@@ -5,9 +5,13 @@
 
 #include "LogDefine.h"
 
+#include "Kismet/GameplayStatics.h"
+
 void UIntroScene::BeginPlay()
 {
 	UE_LOG( LogSlow, Log, TEXT( "UIntroScene::BeginPlay()" ) );
+
+	UGameplayStatics::OpenLevel( this, TEXT( "Intro" ) );
 }
 
 void UIntroScene::EndPlay()

@@ -19,4 +19,7 @@ class P_SLOW_API UDemoScene : public USceneBase
 public:
 	void BeginPlay() override;
 	void EndPlay() override;
+
+private:
+	void OpenNextScene();
 };

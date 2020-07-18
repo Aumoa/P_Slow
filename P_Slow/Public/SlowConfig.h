@@ -16,4 +16,5 @@ class P_SLOW_API USlowConfig : public UObject
 	
 public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite ) FString EntryPoint;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite ) bool bSkipDemo;
 };
