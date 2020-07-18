@@ -1,0 +1,13 @@
+﻿conf
+db
+hooks
+locks
+format
+README.txt
+.vs
+Binaries
+Content
+Intermediate
+Saved
+*.sln
+*.uproject
