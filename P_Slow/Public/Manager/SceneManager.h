@@ -8,7 +8,12 @@
 
 #include "SceneManager.generated.h"
 
+class USlowGameInstance;
+
 class USceneBase;
+class UStartupScene;
+class UDemoScene;
+class UIntroScene;
 
 /**
  * 
@@ -21,11 +26,16 @@ class P_SLOW_API USceneManager : public UObject
 private:
 	UPROPERTY() USceneBase* CurrentScene;
 
-	UPROPERTY() USceneBase* StartupScene;
+	UPROPERTY() UStartupScene* StartupScene;
+	UPROPERTY() UDemoScene* DemoScene;
+	UPROPERTY() UIntroScene* IntroScene;
 
 public:
-	UFUNCTION() void Initialize();
+	UFUNCTION() void Initialize( USlowGameInstance* GInstance );
 
-	UFUNCTION() void LoadScene( const FString& SceneName );
-	UFUNCTION() USceneBase* GetCurrentScene() const;
+	UFUNCTION( BlueprintCallable ) void LoadScene( const FString& SceneName );
+	UFUNCTION( BlueprintCallable ) USceneBase* GetCurrentScene() const;
+
+private:
+	USceneBase* GetSceneByName( const FString& SceneName, bool& bChanged ) const;
 };

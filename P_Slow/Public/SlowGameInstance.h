@@ -8,12 +8,25 @@
 
 #include "SlowGameInstance.generated.h"
 
+class USlowConfig;
+class USceneManager;
+
 UCLASS()
 class P_SLOW_API USlowGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY() USceneManager* SceneManager;
 
 public:
+	UPROPERTY( BlueprintReadWrite ) USlowConfig* Config;
+
+public:
+	UFUNCTION( BlueprintCallable ) void Startup();
+
+	UFUNCTION( BlueprintCallable ) USceneManager* GetSceneManager();
+
+private:
+	void InitializeManagers();
 };

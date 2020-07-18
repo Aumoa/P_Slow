@@ -11,12 +11,12 @@
 /**
  * 
  */
-UCLASS()
+UCLASS( Blueprintable )
 class P_SLOW_API USceneBase : public UObject
 {
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION() virtual void BeginPlay();
-	UFUNCTION() virtual void EndPlay();
+	virtual void BeginPlay();
+	virtual void EndPlay();
 };
