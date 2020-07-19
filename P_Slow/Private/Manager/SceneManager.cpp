@@ -45,6 +45,11 @@ USceneBase* USceneManager::GetCurrentScene( UObject* This )
 	return GetSingletonInstance( This )->CurrentScene;
 }
 
+void USceneManager::SendInputAction( UObject* This, const FName& ActionName, bool bPressed )
+{
+	return GetSingletonInstance( This )->CurrentScene->OnActionInput( ActionName, bPressed );
+}
+
 USceneBase* USceneManager::GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged )
 {
 	USceneBase* NextScene = nullptr;

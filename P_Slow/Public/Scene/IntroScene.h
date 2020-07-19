@@ -15,5 +15,8 @@ public:
 	void BeginPlay( UObject* Args = nullptr ) override;
 	void EndPlay() override;
 
-	bool OnIntroNextSceneInput( bool bPressed, const FKey& Key ) override;
+	void OnActionInput( const FName& ActionName, bool bPressed );
+
+private:
+	void OnIntroNextSceneInput( bool bPressed );
 };

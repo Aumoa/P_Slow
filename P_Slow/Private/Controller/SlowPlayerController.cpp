@@ -5,6 +5,7 @@
 
 #include "SlowGameInstance.h"
 #include "LogDefine.h"
+#include "SlowInputDefine.h"
 
 #include "Manager/SceneManager.h"
 
@@ -14,6 +15,13 @@
 
 #include "Scene/SceneBase.h"
 
+#include "Actor/SlowCharacter.h"
+
+ASlowPlayerController::ASlowPlayerController()
+{
+	bShowMouseCursor = true;
+}
+
 void ASlowPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -21,8 +29,37 @@ void ASlowPlayerController::BeginPlay()
 	GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
 }
 
-void ASlowPlayerController::OnIntroNextSceneInput( bool bPressed, const FKey& Key )
+void ASlowPlayerController::SetupInputComponent()
 {
-	auto CurrentScene = USceneManager::GetCurrentScene( this );
-	bool bSkipInput = CurrentScene->OnIntroNextSceneInput( bPressed, Key );
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction( IA_IntroNextSceneInput, IE_Pressed, this, &ASlowPlayerController::OnIntroNextSceneInputPressed );
+	InputComponent->BindAction( IA_MouseAction, IE_Pressed, this, &ASlowPlayerController::OnMouseActionPressed );
+}
+
+void ASlowPlayerController::OnPossess( APawn* Target )
+{
+	Super::OnPossess( Target );
+
+	Possessed = Cast<ASlowCharacter>( Target );
+}
+
+void ASlowPlayerController::OnUnPossess()
+{
+	Super::OnUnPossess();
+
+	Possessed = nullptr;
+}
+
+void ASlowPlayerController::OnIntroNextSceneInputPressed()
+{
+	USceneManager::SendInputAction( this, IA_IntroNextSceneInput, true );
+}
+
+void ASlowPlayerController::OnMouseActionPressed()
+{
+	if ( Possessed )
+	{
+		Possessed->OnActionInput( IA_MouseAction, true );
+	}
 }

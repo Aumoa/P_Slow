@@ -37,6 +37,7 @@ public:
 
 	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void LoadScene( UObject* This, const FString& SceneName, UObject* Args = nullptr );
 	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static USceneBase* GetCurrentScene( UObject* This );
+	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void SendInputAction( UObject* This, const FName& ActionName, bool bPressed );
 
 private:
 	static USceneBase* GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged );

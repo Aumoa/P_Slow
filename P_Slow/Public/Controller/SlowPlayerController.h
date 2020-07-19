@@ -10,6 +10,7 @@
 
 class USlowGameInstance;
 class UInputComponent;
+class ASlowCharacter;
 
 UCLASS()
 class P_SLOW_API ASlowPlayerController : public APlayerController
@@ -18,9 +19,18 @@ class P_SLOW_API ASlowPlayerController : public APlayerController
 
 private:
 	UPROPERTY() USlowGameInstance* GameInstance;
+	UPROPERTY() ASlowCharacter* Possessed;
+
+public:
+	ASlowPlayerController();
 	
 public:
 	void BeginPlay() override;
+	void SetupInputComponent() override;
+	void OnPossess( APawn* Target ) override;
+	void OnUnPossess() override;
 
-	UFUNCTION( BlueprintCallable ) virtual void OnIntroNextSceneInput( bool bPressed, const FKey& Key );
+private:
+	void OnIntroNextSceneInputPressed();
+	void OnMouseActionPressed();
 };

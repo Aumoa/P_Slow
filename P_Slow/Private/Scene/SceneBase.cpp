@@ -15,7 +15,7 @@ void USceneBase::EndPlay()
 	UE_LOG( LogSlow, Error, TEXT( "USceneBase::EndPlay() is called. The scene class must be overrided this method." ) );
 }
 
-bool USceneBase::OnIntroNextSceneInput( bool bPressed, const FKey& Key )
+void USceneBase::OnActionInput( const FName& ActionName, bool bPressed )
 {
-	return false;
+
 }

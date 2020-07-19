@@ -5,6 +5,7 @@
 
 #include "LogDefine.h"
 #include "SlowGameInstance.h"
+#include "SlowInputDefine.h"
 
 #include "Manager/SceneManager.h"
 
@@ -22,12 +23,15 @@ void UIntroScene::EndPlay()
 	UE_LOG( LogSlow, Log, TEXT( "UIntroScene::EndPlay()" ) );
 }
 
-bool UIntroScene::OnIntroNextSceneInput( bool bPressed, const FKey& Key )
+void UIntroScene::OnActionInput( const FName& ActionName, bool bPressed )
 {
-	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
-	auto SceneManager = GameInstance->GetSceneManager();
+	if ( ActionName == IA_IntroNextSceneInput )
+	{
+		OnIntroNextSceneInput( bPressed );
+	}
+}
 
+void UIntroScene::OnIntroNextSceneInput( bool bPressed )
+{
 	USceneManager::LoadScene( this, TEXT( "Gameplay" ) );
-
-	return true;
 }

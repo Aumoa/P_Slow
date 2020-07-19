@@ -4,14 +4,15 @@
 
 #include "CoreMinimal.h"
 
-#include "GameFramework/Character.h"
+#include "Actor/SlowCharacter.h"
 
 #include "SlowPlayableCharacter.generated.h"
 
 class UInputComponent;
+class APlayerController;
 
 UCLASS()
-class P_SLOW_API ASlowPlayableCharacter : public ACharacter
+class P_SLOW_API ASlowPlayableCharacter : public ASlowCharacter
 {
 	GENERATED_BODY()
 
@@ -19,9 +20,16 @@ public:
 	ASlowPlayableCharacter();
 
 protected:
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 
 public:
-	virtual void Tick( float DeltaTime ) override;
-	virtual void SetupPlayerInputComponent( UInputComponent* PlayerInputComponent ) override;
+	void Tick( float DeltaTime ) override;
+	void OnActionInput( const FName& ActionName, bool bPressed );
+
+protected:
+	UPROPERTY( BlueprintReadWrite ) bool bCanMove;
+
+private:
+	void OnMouseAction( bool bPressed );
+	FVector2D GetCurrentMouseScreenPos( APlayerController* PlayerController ) const;
 };
