@@ -4,10 +4,13 @@
 #include "Scene/IntroScene.h"
 
 #include "LogDefine.h"
+#include "SlowGameInstance.h"
+
+#include "Manager/SceneManager.h"
 
 #include "Kismet/GameplayStatics.h"
 
-void UIntroScene::BeginPlay()
+void UIntroScene::BeginPlay( UObject* Args )
 {
 	UE_LOG( LogSlow, Log, TEXT( "UIntroScene::BeginPlay()" ) );
 
@@ -17,4 +20,14 @@ void UIntroScene::BeginPlay()
 void UIntroScene::EndPlay()
 {
 	UE_LOG( LogSlow, Log, TEXT( "UIntroScene::EndPlay()" ) );
+}
+
+bool UIntroScene::OnIntroNextSceneInput( bool bPressed, const FKey& Key )
+{
+	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
+	auto SceneManager = GameInstance->GetSceneManager();
+
+	SceneManager->LoadScene( TEXT( "Gameplay" ) );
+
+	return true;
 }

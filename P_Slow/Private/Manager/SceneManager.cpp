@@ -5,21 +5,21 @@
 
 #include "SlowGameInstance.h"
 #include "SlowConfig.h"
-
-#include "Scene/StartupScene.h"
-#include "Scene/DemoScene.h"
-#include "Scene/IntroScene.h"
+#include "LogDefine.h"
 
 void USceneManager::Initialize( USlowGameInstance* GInstance )
 {
-	StartupScene = NewObject<UStartupScene>( this );
-	DemoScene = NewObject<UDemoScene>( this );
-	IntroScene = NewObject<UIntroScene>( this );
+	auto Config = GInstance->Config;
+
+	StartupScene = NewObject<USceneBase>( this, Config->StartupScene );
+	DemoScene = NewObject<USceneBase>( this, Config->DemoScene );
+	IntroScene = NewObject<USceneBase>( this, Config->IntroScene );
+	GameplayScene = NewObject<USceneBase>( this, Config->GameplayScene );
 
 	LoadScene( GInstance->Config->EntryPoint );
 }
 
-void USceneManager::LoadScene( const FString& SceneName )
+void USceneManager::LoadScene( const FString& SceneName, UObject* Args )
 {
 	bool bChanged = false;
 
@@ -32,7 +32,7 @@ void USceneManager::LoadScene( const FString& SceneName )
 
 	if ( bChanged )
 	{
-		CurrentScene->BeginPlay();
+		CurrentScene->BeginPlay( Args );
 	}
 }
 
@@ -43,32 +43,35 @@ USceneBase* USceneManager::GetCurrentScene() const
 
 USceneBase* USceneManager::GetSceneByName( const FString& SceneName, bool& bChanged ) const
 {
+	USceneBase* NextScene = nullptr;
 	bChanged = false;
 
 	if ( SceneName == TEXT( "Startup" ) )
 	{
-		if ( CurrentScene != StartupScene )
-		{
-			bChanged = true;
-			return StartupScene;
-		}
+		NextScene = StartupScene;
 	}
 	else if ( SceneName == TEXT( "Demo" ) )
 	{
-		if ( CurrentScene != DemoScene )
-		{
-			bChanged = true;
-			return DemoScene;
-		}
+		NextScene = DemoScene;
 	}
 	else if ( SceneName == TEXT( "Intro" ) )
 	{
-		if ( CurrentScene != IntroScene )
-		{
-			bChanged = true;
-			return IntroScene;
-		}
+		NextScene = IntroScene;
+	}
+	else if ( SceneName == TEXT( "Gameplay" ) )
+	{
+		NextScene = GameplayScene;
+	}
+	else
+	{
+		UE_LOG( LogSlow, Error, TEXT( "Scene name: [%s] is not registered." ), *SceneName );
+		return CurrentScene;;
 	}
 
-	return CurrentScene;
+	if ( CurrentScene != NextScene )
+	{
+		bChanged = true;
+	}
+
+	return NextScene;
 }

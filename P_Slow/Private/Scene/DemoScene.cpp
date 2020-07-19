@@ -11,9 +11,11 @@
 
 #include "Kismet/GameplayStatics.h"
 
-void UDemoScene::BeginPlay()
+void UDemoScene::BeginPlay( UObject* Args )
 {
 	UE_LOG( LogSlow, Log, TEXT( "UDemoScene::BeginPlay()" ) );
+
+	GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
 	OpenNextScene();
 }
 
@@ -22,15 +24,19 @@ void UDemoScene::EndPlay()
 	UE_LOG( LogSlow, Log, TEXT( "UDemoScene::EndPlay()" ) );
 }
 
+void UDemoScene::OnDemoEnded()
+{
+	auto SceneManager = GameInstance->GetSceneManager();
+	SceneManager->LoadScene( TEXT( "Intro" ) );
+}
+
 void UDemoScene::OpenNextScene()
 {
-	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
 	auto Config = GameInstance->Config;
 
 	if ( Config->bSkipDemo )
 	{
-		auto SceneManager = GameInstance->GetSceneManager();
-		SceneManager->LoadScene( TEXT( "Intro" ) );
+		OnDemoEnded();
 	}
 	else
 	{

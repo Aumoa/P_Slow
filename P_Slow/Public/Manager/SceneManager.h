@@ -14,6 +14,7 @@ class USceneBase;
 class UStartupScene;
 class UDemoScene;
 class UIntroScene;
+class UGameplayScene;
 
 /**
  * 
@@ -26,14 +27,15 @@ class P_SLOW_API USceneManager : public UObject
 private:
 	UPROPERTY() USceneBase* CurrentScene;
 
-	UPROPERTY() UStartupScene* StartupScene;
-	UPROPERTY() UDemoScene* DemoScene;
-	UPROPERTY() UIntroScene* IntroScene;
+	UPROPERTY() USceneBase* StartupScene;
+	UPROPERTY() USceneBase* DemoScene;
+	UPROPERTY() USceneBase* IntroScene;
+	UPROPERTY() USceneBase* GameplayScene;
 
 public:
 	UFUNCTION() void Initialize( USlowGameInstance* GInstance );
 
-	UFUNCTION( BlueprintCallable ) void LoadScene( const FString& SceneName );
+	UFUNCTION( BlueprintCallable ) void LoadScene( const FString& SceneName, UObject* Args = nullptr );
 	UFUNCTION( BlueprintCallable ) USceneBase* GetCurrentScene() const;
 
 private:

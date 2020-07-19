@@ -3,3 +3,18 @@
 
 #include "SlowConfig.h"
 
+#include "Scene/StartupScene.h"
+#include "Scene/DemoScene.h"
+#include "Scene/IntroScene.h"
+#include "Scene/GameplayScene.h"
+
+USlowConfig::USlowConfig( const FObjectInitializer& Initializer ) : Super( Initializer )
+{
+	EntryPoint = TEXT( "Startup" );
+	bSkipDemo = false;
+
+	StartupScene = UStartupScene::StaticClass();
+	DemoScene = UDemoScene::StaticClass();
+	IntroScene = UIntroScene::StaticClass();
+	GameplayScene = UGameplayScene::StaticClass();
+}

@@ -17,6 +17,8 @@ class P_SLOW_API USceneBase : public UObject
 	GENERATED_BODY()
 	
 public:
-	virtual void BeginPlay();
+	virtual void BeginPlay( UObject* Args = nullptr );
 	virtual void EndPlay();
+
+	virtual bool OnIntroNextSceneInput( bool bPressed, const FKey& Key );
 };

@@ -8,17 +8,21 @@
 
 #include "DemoScene.generated.h"
 
-/**
- * 
- */
+class USlowGameInstance;
+
 UCLASS()
 class P_SLOW_API UDemoScene : public USceneBase
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY() USlowGameInstance* GameInstance;
+
 public:
-	void BeginPlay() override;
+	void BeginPlay( UObject* Args = nullptr ) override;
 	void EndPlay() override;
+
+	UFUNCTION( BlueprintCallable ) void OnDemoEnded();
 
 private:
 	void OpenNextScene();

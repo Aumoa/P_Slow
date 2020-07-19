@@ -10,7 +10,7 @@
 
 #include "Manager/SceneManager.h"
 
-void UStartupScene::BeginPlay()
+void UStartupScene::BeginPlay( UObject* Args )
 {
 	UE_LOG( LogSlow, Log, TEXT( "UStartupScene::BeginPlay()" ) );
 

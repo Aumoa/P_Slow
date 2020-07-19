@@ -3,21 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Scene/SceneBase.h"
-#include "StartupScene.generated.h"
 
-/**
- * 
- */
+#include "Scene/SceneBase.h"
+
+#include "GameplayScene.generated.h"
+
 UCLASS()
-class P_SLOW_API UStartupScene : public USceneBase
+class P_SLOW_API UGameplayScene : public USceneBase
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY( BlueprintReadWrite ) FName CurrentLevel;
+	UPROPERTY( BlueprintReadWrite ) FName NextStreamingLevel;
 	
 public:
 	void BeginPlay( UObject* Args = nullptr ) override;
 	void EndPlay() override;
-
-private:
-	void OpenDemoScene();
 };
