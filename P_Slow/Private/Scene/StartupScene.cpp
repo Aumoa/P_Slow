@@ -26,8 +26,5 @@ void UStartupScene::EndPlay()
 
 void UStartupScene::OpenDemoScene()
 {
-	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
-	auto SceneManager = GameInstance->GetSceneManager();
-
-	SceneManager->LoadScene( TEXT( "Demo" ) );
+	USceneManager::LoadScene( this, TEXT( "Demo" ) );
 }

@@ -8,6 +8,8 @@
 
 #include "Scene/SceneBase.h"
 
+#include "Actor/SlowPlayableCharacter.h"
+
 #include "SlowConfig.generated.h"
 
 /**
@@ -30,4 +32,7 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> DemoScene;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> IntroScene;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> GameplayScene;
+
+public:
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Game" ) TSubclassOf<ASlowPlayableCharacter> PlayableCharacter;
 };

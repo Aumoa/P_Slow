@@ -23,7 +23,6 @@ void ASlowPlayerController::BeginPlay()
 
 void ASlowPlayerController::OnIntroNextSceneInput( bool bPressed, const FKey& Key )
 {
-	auto SceneManager = GameInstance->GetSceneManager();
-	auto CurrentScene = SceneManager->GetCurrentScene();
+	auto CurrentScene = USceneManager::GetCurrentScene( this );
 	bool bSkipInput = CurrentScene->OnIntroNextSceneInput( bPressed, Key );
 }

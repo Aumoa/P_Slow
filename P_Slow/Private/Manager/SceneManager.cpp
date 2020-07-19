@@ -7,6 +7,8 @@
 #include "SlowConfig.h"
 #include "LogDefine.h"
 
+#include "Kismet/GameplayStatics.h"
+
 void USceneManager::Initialize( USlowGameInstance* GInstance )
 {
 	auto Config = GInstance->Config;
@@ -16,62 +18,70 @@ void USceneManager::Initialize( USlowGameInstance* GInstance )
 	IntroScene = NewObject<USceneBase>( this, Config->IntroScene );
 	GameplayScene = NewObject<USceneBase>( this, Config->GameplayScene );
 
-	LoadScene( GInstance->Config->EntryPoint );
+	LoadScene( this, GInstance->Config->EntryPoint );
 }
 
-void USceneManager::LoadScene( const FString& SceneName, UObject* Args )
+void USceneManager::LoadScene( UObject* This, const FString& SceneName, UObject* Args )
 {
+	auto Instance = GetSingletonInstance( This );
+
 	bool bChanged = false;
 
-	if ( CurrentScene )
+	if ( Instance->CurrentScene )
 	{
-		CurrentScene->EndPlay();
+		Instance->CurrentScene->EndPlay();
 	}
 
-	CurrentScene = GetSceneByName( SceneName, bChanged );
+	Instance->CurrentScene = GetSceneByName( Instance, SceneName, bChanged );
 
 	if ( bChanged )
 	{
-		CurrentScene->BeginPlay( Args );
+		Instance->CurrentScene->BeginPlay( Args );
 	}
 }
 
-USceneBase* USceneManager::GetCurrentScene() const
+USceneBase* USceneManager::GetCurrentScene( UObject* This )
 {
-	return CurrentScene;
+	return GetSingletonInstance( This )->CurrentScene;
 }
 
-USceneBase* USceneManager::GetSceneByName( const FString& SceneName, bool& bChanged ) const
+USceneBase* USceneManager::GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged )
 {
 	USceneBase* NextScene = nullptr;
 	bChanged = false;
 
 	if ( SceneName == TEXT( "Startup" ) )
 	{
-		NextScene = StartupScene;
+		NextScene = Instance->StartupScene;
 	}
 	else if ( SceneName == TEXT( "Demo" ) )
 	{
-		NextScene = DemoScene;
+		NextScene = Instance->DemoScene;
 	}
 	else if ( SceneName == TEXT( "Intro" ) )
 	{
-		NextScene = IntroScene;
+		NextScene = Instance->IntroScene;
 	}
 	else if ( SceneName == TEXT( "Gameplay" ) )
 	{
-		NextScene = GameplayScene;
+		NextScene = Instance->GameplayScene;
 	}
 	else
 	{
 		UE_LOG( LogSlow, Error, TEXT( "Scene name: [%s] is not registered." ), *SceneName );
-		return CurrentScene;;
+		return Instance->CurrentScene;;
 	}
 
-	if ( CurrentScene != NextScene )
+	if ( Instance->CurrentScene != NextScene )
 	{
 		bChanged = true;
 	}
 
 	return NextScene;
+}
+
+USceneManager* USceneManager::GetSingletonInstance( UObject* This )
+{
+	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( This ) );
+	return GameInstance->GetSceneManager();
 }

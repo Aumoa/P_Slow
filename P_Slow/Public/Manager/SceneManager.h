@@ -35,9 +35,10 @@ private:
 public:
 	UFUNCTION() void Initialize( USlowGameInstance* GInstance );
 
-	UFUNCTION( BlueprintCallable ) void LoadScene( const FString& SceneName, UObject* Args = nullptr );
-	UFUNCTION( BlueprintCallable ) USceneBase* GetCurrentScene() const;
+	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void LoadScene( UObject* This, const FString& SceneName, UObject* Args = nullptr );
+	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static USceneBase* GetCurrentScene( UObject* This );
 
 private:
-	USceneBase* GetSceneByName( const FString& SceneName, bool& bChanged ) const;
+	static USceneBase* GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged );
+	static USceneManager* GetSingletonInstance( UObject* This );
 };

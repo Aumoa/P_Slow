@@ -26,8 +26,7 @@ void UDemoScene::EndPlay()
 
 void UDemoScene::OnDemoEnded()
 {
-	auto SceneManager = GameInstance->GetSceneManager();
-	SceneManager->LoadScene( TEXT( "Intro" ) );
+	USceneManager::LoadScene( this, TEXT( "Intro" ) );
 }
 
 void UDemoScene::OpenNextScene()

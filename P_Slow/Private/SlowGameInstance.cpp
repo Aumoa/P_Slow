@@ -2,10 +2,12 @@
 
 
 #include "SlowGameInstance.h"
+
 #include "SlowConfig.h"
 #include "LogDefine.h"
 
 #include "Manager/SceneManager.h"
+#include "Manager/SpawnManager.h"
 
 void USlowGameInstance::Startup()
 {
@@ -19,8 +21,16 @@ USceneManager* USlowGameInstance::GetSceneManager()
 	return SceneManager;
 }
 
+USpawnManager* USlowGameInstance::GetSpawnManager()
+{
+	return SpawnManager;
+}
+
 void USlowGameInstance::InitializeManagers()
 {
 	SceneManager = NewObject<USceneManager>( this );
 	SceneManager->Initialize( this );
+
+	SpawnManager = NewObject<USpawnManager>( this );
+	SpawnManager->Initialize( this );
 }

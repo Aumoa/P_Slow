@@ -27,7 +27,7 @@ bool UIntroScene::OnIntroNextSceneInput( bool bPressed, const FKey& Key )
 	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
 	auto SceneManager = GameInstance->GetSceneManager();
 
-	SceneManager->LoadScene( TEXT( "Gameplay" ) );
+	USceneManager::LoadScene( this, TEXT( "Gameplay" ) );
 
 	return true;
 }

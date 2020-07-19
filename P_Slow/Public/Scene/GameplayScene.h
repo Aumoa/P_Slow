@@ -20,4 +20,7 @@ public:
 public:
 	void BeginPlay( UObject* Args = nullptr ) override;
 	void EndPlay() override;
+
+private:
+	void ReadyPlayerCharacter();
 };
