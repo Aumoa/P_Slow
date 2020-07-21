@@ -8,10 +8,18 @@
 
 #include "SlowCharacter.generated.h"
 
+class UStatAttribute;
+
 UCLASS()
 class P_SLOW_API ASlowCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY( BlueprintReadOnly ) UStatAttribute* Stats;
+
+public:
+	ASlowCharacter();
 
 public:
 	virtual void OnActionInput( const FName& ActionName, bool bPressed );

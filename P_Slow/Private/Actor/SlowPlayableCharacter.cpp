@@ -47,7 +47,6 @@ void ASlowPlayableCharacter::OnMouseAction( bool bPressed )
 
 		if ( bHit )
 		{
-			UE_LOG( LogSlow, Log, TEXT( "ASlowPlayableCharacter::OnMouseAction(), HitResultX: %f, HitResultY: %f" ), HitResult.Location.X, HitResult.Location.Y );
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation( PlayerController, HitResult.Location );
 		}
 	}
@@ -58,8 +57,6 @@ FVector2D ASlowPlayableCharacter::GetCurrentMouseScreenPos( APlayerController* P
 	float MouseX;
 	float MouseY;
 	PlayerController->GetMousePosition( MouseX, MouseY );
-
-	UE_LOG( LogSlow, Log, TEXT( "ASlowPlayableCharacter::GetCurrentMouseScreenPos(), MouseX: %f, MouseY: %f" ), MouseX, MouseY );
 
 	return FVector2D( MouseX, MouseY );
 }
