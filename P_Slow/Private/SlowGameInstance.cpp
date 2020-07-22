@@ -8,6 +8,7 @@
 
 #include "Manager/SceneManager.h"
 #include "Manager/SpawnManager.h"
+#include "Manager/WidgetManager.h"
 
 void USlowGameInstance::Startup()
 {
@@ -16,14 +17,19 @@ void USlowGameInstance::Startup()
 	InitializeManagers();
 }
 
-USceneManager* USlowGameInstance::GetSceneManager()
+USceneManager* USlowGameInstance::GetSceneManager() const
 {
 	return SceneManager;
 }
 
-USpawnManager* USlowGameInstance::GetSpawnManager()
+USpawnManager* USlowGameInstance::GetSpawnManager() const
 {
 	return SpawnManager;
+}
+
+UWidgetManager* USlowGameInstance::GetWidgetManager() const
+{
+	return WidgetManager;
 }
 
 void USlowGameInstance::InitializeManagers()
@@ -33,4 +39,7 @@ void USlowGameInstance::InitializeManagers()
 
 	SpawnManager = NewObject<USpawnManager>( this );
 	SpawnManager->Initialize( this );
+
+	WidgetManager = NewObject<UWidgetManager>( this );
+	WidgetManager->Initialize( this );
 }

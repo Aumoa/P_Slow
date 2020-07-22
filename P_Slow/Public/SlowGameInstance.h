@@ -11,6 +11,7 @@
 class USlowConfig;
 class USceneManager;
 class USpawnManager;
+class UWidgetManager;
 
 UCLASS()
 class P_SLOW_API USlowGameInstance : public UGameInstance
@@ -20,6 +21,7 @@ class P_SLOW_API USlowGameInstance : public UGameInstance
 private:
 	UPROPERTY() USceneManager* SceneManager;
 	UPROPERTY() USpawnManager* SpawnManager;
+	UPROPERTY() UWidgetManager* WidgetManager;
 
 public:
 	UPROPERTY( BlueprintReadWrite ) USlowConfig* Config;
@@ -27,8 +29,9 @@ public:
 public:
 	UFUNCTION( BlueprintCallable ) void Startup();
 
-	UFUNCTION( BlueprintCallable ) USceneManager* GetSceneManager();
-	UFUNCTION( BlueprintCallable ) USpawnManager* GetSpawnManager();
+	USceneManager* GetSceneManager() const;
+	USpawnManager* GetSpawnManager() const;
+	UWidgetManager* GetWidgetManager() const;
 
 private:
 	void InitializeManagers();
