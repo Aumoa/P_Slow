@@ -53,7 +53,7 @@ void ASlowPlayerController::OnUnPossess()
 
 void ASlowPlayerController::OnIntroNextSceneInputPressed()
 {
-	USceneManager::SendInputAction( this, IA_IntroNextSceneInput, true );
+	USceneManager::SendInputAction( IA_IntroNextSceneInput, true );
 }
 
 void ASlowPlayerController::OnMouseActionPressed()

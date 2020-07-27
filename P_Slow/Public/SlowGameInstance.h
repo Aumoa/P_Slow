@@ -6,32 +6,36 @@
 
 #include "Engine/GameInstance.h"
 
+#include "Manager/ManagerBase.h"
+
 #include "SlowGameInstance.generated.h"
 
 class USlowConfig;
-class USceneManager;
-class USpawnManager;
-class UWidgetManager;
+class UManagerBase;
 
 UCLASS()
 class P_SLOW_API USlowGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
+
 private:
-	UPROPERTY() USceneManager* SceneManager;
-	UPROPERTY() USpawnManager* SpawnManager;
-	UPROPERTY() UWidgetManager* WidgetManager;
+	//
+	// Not managed storage.
+	// GameInstance will be destroyed on end of gameplay.
+	static USlowGameInstance* Instance;
+
+private:
+	UPROPERTY() TArray<UManagerBase*> Managers;
 
 public:
 	UPROPERTY( BlueprintReadWrite ) USlowConfig* Config;
 
 public:
 	UFUNCTION( BlueprintCallable ) void Startup();
+	UFUNCTION( BlueprintCallable ) static USlowGameInstance* GetGameInstance();
 
-	USceneManager* GetSceneManager() const;
-	USpawnManager* GetSpawnManager() const;
-	UWidgetManager* GetWidgetManager() const;
+public:
+	UFUNCTION( BlueprintPure ) UManagerBase* GetManager( TSubclassOf<UManagerBase> ClassType ) const;
 
 private:
 	void InitializeManagers();

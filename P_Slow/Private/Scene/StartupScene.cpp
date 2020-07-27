@@ -26,5 +26,5 @@ void UStartupScene::EndPlay()
 
 void UStartupScene::OpenDemoScene()
 {
-	USceneManager::LoadScene( this, TEXT( "Demo" ) );
+	USceneManager::LoadScene( TEXT( "Demo" ) );
 }

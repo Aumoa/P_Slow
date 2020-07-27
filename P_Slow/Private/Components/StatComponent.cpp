@@ -1,17 +1,17 @@
 // Copyright 2020. Team slow, All right reserved.
 
 
-#include "Components/StatAttribute.h"
+#include "Components/StatComponent.h"
 
 #include "LogDefine.h"
 
-UStatAttribute::UStatAttribute()
+UStatComponent::UStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	bBeginMaxCurrent = true;
 }
 
-void UStatAttribute::BeginPlay()
+void UStatComponent::BeginPlay()
 {
 	if ( bBeginMaxCurrent )
 	{
@@ -19,12 +19,12 @@ void UStatAttribute::BeginPlay()
 	}
 }
 
-void UStatAttribute::ApplyDamage( const FDamage& Damage )
+void UStatComponent::ApplyDamage( const FDamage& Damage )
 {
 	ApplyFixedDamage( Damage );
 }
 
-void UStatAttribute::ApplyFixedDamage( const FDamage& Damage )
+void UStatComponent::ApplyFixedDamage( const FDamage& Damage )
 {
 	if ( CurrentHealth < Damage.FixedHealth )
 	{

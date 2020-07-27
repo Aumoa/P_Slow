@@ -3,12 +3,12 @@
 
 #include "Actor/SlowCharacter.h"
 
-#include "Components/StatAttribute.h"
+#include "Components/StatComponent.h"
 
 ASlowCharacter::ASlowCharacter()
 {
-	Stats = CreateDefaultSubobject<UStatAttribute>( TEXT( "Stats" ) );
-	AddOwnedComponent( Stats );
+	auto StatComponent = CreateDefaultSubobject<UStatComponent>( TEXT( "StatComponent" ) );
+	AddOwnedComponent( StatComponent );
 }
 
 void ASlowCharacter::OnActionInput( const FName& ActionName, bool bPressed )

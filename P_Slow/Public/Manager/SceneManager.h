@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "UObject/NoExportTypes.h"
+#include "ManagerBase.h"
 
 #include "SceneManager.generated.h"
 
@@ -20,7 +20,7 @@ class UGameplayScene;
  * 
  */
 UCLASS()
-class P_SLOW_API USceneManager : public UObject
+class P_SLOW_API USceneManager : public UManagerBase
 {
 	GENERATED_BODY()
 	
@@ -33,13 +33,13 @@ private:
 	UPROPERTY() USceneBase* GameplayScene;
 
 public:
-	UFUNCTION() void Initialize( USlowGameInstance* GInstance );
+	void Initialize( USlowGameInstance* GInstance ) override;
 
-	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void LoadScene( UObject* This, const FString& SceneName, UObject* Args = nullptr );
-	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static USceneBase* GetCurrentScene( UObject* This );
-	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void SendInputAction( UObject* This, const FName& ActionName, bool bPressed );
+	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void LoadScene( const FString& SceneName, UObject* Args = nullptr );
+	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static USceneBase* GetCurrentScene();
+	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void SendInputAction( const FName& ActionName, bool bPressed );
 
 private:
 	static USceneBase* GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged );
-	static USceneManager* GetSingletonInstance( UObject* This );
+	static USceneManager* GetSingletonInstance();
 };

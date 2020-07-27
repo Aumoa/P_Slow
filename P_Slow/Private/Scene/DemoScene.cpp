@@ -15,7 +15,7 @@ void UDemoScene::BeginPlay( UObject* Args )
 {
 	UE_LOG( LogSlow, Log, TEXT( "UDemoScene::BeginPlay()" ) );
 
-	GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
+	GameInstance = USlowGameInstance::GetGameInstance();
 	OpenNextScene();
 }
 
@@ -26,7 +26,7 @@ void UDemoScene::EndPlay()
 
 void UDemoScene::OnDemoEnded()
 {
-	USceneManager::LoadScene( this, TEXT( "Intro" ) );
+	USceneManager::LoadScene( TEXT( "Intro" ) );
 }
 
 void UDemoScene::OpenNextScene()

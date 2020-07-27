@@ -33,5 +33,5 @@ void UIntroScene::OnActionInput( const FName& ActionName, bool bPressed )
 
 void UIntroScene::OnIntroNextSceneInput( bool bPressed )
 {
-	USceneManager::LoadScene( this, TEXT( "Gameplay" ) );
+	USceneManager::LoadScene( TEXT( "Gameplay" ) );
 }

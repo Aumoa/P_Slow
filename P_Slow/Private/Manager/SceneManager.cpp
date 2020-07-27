@@ -11,6 +11,8 @@
 
 void USceneManager::Initialize( USlowGameInstance* GInstance )
 {
+	Super::Initialize( GInstance );
+
 	auto Config = GInstance->Config;
 
 	StartupScene = NewObject<USceneBase>( this, Config->StartupScene );
@@ -18,12 +20,12 @@ void USceneManager::Initialize( USlowGameInstance* GInstance )
 	IntroScene = NewObject<USceneBase>( this, Config->IntroScene );
 	GameplayScene = NewObject<USceneBase>( this, Config->GameplayScene );
 
-	LoadScene( this, GInstance->Config->EntryPoint );
+	LoadScene( GInstance->Config->EntryPoint );
 }
 
-void USceneManager::LoadScene( UObject* This, const FString& SceneName, UObject* Args )
+void USceneManager::LoadScene( const FString& SceneName, UObject* Args )
 {
-	auto Instance = GetSingletonInstance( This );
+	auto Instance = GetSingletonInstance();
 
 	bool bChanged = false;
 
@@ -40,14 +42,14 @@ void USceneManager::LoadScene( UObject* This, const FString& SceneName, UObject*
 	}
 }
 
-USceneBase* USceneManager::GetCurrentScene( UObject* This )
+USceneBase* USceneManager::GetCurrentScene()
 {
-	return GetSingletonInstance( This )->CurrentScene;
+	return GetSingletonInstance()->CurrentScene;
 }
 
-void USceneManager::SendInputAction( UObject* This, const FName& ActionName, bool bPressed )
+void USceneManager::SendInputAction( const FName& ActionName, bool bPressed )
 {
-	return GetSingletonInstance( This )->CurrentScene->OnActionInput( ActionName, bPressed );
+	return GetSingletonInstance()->CurrentScene->OnActionInput( ActionName, bPressed );
 }
 
 USceneBase* USceneManager::GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged )
@@ -85,8 +87,7 @@ USceneBase* USceneManager::GetSceneByName( USceneManager* Instance, const FStrin
 	return NextScene;
 }
 
-USceneManager* USceneManager::GetSingletonInstance( UObject* This )
+USceneManager* USceneManager::GetSingletonInstance()
 {
-	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( This ) );
-	return GameInstance->GetSceneManager();
+	return Super::GetSingletonInstance<USceneManager>();
 }

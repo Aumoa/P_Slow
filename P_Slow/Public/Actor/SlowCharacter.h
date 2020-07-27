@@ -8,15 +8,12 @@
 
 #include "SlowCharacter.generated.h"
 
-class UStatAttribute;
+class UStatComponent;
 
 UCLASS()
 class P_SLOW_API ASlowCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY( BlueprintReadOnly ) UStatAttribute* Stats;
 
 public:
 	ASlowCharacter();

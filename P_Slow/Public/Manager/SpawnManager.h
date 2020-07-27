@@ -4,20 +4,22 @@
 
 #include "CoreMinimal.h"
 
-#include "UObject/NoExportTypes.h"
+#include "ManagerBase.h"
 
 #include "SpawnManager.generated.h"
 
 class ASlowPlayableCharacter;
 class USlowPlayableCharacterState;
+class USlowGameInstance;
 
 UCLASS()
-class P_SLOW_API USpawnManager : public UObject
+class P_SLOW_API USpawnManager : public UManagerBase
 {
 	GENERATED_BODY()
 	
 public:
-	void Initialize( UObject* This );
+	UFUNCTION( BlueprintCallable, Category = "SpawnManager" ) static ASlowPlayableCharacter* SpawnPlayerPawn( UPARAM( ref ) const FTransform& Transform );
 
-	UFUNCTION( BlueprintCallable, Category = "SpawnManager" ) static ASlowPlayableCharacter* SpawnPlayerPawn( UObject* This, const FTransform& Transform );
+private:
+	static USpawnManager* GetSingletonInstance();
 };

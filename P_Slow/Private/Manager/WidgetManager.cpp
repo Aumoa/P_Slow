@@ -11,15 +11,9 @@
 
 bool UWidgetManager::bClearAllWhenSceneChanged = true;
 
-void UWidgetManager::Initialize( USlowGameInstance* GInstance )
+int64 UWidgetManager::AddWidget( const FName& WidgetName, UUserWidget* UserWidget, bool bShow )
 {
-	ThreadLocker = TSharedPtr<FMutex>( new FMutex() );
-}
-
-int64 UWidgetManager::AddWidget( UObject* This, const FName& WidgetName, UUserWidget* UserWidget, bool bShow )
-{
-	auto Instance = GetSingletonInstance( This );
-	auto Context = Instance->ThreadLocker->Lock();
+	auto Instance = GetSingletonInstance();
 
 	if ( Instance->WidgetsMap.Contains( WidgetName ) )
 	{
@@ -42,18 +36,22 @@ int64 UWidgetManager::AddWidget( UObject* This, const FName& WidgetName, UUserWi
 	return Index;
 }
 
-int64 UWidgetManager::AddWidget( UObject* This, const FName& WidgetName, UWorld* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow )
+int64 UWidgetManager::AddWidget( const FName& WidgetName, UWorld* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow )
 {
-	return AddWidget( This, WidgetName, CreateWidget<UUserWidget>( Owner, UserWidgetClass, WidgetName ), bShow );
+	if ( Owner == nullptr )
+	{
+		Owner = GetSingletonInstance()->GetWorld();
+	}
+
+	return AddWidget( WidgetName, CreateWidget<UUserWidget>( Owner, UserWidgetClass, WidgetName ), bShow );
 }
 
-void UWidgetManager::ShowWidget( UObject* This, int64 WidgetLuid, bool bShow )
+void UWidgetManager::ShowWidget( int64 WidgetLuid, bool bShow )
 {
-	auto Instance = GetSingletonInstance( This );
-	auto Context = Instance->ThreadLocker->Lock();
+	auto Instance = GetSingletonInstance();
 	
 	UUserWidget* Widget = nullptr;
-	if ( ( Widget = Instance->IsValidLuid( WidgetLuid ) ) == nullptr )
+	if ( ( Widget = Instance->IsValidLuidInternal( WidgetLuid ) ) == nullptr )
 	{
 		UE_LOG( LogSlow, Error, TEXT( "UWidgetManager::ShowWidget(): WidgetLuid is invalid." ) );
 		return;
@@ -62,14 +60,13 @@ void UWidgetManager::ShowWidget( UObject* This, int64 WidgetLuid, bool bShow )
 	Instance->SetVisibleState( WidgetLuid, bShow );
 }
 
-bool UWidgetManager::RemoveWidget( UObject* This, int64 WidgetLuid )
+bool UWidgetManager::RemoveWidget( int64 WidgetLuid )
 {
-	auto Instance = GetSingletonInstance( This );
-	auto Context = Instance->ThreadLocker->Lock();
+	auto Instance = GetSingletonInstance();
 
 	//
 	// Cannot find reference. This is not error, but return false for notify to caller.
-	if ( !Instance->IsValidLuid( WidgetLuid ) )
+	if ( !Instance->IsValidLuidInternal( WidgetLuid ) )
 	{
 		return false;
 	}
@@ -106,16 +103,16 @@ bool UWidgetManager::RemoveWidget( UObject* This, int64 WidgetLuid )
 	return true;
 }
 
-bool UWidgetManager::IsValidLuid( UObject* This, int64 WidgetLuid )
+bool UWidgetManager::IsValidLuid( int64 WidgetLuid )
 {
-	return GetSingletonInstance( This )->IsValidLuid( WidgetLuid ) != nullptr;
+	return GetSingletonInstance()->IsValidLuidInternal( WidgetLuid ) != nullptr;
 }
 
-bool UWidgetManager::IsShowWidget( UObject* This, int64 WidgetLuid )
+bool UWidgetManager::IsShowWidget( int64 WidgetLuid )
 {
-	auto Instance = GetSingletonInstance( This );
+	auto Instance = GetSingletonInstance();
 
-	if ( Instance->IsValidLuid( WidgetLuid ) )
+	if ( Instance->IsValidLuidInternal( WidgetLuid ) )
 	{
 		return Instance->WidgetVisibleStates[WidgetLuid];
 	}
@@ -126,9 +123,9 @@ bool UWidgetManager::IsShowWidget( UObject* This, int64 WidgetLuid )
 	}
 }
 
-int64 UWidgetManager::FindWidget( UObject* This, const FName& WidgetName )
+int64 UWidgetManager::FindWidget( const FName& WidgetName )
 {
-	auto Instance = GetSingletonInstance( This );
+	auto Instance = GetSingletonInstance();
 	auto ReferencePtr = Instance->WidgetsMap.Find( WidgetName );
 
 	if ( ReferencePtr == nullptr )
@@ -141,11 +138,11 @@ int64 UWidgetManager::FindWidget( UObject* This, const FName& WidgetName )
 	}
 }
 
-UUserWidget* UWidgetManager::GetWidget( UObject* This, int64 WidgetLuid )
+UUserWidget* UWidgetManager::GetWidget( int64 WidgetLuid )
 {
-	auto Instance = GetSingletonInstance( This );
+	auto Instance = GetSingletonInstance();
 
-	if ( Instance->IsValidLuid( WidgetLuid ) )
+	if ( Instance->IsValidLuidInternal( WidgetLuid ) )
 	{
 		return Instance->AddedWidgets[WidgetLuid];
 	}
@@ -192,15 +189,14 @@ int64 UWidgetManager::FindEmptyOrAlloc()
 	}
 }
 
-UUserWidget* UWidgetManager::IsValidLuid( int64 WidgetLuid ) const
+UUserWidget* UWidgetManager::IsValidLuidInternal( int64 WidgetLuid ) const
 {
 	UUserWidget* Widget = nullptr;
 	bool bExpression = AddedWidgets.Num() <= WidgetLuid || ( Widget = AddedWidgets[WidgetLuid] ) == nullptr;
 	return Widget;
 }
 
-UWidgetManager* UWidgetManager::GetSingletonInstance( UObject* This )
+UWidgetManager* UWidgetManager::GetSingletonInstance()
 {
-	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( This ) );
-	return GameInstance->GetWidgetManager();
+	return Super::GetSingletonInstance<UWidgetManager>();
 }

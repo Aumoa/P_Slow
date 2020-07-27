@@ -6,40 +6,34 @@
 #include "SlowConfig.h"
 #include "LogDefine.h"
 
-#include "Manager/SceneManager.h"
-#include "Manager/SpawnManager.h"
-#include "Manager/WidgetManager.h"
+#include "Manager/ManagerBase.h"
+
+USlowGameInstance* USlowGameInstance::Instance;
 
 void USlowGameInstance::Startup()
 {
 	UE_LOG( LogSlow, Log, TEXT( "USlowGameInstance::Startup()" ) );
+	
+	Instance = this;
 
 	InitializeManagers();
 }
 
-USceneManager* USlowGameInstance::GetSceneManager() const
+USlowGameInstance* USlowGameInstance::GetGameInstance()
 {
-	return SceneManager;
+	return Instance;
 }
 
-USpawnManager* USlowGameInstance::GetSpawnManager() const
+UManagerBase* USlowGameInstance::GetManager( TSubclassOf<UManagerBase> ClassType ) const
 {
-	return SpawnManager;
-}
+	for ( int32 i = 0, count = Managers.Num(); i < count; ++i )
+	{
+		if ( Managers[i]->GetClass() == ClassType.Get() )
+		{
+			return Managers[i];
+		}
+	}
 
-UWidgetManager* USlowGameInstance::GetWidgetManager() const
-{
-	return WidgetManager;
-}
-
-void USlowGameInstance::InitializeManagers()
-{
-	SceneManager = NewObject<USceneManager>( this );
-	SceneManager->Initialize( this );
-
-	SpawnManager = NewObject<USpawnManager>( this );
-	SpawnManager->Initialize( this );
-
-	WidgetManager = NewObject<UWidgetManager>( this );
-	WidgetManager->Initialize( this );
+	checkfSlow( false, TEXT( "USlowGameInstance::GetManager(): Unknown manager class." ) );
+	return nullptr;
 }

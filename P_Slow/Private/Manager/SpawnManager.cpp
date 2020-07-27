@@ -12,17 +12,23 @@
 
 #include "Kismet/GameplayStatics.h"
 
-void USpawnManager::Initialize( UObject* This )
-{
+#include "Manager/ReferenceManager.h"
 
+ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn( const FTransform& Transform )
+{
+	auto Instance = GetSingletonInstance();
+	auto World = Instance->GetWorld();
+
+	if ( World == nullptr )
+	{
+		UE_LOG( LogSlow, Error, TEXT( "USpawnManager::SpawnPlayerPawn(): GameInstance haven't world context." ) );
+		return nullptr;
+	}
+
+	return World->SpawnActor<ASlowPlayableCharacter>( UReferenceManager::GetTypeofPlayerCharacter(), Transform );
 }
 
-ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn( UObject* This, const FTransform& Transform )
+USpawnManager* USpawnManager::GetSingletonInstance()
 {
-	UE_LOG( LogSlow, Log, TEXT( "USpawnManager::SpawnPlayerPawn()" ) );
-
-	auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( This ) );
-	auto World = This->GetWorld();
-
-	return World->SpawnActor<ASlowPlayableCharacter>( GameInstance->Config->PlayableCharacter, Transform );
+	return Super::GetSingletonInstance<USpawnManager>();
 }

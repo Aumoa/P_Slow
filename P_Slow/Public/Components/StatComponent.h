@@ -8,19 +8,19 @@
 
 #include "Structures/Damage.h"
 
-#include "StatAttribute.generated.h"
+#include "StatComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class P_SLOW_API UStatAttribute : public UActorComponent
+class P_SLOW_API UStatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 private:
-	DECLARE_MULTICAST_DELEGATE_OneParam( HealthKilledDelegate, UStatAttribute* );
+	DECLARE_MULTICAST_DELEGATE_OneParam( HealthKilledDelegate, UStatComponent* );
 
 public:	
 	// Sets default values for this component's properties
-	UStatAttribute();
+	UStatComponent();
 
 public:
 	void BeginPlay() override;
