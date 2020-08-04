@@ -1,5 +1,4 @@
-// Copyright 2020. Team slow, All right reserved.
-
+// Copyright 2020 Team slow. All right reserved.
 
 #include "Components/StatComponent.h"
 
@@ -13,22 +12,12 @@ UStatComponent::UStatComponent()
 
 void UStatComponent::BeginPlay()
 {
-	if ( bBeginMaxCurrent )
-	{
+	if (bBeginMaxCurrent) {
 		CurrentHealth = MaxHealth;
 	}
 }
 
-void UStatComponent::ApplyDamage( const FDamage& Damage )
+void UStatComponent::ApplyDamage(const FRelativeDamage& Damage)
 {
-	ApplyFixedDamage( Damage );
-}
 
-void UStatComponent::ApplyFixedDamage( const FDamage& Damage )
-{
-	if ( CurrentHealth < Damage.FixedHealth )
-	{
-		CurrentHealth = 0;
-		HealthKilled.Broadcast( this );
-	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2020. Team slow, All right reserved.
+// Copyright 2020 Team slow. All right reserved.
 
 #pragma once
 
@@ -19,10 +19,10 @@ private:
 	UPROPERTY() TSubclassOf<ASlowPlayableCharacter> TypeofPlayerCharacter;
 
 public:
-	UFUNCTION( BlueprintCallable, Category = "ReferenceManager" )
-	static void SetTypeofPlayerCharacter( TSubclassOf<ASlowPlayableCharacter> Typeof );
+	UFUNCTION(BlueprintCallable, Category = "ReferenceManager")
+	static void SetTypeofPlayerCharacter(TSubclassOf<ASlowPlayableCharacter> Typeof);
 
-	UFUNCTION( BlueprintCallable, Category = "ReferenceManager" )
+	UFUNCTION(BlueprintCallable, Category = "ReferenceManager")
 	static TSubclassOf<ASlowPlayableCharacter> GetTypeofPlayerCharacter();
 
 private:

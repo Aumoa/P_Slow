@@ -1,4 +1,4 @@
-// Copyright 2020. Team slow, All right reserved.
+// Copyright 2020 Team slow. All right reserved.
 
 #pragma once
 
@@ -28,14 +28,17 @@ private:
 	UPROPERTY() TArray<UManagerBase*> Managers;
 
 public:
-	UPROPERTY( BlueprintReadWrite ) USlowConfig* Config;
+	UPROPERTY(BlueprintReadWrite)
+	USlowConfig* Config;
 
 public:
-	UFUNCTION( BlueprintCallable ) void Startup();
-	UFUNCTION( BlueprintCallable ) static USlowGameInstance* GetGameInstance();
+	UFUNCTION(BlueprintCallable)
+	void Startup();
+	UFUNCTION(BlueprintCallable)
+	static USlowGameInstance* GetGameInstance();
 
 public:
-	UFUNCTION( BlueprintPure ) UManagerBase* GetManager( TSubclassOf<UManagerBase> ClassType ) const;
+	UFUNCTION(BlueprintPure) UManagerBase* GetManager(TSubclassOf<UManagerBase> ClassType) const;
 
 private:
 	void InitializeManagers();

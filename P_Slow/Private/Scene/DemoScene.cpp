@@ -1,4 +1,4 @@
-// Copyright 2020. Team slow, All right reserved.
+// Copyright 2020 Team slow. All right reserved.
 
 
 #include "Scene/DemoScene.h"
@@ -11,9 +11,9 @@
 
 #include "Kismet/GameplayStatics.h"
 
-void UDemoScene::BeginPlay( UObject* Args )
+void UDemoScene::BeginPlay(UObject* Args)
 {
-	UE_LOG( LogSlow, Log, TEXT( "UDemoScene::BeginPlay()" ) );
+	UE_LOG(LogSlow, Log, TEXT("UDemoScene::BeginPlay()"));
 
 	GameInstance = USlowGameInstance::GetGameInstance();
 	OpenNextScene();
@@ -21,24 +21,22 @@ void UDemoScene::BeginPlay( UObject* Args )
 
 void UDemoScene::EndPlay()
 {
-	UE_LOG( LogSlow, Log, TEXT( "UDemoScene::EndPlay()" ) );
+	UE_LOG(LogSlow, Log, TEXT("UDemoScene::EndPlay()"));
 }
 
 void UDemoScene::OnDemoEnded()
 {
-	USceneManager::LoadScene( TEXT( "Intro" ) );
+	USceneManager::LoadScene(TEXT("Intro"));
 }
 
 void UDemoScene::OpenNextScene()
 {
 	auto Config = GameInstance->Config;
 
-	if ( Config->bSkipDemo )
-	{
+	if (Config->bSkipDemo) {
 		OnDemoEnded();
 	}
-	else
-	{
-		UGameplayStatics::OpenLevel( this, TEXT( "Demo" ) );
+	else {
+		UGameplayStatics::OpenLevel(this, TEXT("Demo"));
 	}
 }

@@ -4,4 +4,9 @@
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN( LogSlow, Log, All );
+struct P_SLOW_API FRelativeDamage
+{
+	FRelativeDamage();
+
+	int64 RelativeHealth;
+};
