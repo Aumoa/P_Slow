@@ -6,9 +6,10 @@
 
 #include "Components/ActorComponent.h"
 #include "Structures/BaseAttributeConfig.h"
-#include "Attributes/AttributeInstance.h"
 
 #include "StatComponent.generated.h"
+
+class UAttributeInstance;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(HealthKilledDelegate, UStatComponent*);
 
@@ -18,10 +19,12 @@ class P_SLOW_API UStatComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	FAttributeInstance attributeInstance;
+	UPROPERTY()
+	UAttributeInstance* attributeInstance;
 
 protected:
-	UPROPERTY(EditAnywhere) FBaseAttributeConfig BaseAttribute;
+	UPROPERTY(EditAnywhere)
+	FBaseAttributeConfig baseAttribute;
 
 public:
 	// Sets default values for this component's properties
@@ -31,15 +34,8 @@ public:
 	void BeginPlay() override;
 	//void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
-	void ApplyDamage(const FRelativeDamage& Damage);
+	void ApplyDamage(const struct FRelativeDamage& relativeDamage);
 
 public:
 	HealthKilledDelegate HealthKilled;
-
-public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "General") bool bBeginMaxCurrent;
-
-protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MaxAttribute") int64 MaxHealth;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CurrentAttribute") int64 CurrentHealth;
 };

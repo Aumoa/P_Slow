@@ -10,24 +10,13 @@
 
 void USlowGameInstance::InitializeManagers()
 {
-	auto SceneManager = NewObject<USceneManager>( this );
-	SceneManager->Initialize( this );
+	Managers.Add(NewObject<USceneManager>(this));
+	Managers.Add(NewObject<USpawnManager>(this));
+	Managers.Add(NewObject<UWidgetManager>(this));
+	Managers.Add(NewObject<UConfigManager>(this));
+	Managers.Add(NewObject<UReferenceManager>(this));
 
-	auto SpawnManager = NewObject<USpawnManager>( this );
-	SpawnManager->Initialize( this );
-
-	auto WidgetManager = NewObject<UWidgetManager>( this );
-	WidgetManager->Initialize( this );
-
-	auto ConfigManager = NewObject<UConfigManager>( this );
-	ConfigManager->Initialize( this );
-
-	auto ReferenceManager = NewObject<UReferenceManager>( this );
-	ReferenceManager->Initialize( this );
-
-	Managers.Add( SceneManager );
-	Managers.Add( SpawnManager );
-	Managers.Add( WidgetManager );
-	Managers.Add( ConfigManager );
-	Managers.Add( ReferenceManager );
+	for (int32 i = 0, count = Managers.Num(); i < count; ++i) {
+		Managers[i]->Initialize(this);
+	}
 }

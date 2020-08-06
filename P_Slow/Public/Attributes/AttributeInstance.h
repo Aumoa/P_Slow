@@ -3,17 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
 
-#include "Structures/RelativeDamage.h"
+#include "AttributeInstance.generated.h"
 
-class FAttributeInstance
+UCLASS(BlueprintType)
+class P_SLOW_API UAttributeInstance : public UObject
 {
-	int64 Health;
+	GENERATED_BODY()
+
+private:
+	const struct FBaseAttributeConfig* configRef;
+
+	int64 health;
 
 public:
-	FAttributeInstance();
+	void BeginPlay(const struct FBaseAttributeConfig& config);
+	void ApplyDamage(const struct FRelativeDamage& relativeDamage);
 
-	void ApplyDamage(const FRelativeDamage& relativeDamage);
+	int64 GetCurrentHealth() const;
 
 	bool IsPendingKill() const;
 };

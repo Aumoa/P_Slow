@@ -16,7 +16,7 @@ class P_SLOW_API UReferenceManager : public UManagerBase
 	GENERATED_BODY()
 
 private:
-	UPROPERTY() TSubclassOf<ASlowPlayableCharacter> TypeofPlayerCharacter;
+	UPROPERTY(EditAnywhere) TSubclassOf<ASlowPlayableCharacter> TypeofPlayerCharacter;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "ReferenceManager")

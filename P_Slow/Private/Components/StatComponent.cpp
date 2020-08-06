@@ -3,21 +3,21 @@
 #include "Components/StatComponent.h"
 
 #include "LogDefine.h"
+#include "Structures/RelativeDamage.h"
+#include "Attributes/AttributeInstance.h"
 
 UStatComponent::UStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	bBeginMaxCurrent = true;
+	attributeInstance = CreateDefaultSubobject<UAttributeInstance>(TEXT("AttributeInstance"));
 }
 
 void UStatComponent::BeginPlay()
 {
-	if (bBeginMaxCurrent) {
-		CurrentHealth = MaxHealth;
-	}
+	attributeInstance->BeginPlay(baseAttribute);
 }
 
-void UStatComponent::ApplyDamage(const FRelativeDamage& Damage)
+void UStatComponent::ApplyDamage(const FRelativeDamage& relativeDamage)
 {
-
+	attributeInstance->ApplyDamage(relativeDamage);
 }

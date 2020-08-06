@@ -2,17 +2,21 @@
 
 #include "Attributes/AttributeInstance.h"
 
-FAttributeInstance::FAttributeInstance()
-{
+#include "Structures/RelativeDamage.h"
+#include "Structures/BaseAttributeConfig.h"
 
+void UAttributeInstance::BeginPlay(const FBaseAttributeConfig& config)
+{
+	configRef = &config;
+	health = config.StartHealth;
 }
 
-void FAttributeInstance::ApplyDamage(const FRelativeDamage& relativeDamage)
+void UAttributeInstance::ApplyDamage(const FRelativeDamage& relativeDamage)
 {
-	Health += relativeDamage.RelativeHealth;
+	health += relativeDamage.RelativeHealth;
 }
 
-bool FAttributeInstance::IsPendingKill() const
+bool UAttributeInstance::IsPendingKill() const
 {
-	return Health <= 0;
+	return health <= 0;
 }

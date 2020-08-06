@@ -1,6 +1,5 @@
 // Copyright 2020 Team slow. All right reserved.
 
-
 #include "Manager/SpawnManager.h"
 
 #include "SlowGameInstance.h"
@@ -14,18 +13,17 @@
 
 #include "Manager/ReferenceManager.h"
 
-ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn( const FTransform& Transform )
+ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(const FTransform& Transform)
 {
 	auto Instance = GetSingletonInstance();
 	auto World = Instance->GetWorld();
 
-	if ( World == nullptr )
-	{
-		UE_LOG( LogSlow, Error, TEXT( "USpawnManager::SpawnPlayerPawn(): GameInstance haven't world context." ) );
+	if (World == nullptr) {
+		UE_LOG(LogSlow, Error, TEXT("USpawnManager::SpawnPlayerPawn(): GameInstance haven't world context."));
 		return nullptr;
 	}
 
-	return World->SpawnActor<ASlowPlayableCharacter>( UReferenceManager::GetTypeofPlayerCharacter(), Transform );
+	return World->SpawnActor<ASlowPlayableCharacter>(UReferenceManager::GetTypeofPlayerCharacter(), Transform);
 }
 
 USpawnManager* USpawnManager::GetSingletonInstance()
