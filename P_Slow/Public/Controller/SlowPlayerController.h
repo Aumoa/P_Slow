@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "GameFramework/PlayerController.h"
 
 #include "SlowPlayerController.generated.h"
@@ -18,8 +17,8 @@ class P_SLOW_API ASlowPlayerController : public APlayerController
 	GENERATED_BODY()
 
 private:
-	UPROPERTY() USlowGameInstance* GameInstance;
-	UPROPERTY() ASlowCharacter* Possessed;
+	UPROPERTY()
+	ASlowCharacter* Possessed;
 
 public:
 	ASlowPlayerController();
@@ -27,7 +26,7 @@ public:
 public:
 	void BeginPlay() override;
 	void SetupInputComponent() override;
-	void OnPossess( APawn* Target ) override;
+	void OnPossess(APawn* Target) override;
 	void OnUnPossess() override;
 
 private:
