@@ -14,6 +14,8 @@ UStatComponent::UStatComponent()
 
 void UStatComponent::BeginPlay()
 {
+	Super::BeginPlay();
+
 	attributeInstance->BeginPlay(baseAttribute);
 }
 
