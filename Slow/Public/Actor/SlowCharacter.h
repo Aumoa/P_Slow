@@ -3,21 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "GameFramework/Character.h"
 
-#include "SlowCharacter.generated.h"
+#include "Structures/CombatTag.h"
 
-class UStatComponent;
+#include "SlowCharacter.generated.h"
 
 UCLASS()
 class SLOW_API ASlowCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCombatTag CombatTag;
+
 public:
 	ASlowCharacter();
 
-public:
-	virtual void OnActionInput( const FName& ActionName, bool bPressed );
+	const FCombatTag& GetCombatTag() const;
 };

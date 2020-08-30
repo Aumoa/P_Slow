@@ -9,7 +9,7 @@
 
 class USlowGameInstance;
 class UInputComponent;
-class ASlowCharacter;
+class ASlowPlayableCharacter;
 
 UCLASS()
 class SLOW_API ASlowPlayerController : public APlayerController
@@ -18,7 +18,7 @@ class SLOW_API ASlowPlayerController : public APlayerController
 
 private:
 	UPROPERTY()
-	ASlowCharacter* Possessed;
+	ASlowPlayableCharacter* Possessed;
 
 public:
 	ASlowPlayerController();

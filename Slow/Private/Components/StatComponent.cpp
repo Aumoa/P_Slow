@@ -9,17 +9,17 @@
 UStatComponent::UStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	attributeInstance = CreateDefaultSubobject<UAttributeInstance>(TEXT("AttributeInstance"));
+	AttrInstance = CreateDefaultSubobject<UAttributeInstance>(TEXT("AttributeInstance"));
 }
 
 void UStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	attributeInstance->BeginPlay(baseAttribute);
+	AttrInstance->BeginPlay(baseAttribute);
 }
 
 void UStatComponent::ApplyDamage(const FRelativeDamage& relativeDamage)
 {
-	attributeInstance->ApplyDamage(relativeDamage);
+	AttrInstance->ApplyDamage(relativeDamage);
 }

@@ -2,20 +2,20 @@
 
 #include "Actor/SlowPlayableCharacter.h"
 
-#include "GameFramework/PlayerController.h"
-
-#include "Components/InputComponent.h"
-
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-
 #include "SlowTraceChannels.h"
 #include "LogDefine.h"
 #include "SlowInputDefine.h"
+#include "GameFramework/PlayerController.h"
+#include "Components/InputComponent.h"
+#include "Components/StatComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	bCanMove = true;
+
+	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
+	AddOwnedComponent(StatComponent);
 }
 
 void ASlowPlayableCharacter::BeginPlay()
@@ -23,40 +23,31 @@ void ASlowPlayableCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ASlowPlayableCharacter::Tick( float DeltaTime )
+void ASlowPlayableCharacter::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 }
 
-void ASlowPlayableCharacter::OnActionInput( const FName& ActionName, bool bPressed )
+void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPressed)
 {
-	if ( ActionName == IA_MouseAction )
+	if (ActionName == IA_MouseAction)
 	{
-		OnMouseAction( bPressed );
+		OnMouseAction(bPressed);
 	}
 }
 
-void ASlowPlayableCharacter::OnMouseAction( bool bPressed )
+void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
 {
-	if ( bPressed )
+	if (bPressed)
 	{
-		auto PlayerController = Cast<APlayerController>( Controller );
+		auto PlayerController = Cast<APlayerController>(Controller);
 
 		FHitResult HitResult;
-		bool bHit = PlayerController->GetHitResultAtScreenPosition( GetCurrentMouseScreenPos( PlayerController ), ECC_AcceptMouseAction, false, HitResult );
+		bool bHit = PlayerController->GetHitResultUnderCursor(ECC_AcceptMouseAction, false, HitResult);
 
-		if ( bHit )
+		if (bHit)
 		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation( PlayerController, HitResult.Location );
+			UAIBlueprintHelperLibrary::SimpleMoveToLocation(PlayerController, HitResult.Location);
 		}
 	}
-}
-
-FVector2D ASlowPlayableCharacter::GetCurrentMouseScreenPos( APlayerController* PlayerController ) const
-{
-	float MouseX;
-	float MouseY;
-	PlayerController->GetMousePosition( MouseX, MouseY );
-
-	return FVector2D( MouseX, MouseY );
 }

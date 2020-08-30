@@ -20,7 +20,7 @@ class SLOW_API UStatComponent : public UActorComponent
 
 private:
 	UPROPERTY()
-	UAttributeInstance* attributeInstance;
+	UAttributeInstance* AttrInstance;
 
 protected:
 	UPROPERTY(EditAnywhere)

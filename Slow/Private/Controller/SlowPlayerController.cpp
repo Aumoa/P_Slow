@@ -35,7 +35,7 @@ void ASlowPlayerController::OnPossess(APawn* Target)
 {
 	Super::OnPossess(Target);
 
-	Possessed = Cast<ASlowCharacter>(Target);
+	Possessed = Cast<ASlowPlayableCharacter>(Target);
 }
 
 void ASlowPlayerController::OnUnPossess()
