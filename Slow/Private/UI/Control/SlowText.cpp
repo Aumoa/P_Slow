@@ -101,7 +101,7 @@ bool USlowText::ParseString(TArray<UTextBlock*>* parsingResult)
 	bool bSucceeded = true;
 	while (state.Get() != nullptr && bSucceeded) {
 		bSucceeded = state->ParseText();
-		state = state->GetNextState(MoveTemp(state));
+		state = state->GetNextState();
 	}
 
 	return bSucceeded;

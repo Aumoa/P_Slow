@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/SlowWidgetBase.h"
+#include "SlowControlBase.h"
+
+#include "Structures/SlowTextStyle.h"
 
 #include "SlowText.generated.h"
 
@@ -12,13 +14,14 @@ class UHorizontalBox;
 class UTextBlock;
 
 UCLASS()
-class SLOW_API USlowText : public USlowWidgetBase
+class SLOW_API USlowText : public USlowControlBase
 {
 	GENERATED_BODY()
 
-private:
+public:
 	class FStateMachine;
 	class FDefaultStateMachine;
+	class FOptionalStateMachine;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -26,8 +29,8 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Content, meta = (MultiLine = "true", AllowPrivateAccess = "true"))
 	FText Text;
-	UPROPERTY(EditAnywhere, Category = "TextBlock", meta = (AllowPrivateAccess = "true"))
-	FTextBlockStyle TextStyleBase;
+	UPROPERTY(EditAnywhere, Category = Appearance, meta = (AllowPrivateAccess = "true"))
+	FSlowTextStyle TextStyleBase;
 
 	UPROPERTY()
 	TArray<UHorizontalBox*> TextAppendingBoxes;
@@ -54,6 +57,16 @@ private:
 
 class USlowText::FStateMachine
 {
+protected:
+	struct FStyleDeltas
+	{
+		uint8 bBold : 1;
+		uint8 bItalic : 1;
+		FSlateColor TextColor;
+
+		FStyleDeltas();
+	};
+
 public:
 	struct FArguments
 	{
@@ -65,18 +78,64 @@ public:
 		FArguments(const FArguments& copy);
 	};
 
+private:
 	FArguments Args;
+	mutable TUniquePtr<FStateMachine> NextState;  // Can movable.
 
 public:
 	FStateMachine(const FArguments& args);
 	virtual ~FStateMachine();
 
 	virtual bool ParseText() = 0;
-	virtual TUniquePtr<FStateMachine> GetNextState(TUniquePtr<FStateMachine> this_) const = 0;
+	virtual TUniquePtr<FStateMachine> GetNextState() const;
 
 	USlowText* GetParent() const;
 	const FString& GetStringReference() const;
 	int32 GetSeekpos() const;
 
 	static TUniquePtr<FStateMachine> GetEntry(const FArguments& args, TArray<UTextBlock*>* outputResults);
+
+protected:
+	void SetNext(TUniquePtr<FStateMachine>&& state);
+};
+
+class USlowText::FDefaultStateMachine : public FStateMachine
+{
+	using Super = FStateMachine;
+
+	TArray<UTextBlock*>* OutputResults;
+	TUniquePtr<FStateMachine> NextState;
+	FStyleDeltas CurrentDeltas;
+
+public:
+	FDefaultStateMachine(const FArguments& args, TArray<UTextBlock*>* outputResults);
+	FDefaultStateMachine(const FArguments& args, TArray<UTextBlock*>* outputResults, const FStyleDeltas& currentDeltas);
+
+	bool ParseText() override;
+
+private:
+	UTextBlock* MakeTextBlock(const FText& substring) const;
+	void SetTextStyle(UTextBlock* this_, FSlowTextStyle style) const;
+	template<class T>
+	void SetNextInternal(int32 findPos);
+};
+
+class USlowText::FOptionalStateMachine : public FStateMachine
+{
+	using Super = FStateMachine;
+	using Callback = bool (FOptionalStateMachine::*)(FStyleDeltas&, const FString&, bool);
+
+	TArray<UTextBlock*>* OutputResults;
+	FStyleDeltas CurrentDeltas;
+	TMap<FString, Callback> HandlersMap;
+
+public:
+	FOptionalStateMachine(const FArguments& args, TArray<UTextBlock*>* outputResults, const FStyleDeltas& currentDeltas);
+
+	bool ParseText() override;
+
+private:
+	bool OnBoldKey(FStyleDeltas& style, const FString& value, bool bSet);
+	bool OnItalicKey(FStyleDeltas& style, const FString& value, bool bSet);
+	bool OnColorKey(FStyleDeltas& style, const FString& value, bool bSet);
 };
