@@ -6,12 +6,9 @@
 #include "SlowConfig.h"
 #include "SlowPlayableCharacterState.h"
 #include "LogDefine.h"
-
 #include "Actor/SlowPlayableCharacter.h"
-
 #include "Kismet/GameplayStatics.h"
-
-#include "Manager/ReferenceManager.h"
+#include "Datatable/ActorReference.h"
 
 ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(const FTransform& Transform)
 {
@@ -23,7 +20,7 @@ ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(const FTransform& Transfo
 		return nullptr;
 	}
 
-	return World->SpawnActor<ASlowPlayableCharacter>(UReferenceManager::GetTypeofPlayerCharacter(), Transform);
+	return World->SpawnActor<ASlowPlayableCharacter>(UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter")), Transform);
 }
 
 USpawnManager* USpawnManager::GetSingletonInstance()

@@ -2,12 +2,11 @@
 
 #include "Manager/WidgetManager.h"
 
-#include "Blueprint/UserWidget.h"
-
 #include "LogDefine.h"
 #include "SlowGameInstance.h"
-
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Datatable/UIReference.h"
 
 bool UWidgetManager::bClearAllWhenSceneChanged = true;
 
@@ -34,7 +33,6 @@ int64 UWidgetManager::AddWidget( const FName& WidgetName, UUserWidget* UserWidge
 	Instance->WidgetsMap.Emplace( WidgetName, Index );
 
 	return Index;
-	return 0;
 }
 
 int64 UWidgetManager::AddWidget( const FName& WidgetName, UWorld* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow )
@@ -45,7 +43,11 @@ int64 UWidgetManager::AddWidget( const FName& WidgetName, UWorld* Owner, TSubcla
 	}
 
 	return AddWidget( WidgetName, CreateWidget<UUserWidget>( Owner, UserWidgetClass, WidgetName ), bShow );
-	return 0;
+}
+
+int64 UWidgetManager::AddWidgetFromReference(const FName& WidgetName, const FName& InReferenceKey, bool bShow)
+{
+	return AddWidget(WidgetName, nullptr, UUIReference::GetReference(InReferenceKey), bShow);
 }
 
 void UWidgetManager::ShowWidget( int64 WidgetLuid, bool bShow )
@@ -103,13 +105,11 @@ bool UWidgetManager::RemoveWidget( int64 WidgetLuid )
 	Instance->WaitingQueue.Enqueue( WidgetLuid );
 
 	return true;
-	return false;
 }
 
 bool UWidgetManager::IsValidLuid( int64 WidgetLuid )
 {
 	return GetSingletonInstance()->IsValidLuidInternal( WidgetLuid ) != nullptr;
-	return false;
 }
 
 bool UWidgetManager::IsShowWidget( int64 WidgetLuid )
@@ -125,7 +125,6 @@ bool UWidgetManager::IsShowWidget( int64 WidgetLuid )
 		UE_LOG( LogSlow, Error, TEXT( "UWidgetManger::IsShowWidget(): WidgetLuid is invalid." ) );
 		return false;
 	}
-	return false;
 }
 
 int64 UWidgetManager::FindWidget( const FName& WidgetName )
@@ -141,7 +140,6 @@ int64 UWidgetManager::FindWidget( const FName& WidgetName )
 	{
 		return *ReferencePtr;
 	}
-	return 0;
 }
 
 UUserWidget* UWidgetManager::GetWidget( int64 WidgetLuid )
@@ -157,7 +155,6 @@ UUserWidget* UWidgetManager::GetWidget( int64 WidgetLuid )
 		UE_LOG( LogSlow, Error, TEXT( "UWidgetManager::GetWidget(): WidgetLuid is invalid." ) );
 		return nullptr;
 	}
-	return nullptr;
 }
 
 void UWidgetManager::SetVisibleState( int64 CheckedWidgetLuid, bool bShow )
@@ -194,7 +191,6 @@ int64 UWidgetManager::FindEmptyOrAlloc()
 		WaitingQueue.Dequeue( V );
 		return V;
 	}
-	return 0;
 }
 
 UUserWidget* UWidgetManager::IsValidLuidInternal( int64 WidgetLuid ) const
@@ -202,11 +198,9 @@ UUserWidget* UWidgetManager::IsValidLuidInternal( int64 WidgetLuid ) const
 	UUserWidget* Widget = nullptr;
 	bool bExpression = AddedWidgets.Num() <= WidgetLuid || ( Widget = AddedWidgets[WidgetLuid] ) == nullptr;
 	return Widget;
-	return nullptr;
 }
 
 UWidgetManager* UWidgetManager::GetSingletonInstance()
 {
 	return Super::GetSingletonInstance<UWidgetManager>();
-	return nullptr;
 }
