@@ -46,6 +46,10 @@ public:
 	FText GetText() const;
 	UFUNCTION(BlueprintCallable)
 	FText GetRawText() const;
+	UFUNCTION(BlueprintCallable)
+	void SetTextStyleBase(const FSlowTextStyle& InStyleBase);
+	UFUNCTION(BlueprintPure)
+	FSlowTextStyle GetTextStyleBase() const;
 
 private:
 	void ClearText();

@@ -59,12 +59,25 @@ FText USlowText::GetRawText() const
 	return Text;
 }
 
+void USlowText::SetTextStyleBase(const FSlowTextStyle& InStyleBase)
+{
+	TextStyleBase = InStyleBase;
+	SetText(GetRawText());
+}
+
+FSlowTextStyle USlowText::GetTextStyleBase() const
+{
+	return TextStyleBase;
+}
+
 void USlowText::ClearText()
 {
 	int32 count = TextAppendingBoxes.Num();
 
 	for (int32 i = 0; i < count; ++i) {
-		TextAppendingBoxes[i]->RemoveFromParent();
+		if (TextAppendingBoxes[i] != nullptr) {
+			TextAppendingBoxes[i]->RemoveFromParent();
+		}
 	}
 
 	TextAppendingBoxes.Empty();
