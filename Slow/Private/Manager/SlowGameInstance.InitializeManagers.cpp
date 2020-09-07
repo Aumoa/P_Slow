@@ -6,7 +6,6 @@
 #include "Manager/SpawnManager.h"
 #include "Manager/WidgetManager.h"
 #include "Manager/ConfigManager.h"
-#include "Manager/ReferenceManager.h"
 #include "Manager/InputManager.h"
 
 void USlowGameInstance::InitializeManagers()
@@ -15,7 +14,6 @@ void USlowGameInstance::InitializeManagers()
 	Managers.Add(NewObject<USpawnManager>(this));
 	Managers.Add(NewObject<UWidgetManager>(this));
 	Managers.Add(NewObject<UConfigManager>(this));
-	Managers.Add(NewObject<UReferenceManager>(this));
 	Managers.Add(NewObject<UInputManager>(this));
 
 	for (int32 i = 0, count = Managers.Num(); i < count; ++i) {
