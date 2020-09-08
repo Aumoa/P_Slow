@@ -35,11 +35,11 @@ int64 UWidgetManager::AddWidget( const FName& WidgetName, UUserWidget* UserWidge
 	return Index;
 }
 
-int64 UWidgetManager::AddWidget( const FName& WidgetName, UWorld* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow )
+int64 UWidgetManager::AddWidget( const FName& WidgetName, APlayerController* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow )
 {
 	if ( Owner == nullptr )
 	{
-		Owner = GetSingletonInstance()->GetWorld();
+		Owner = UGameplayStatics::GetPlayerController(GetSingletonInstance()->GetWorld(), 0);
 	}
 
 	return AddWidget( WidgetName, CreateWidget<UUserWidget>( Owner, UserWidgetClass, WidgetName ), bShow );

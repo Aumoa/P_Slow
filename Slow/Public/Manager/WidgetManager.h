@@ -17,7 +17,7 @@ class SLOW_API UWidgetManager : public UManagerBase
 	GENERATED_BODY()
 
 private:
-	UPROPERTY() TArray<class UUserWidget*> AddedWidgets;
+	UPROPERTY() TArray<UUserWidget*> AddedWidgets;
 	TArray<bool> WidgetVisibleStates;
 	TMap<FName, int64> WidgetsMap;
 
@@ -29,7 +29,9 @@ public:
 public:
 	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
 	static int64 AddWidget( UPARAM( ref ) const FName& WidgetName, class UUserWidget* UserWidget, bool bShow );
-	static int64 AddWidget( UPARAM( ref ) const FName& WidgetName, UWorld* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow );
+	static int64 AddWidget( UPARAM( ref ) const FName& WidgetName, APlayerController* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow );
+	UFUNCTION(BlueprintCallable, Category = "WidgetManager")
+	static int64 AddWidgetFromReference(const FName& WidgetName, const FName& InReferenceKey, bool bShow);
 
 	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
 	static void ShowWidget( int64 WidgetLuid, bool bShow );
