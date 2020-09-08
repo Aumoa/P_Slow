@@ -15,6 +15,9 @@ class SLOW_API UDemoWidget : public USlowWidgetBase
 {
 	GENERATED_BODY()
 
+public:
+	DECLARE_EVENT(UDemoWidget, FDemoEndedEvent);
+
 private:
 	float logoTickTime = 0.0f;
 
@@ -24,8 +27,13 @@ private:
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* Intro;
 
+	UPROPERTY(EditAnywhere, Category = "AnimationTick", meta = (AllowPrivateAccess = "true"))
+	float LogoTickPeriod = 0.1f;
+	UPROPERTY(EditAnywhere, Category = "AnimationTick", meta = (AllowPrivateAccess = "true"))
+	float LogoTickScale = 10.0f;
+
 protected:
-	UPROPERTY(BlueprintReadWrite, Category = "Logo")
+	UPROPERTY(EditAnywhere, Interp, Category = "AnimationTick")
 	uint8 bLogoTickEnabled : 1;
 
 protected:
@@ -36,13 +44,8 @@ public:
 	void NativeConstruct() override;
 	void NativeTick(const FGeometry& geometry, float deltaTime) override;
 
-public:
-	UPROPERTY(EditAnywhere)
-	float LogoTickPeriod = 0.1f;
-	UPROPERTY(EditAnywhere)
-	float LogoTickScale = 10.0f;
+	FDemoEndedEvent DemoEnded;
 
-public:
-	UFUNCTION(BlueprintImplementableEvent, Category = "Logo")
-	UImage* OnGetLogoImage();
+private:
+	void OnDemoSequenceEnded(UUMGSequencePlayer& InPlayer);
 };

@@ -6,10 +6,10 @@
 #include "LogDefine.h"
 #include "SlowGameInstance.h"
 #include "SlowConfig.h"
-
 #include "Manager/SceneManager.h"
-
+#include "Manager/WidgetManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/Widget/DemoWidget.h"
 
 void UDemoScene::BeginPlay(UObject* Args)
 {
@@ -19,8 +19,21 @@ void UDemoScene::BeginPlay(UObject* Args)
 	OpenNextScene();
 }
 
+void UDemoScene::BeginLevel(ASlowControllerBase* InPlayerController)
+{
+	Super::BeginLevel(InPlayerController);
+
+	int64 luid = UWidgetManager::AddWidgetFromReference(TEXT("MainWidget"), TEXT("Widget.DemoScene.Demo"), true);
+	UDemoWidget* widget = Cast<UDemoWidget>(UWidgetManager::GetWidget(luid));
+	widget->DemoEnded.AddUObject(this, &UDemoScene::OnDemoEnded);
+
+	MyWidgetLuid = luid;
+}
+
 void UDemoScene::EndPlay()
 {
+	UWidgetManager::RemoveWidget(MyWidgetLuid);
+
 	UE_LOG(LogSlow, Log, TEXT("UDemoScene::EndPlay()"));
 }
 

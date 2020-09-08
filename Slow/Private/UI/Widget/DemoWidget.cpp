@@ -4,12 +4,14 @@
 
 #include "Components/Image.h"
 #include "Animation/WidgetAnimation.h"
+#include "Animation/UMGSequencePlayer.h"
 
 void UDemoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	PlayAnimation(Intro);
+	UUMGSequencePlayer* sequencePlayer = PlayAnimation(Intro);
+	sequencePlayer->OnSequenceFinishedPlaying().AddUObject(this, &UDemoWidget::OnDemoSequenceEnded);
 }
 
 void UDemoWidget::NativeTick(const FGeometry& geometry, float deltaTime)
@@ -35,4 +37,9 @@ void UDemoWidget::LogoTick(float deltaTime)
 		UMaterialInstanceDynamic* logoMaterial = LogoImage->GetDynamicMaterial();
 		logoMaterial->SetScalarParameterValue(TEXT("ZagScalar"), 0);
 	}
+}
+
+void UDemoWidget::OnDemoSequenceEnded(UUMGSequencePlayer& InPlayer)
+{
+	DemoEnded.Broadcast();
 }

@@ -16,10 +16,13 @@ class SLOW_API UDemoScene : public USceneBase
 	GENERATED_BODY()
 
 private:
-	UPROPERTY() USlowGameInstance* GameInstance;
+	TWeakObjectPtr<USlowGameInstance> GameInstance;
+
+	int64 MyWidgetLuid = 0;
 
 public:
 	void BeginPlay( UObject* Args = nullptr ) override;
+	void BeginLevel(ASlowControllerBase* InPlayerController) override;
 	void EndPlay() override;
 
 	UFUNCTION( BlueprintCallable ) void OnDemoEnded();
