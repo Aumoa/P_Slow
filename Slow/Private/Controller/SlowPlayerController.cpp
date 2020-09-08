@@ -9,7 +9,7 @@
 #include "Manager/InputManager.h"
 #include "Components/InputComponent.h"
 #include "Scene/SceneBase.h"
-#include "Actor/SlowCharacter.h"
+#include "Actor/SlowPlayableCharacter.h"
 
 ASlowPlayerController::ASlowPlayerController()
 {
@@ -27,7 +27,6 @@ void ASlowPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction(IA_IntroNextSceneInput, IE_Pressed, this, &ASlowPlayerController::OnIntroNextSceneInputPressed);
 	InputComponent->BindAction(IA_MouseAction, IE_Pressed, this, &ASlowPlayerController::OnMouseActionPressed);
 }
 
@@ -43,11 +42,6 @@ void ASlowPlayerController::OnUnPossess()
 	Super::OnUnPossess();
 
 	Possessed = nullptr;
-}
-
-void ASlowPlayerController::OnIntroNextSceneInputPressed()
-{
-	USceneManager::SendInputAction(IA_IntroNextSceneInput, true);
 }
 
 void ASlowPlayerController::OnMouseActionPressed()
