@@ -6,17 +6,24 @@
 #include "Scene/SceneBase.h"
 #include "IntroScene.generated.h"
 
+class UIntroWidget;
+
 UCLASS()
 class SLOW_API UIntroScene : public USceneBase
 {
 	GENERATED_BODY()
-	
-public:
-	void BeginPlay( UObject* Args = nullptr ) override;
-	void EndPlay() override;
-
-	void OnActionInput( const FName& ActionName, bool bPressed );
 
 private:
-	void OnIntroNextSceneInput( bool bPressed );
+	TWeakObjectPtr<UIntroWidget> MyMainWidget;
+	int64 MyMainWidgetLuid = 0;
+
+public:
+	void BeginPlay(UObject* Args = nullptr) override;
+	void BeginLevel(ASlowControllerBase* InPlayerController) override;
+	void EndPlay() override;
+
+	void OnActionInput(const FName& ActionName, bool bPressed) override;
+
+private:
+	void OnIntroNextSceneInput();
 };

@@ -1,37 +1,41 @@
 // Copyright 2020 Team slow. All right reserved.
 
-
 #include "Scene/IntroScene.h"
 
 #include "LogDefine.h"
-#include "SlowGameInstance.h"
-#include "SlowInputDefine.h"
-
 #include "Manager/SceneManager.h"
-
+#include "Manager/WidgetManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/Widget/IntroWidget.h"
 
-void UIntroScene::BeginPlay( UObject* Args )
+void UIntroScene::BeginPlay(UObject* Args)
 {
-	UE_LOG( LogSlow, Log, TEXT( "UIntroScene::BeginPlay()" ) );
+	UE_LOG(LogSlow, Log, TEXT("UIntroScene::BeginPlay()"));
 
-	UGameplayStatics::OpenLevel( this, TEXT( "Intro" ) );
+	UGameplayStatics::OpenLevel(this, TEXT("Intro"));
+}
+
+void UIntroScene::BeginLevel(ASlowControllerBase* InPlayerController)
+{
+	Super::BeginLevel(InPlayerController);
+
+	MyMainWidgetLuid = UWidgetManager::AddWidgetFromReference(TEXT("MainWidget"), TEXT("Widget.IntroScene.IntroMain"), true);
+	MyMainWidget = Cast<UIntroWidget>(UWidgetManager::GetWidget(MyMainWidgetLuid));
 }
 
 void UIntroScene::EndPlay()
 {
-	UE_LOG( LogSlow, Log, TEXT( "UIntroScene::EndPlay()" ) );
+	UWidgetManager::RemoveWidget(MyMainWidgetLuid);
+
+	UE_LOG(LogSlow, Log, TEXT("UIntroScene::EndPlay()"));
 }
 
-void UIntroScene::OnActionInput( const FName& ActionName, bool bPressed )
+void UIntroScene::OnActionInput(const FName& ActionName, bool bPressed)
 {
-	if ( ActionName == IA_IntroNextSceneInput )
-	{
-		OnIntroNextSceneInput( bPressed );
-	}
+	Super::OnActionInput(ActionName, bPressed);
 }
 
-void UIntroScene::OnIntroNextSceneInput( bool bPressed )
+void UIntroScene::OnIntroNextSceneInput()
 {
-	USceneManager::LoadScene( TEXT( "Gameplay" ) );
+	USceneManager::LoadScene(TEXT("Gameplay"));
 }
