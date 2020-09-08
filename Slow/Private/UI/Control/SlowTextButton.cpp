@@ -48,5 +48,5 @@ FSlowTextStyle USlowTextButton::GetTextStyleBase() const
 
 void USlowTextButton::OnClicked()
 {
-	Clicked.Broadcast();
+	Clicked.Broadcast(this);
 }

@@ -18,7 +18,7 @@ class SLOW_API USlowTextButton : public USlowControlBase
 	GENERATED_BODY()
 
 public:
-	DECLARE_EVENT(USlowTextButton, FClickedEvent);
+	DECLARE_EVENT_OneParam(USlowTextButton, FClickedEvent, USlowTextButton*);
 
 private:
 	UPROPERTY(meta = (BindWidget))
