@@ -18,8 +18,18 @@ void USceneManager::Initialize(USlowGameInstance* GInstance)
 	DemoScene = NewObject<USceneBase>(this, Config->DemoScene);
 	IntroScene = NewObject<USceneBase>(this, Config->IntroScene);
 	GameplayScene = NewObject<USceneBase>(this, Config->GameplayScene);
+}
 
-	LoadScene(GInstance->GetConfig()->EntryPoint);
+void USceneManager::BeginLevel(ASlowControllerBase* InPlayerController)
+{
+	auto Instance = GetSingletonInstance();
+
+	if (Instance->CurrentScene != nullptr) {
+		Instance->CurrentScene->BeginLevel(InPlayerController);
+	}
+	else {
+		LoadScene(GetGameInstance()->GetConfig()->EntryPoint);
+	}
 }
 
 void USceneManager::LoadScene(const FString& SceneName, UObject* Args)

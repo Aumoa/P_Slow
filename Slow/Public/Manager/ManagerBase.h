@@ -27,6 +27,8 @@ protected:
 public:
 	virtual void Initialize( USlowGameInstance* GInstance );
 
+	static USlowGameInstance* GetGameInstance();
+
 private:
 	static UObject* GetSingletonInstanceInternal( TSubclassOf<UManagerBase> ClassType );
 };

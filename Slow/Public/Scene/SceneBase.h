@@ -3,22 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "UObject/NoExportTypes.h"
 
 #include "SceneBase.generated.h"
 
-/**
- * 
- */
-UCLASS( Blueprintable )
+class ULevel;
+class UWorld;
+class ASlowControllerBase;
+
+UCLASS(Blueprintable)
 class SLOW_API USceneBase : public UObject
 {
 	GENERATED_BODY()
-			
+
 public:
-	virtual void BeginPlay( UObject* Args = nullptr );
+	virtual void BeginPlay(UObject* Args = nullptr);
+	virtual void BeginLevel(ASlowControllerBase* InPlayerController);
 	virtual void EndPlay();
 
-	virtual void OnActionInput( const FName& ActionName, bool bPressed );
+	virtual void OnActionInput(const FName& ActionName, bool bPressed);
 };

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "ManagerBase.h"
 
 #include "SceneManager.generated.h"
@@ -15,10 +14,10 @@ class UStartupScene;
 class UDemoScene;
 class UIntroScene;
 class UGameplayScene;
+class ULevel;
+class UWorld;
+class ASlowControllerBase;
 
-/**
- * 
- */
 UCLASS()
 class SLOW_API USceneManager : public UManagerBase
 {
@@ -33,11 +32,17 @@ private:
 	UPROPERTY() USceneBase* GameplayScene;
 
 public:
-	void Initialize( USlowGameInstance* GInstance ) override;
+	void Initialize(USlowGameInstance* GInstance) override;
 
-	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void LoadScene( const FString& SceneName, UObject* Args = nullptr );
-	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static USceneBase* GetCurrentScene();
-	UFUNCTION( BlueprintCallable, Category = "SceneManager" ) static void SendInputAction( const FName& ActionName, bool bPressed );
+	static void BeginLevel(ASlowControllerBase* InPlayerController);
+
+	UFUNCTION(BlueprintCallable, Category = "SceneManager")
+	static void LoadScene(const FString& SceneName, UObject* Args = nullptr);
+	UFUNCTION(BlueprintCallable, Category = "SceneManager")
+	static USceneBase* GetCurrentScene();
+	UFUNCTION(BlueprintCallable, Category = "SceneManager")
+	static void SendInputAction(const FName& ActionName, bool bPressed);
+
 
 private:
 	static USceneBase* GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged );
