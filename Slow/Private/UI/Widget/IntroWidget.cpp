@@ -22,8 +22,10 @@ void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 		// Case on play.
 	}
 	else if (InClickedButton == OptionButton) {
-		OptionsWidget = UWidgetManager::CreateSlowWidget<USlowOptionsWidget>(TEXT("Widget.SlowOptionsWidget"));
-		OptionsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_Options);
+		if (OptionsWidget == nullptr) {
+			OptionsWidget = UWidgetManager::CreateSlowWidget<USlowOptionsWidget>(TEXT("Widget.SlowOptionsWidget"));
+			OptionsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_Options);
+		}
 	}
 	else if (InClickedButton == ExitButton) {
 		UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
