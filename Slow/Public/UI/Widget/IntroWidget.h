@@ -8,6 +8,7 @@
 #include "IntroWidget.generated.h"
 
 class USlowTextButton;
+class USlowOptionsWidget;
 
 UCLASS()
 class SLOW_API UIntroWidget : public USlowWidgetBase
@@ -22,9 +23,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess = "true"))
 	USlowTextButton* ExitButton;
 
+	UPROPERTY()
+	USlowOptionsWidget* OptionsWidget;
+
 public:
 	void NativeConstruct() override;
 
 private:
 	void OnButtonClicked(USlowTextButton* InClickedButton);
+	void OnDisposing_Options();
 };

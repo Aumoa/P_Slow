@@ -4,200 +4,26 @@
 
 #include "LogDefine.h"
 #include "SlowGameInstance.h"
-#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Datatable/UIReference.h"
+#include "UI/SlowWidgetBase.h"
 
-bool UWidgetManager::bClearAllWhenSceneChanged = true;
-
-int64 UWidgetManager::AddWidget( const FName& WidgetName, UUserWidget* UserWidget, bool bShow )
+USlowWidgetBase* UWidgetManager::CreateSlowWidgetInternal(const FName& InReferenceKey, APlayerController* InPlayerController, bool bVisible)
 {
-	auto Instance = GetSingletonInstance();
+	USlowGameInstance* gameInstance = Super::GetGameInstance();
 
-	if ( Instance->WidgetsMap.Contains( WidgetName ) )
-	{
-		UE_LOG( LogSlow, Error, TEXT( "UWidgetManager::AddWidget(): WidgetName is already exist." ) );
-		return -1;
+	if (InPlayerController == nullptr) {
+		InPlayerController = UGameplayStatics::GetPlayerController(gameInstance->GetWorld(), 0);
 	}
 
-	int64 Index = Instance->FindEmptyOrAlloc();
+	TSubclassOf<UUserWidget> widgetClass = UUIReference::GetReference(InReferenceKey);
+	USlowWidgetBase* widget = CreateWidget<USlowWidgetBase>(InPlayerController, widgetClass);
 
-	if ( Index == -1 )
-	{
-		UE_LOG( LogSlow, Error, TEXT( "UWidgetManager::AddWidget(): Cannot allocate new element." ) );
-		return -1;
+	if (bVisible) {
+		widget->AddToViewport();
 	}
 
-	Instance->AddedWidgets[Index] = UserWidget;
-	Instance->SetVisibleState( Index, bShow );
-	Instance->WidgetsMap.Emplace( WidgetName, Index );
-
-	return Index;
-}
-
-int64 UWidgetManager::AddWidget( const FName& WidgetName, APlayerController* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow )
-{
-	if ( Owner == nullptr )
-	{
-		Owner = UGameplayStatics::GetPlayerController(GetSingletonInstance()->GetWorld(), 0);
-	}
-
-	return AddWidget( WidgetName, CreateWidget<UUserWidget>( Owner, UserWidgetClass, WidgetName ), bShow );
-}
-
-int64 UWidgetManager::AddWidgetFromReference(const FName& WidgetName, const FName& InReferenceKey, bool bShow)
-{
-	return AddWidget(WidgetName, nullptr, UUIReference::GetReference(InReferenceKey), bShow);
-}
-
-void UWidgetManager::ShowWidget( int64 WidgetLuid, bool bShow )
-{
-	auto Instance = GetSingletonInstance();
-	
-	UUserWidget* Widget = nullptr;
-	if ( ( Widget = Instance->IsValidLuidInternal( WidgetLuid ) ) == nullptr )
-	{
-		UE_LOG( LogSlow, Error, TEXT( "UWidgetManager::ShowWidget(): WidgetLuid is invalid." ) );
-		return;
-	}
-
-	Instance->SetVisibleState( WidgetLuid, bShow );
-}
-
-bool UWidgetManager::RemoveWidget( int64 WidgetLuid )
-{
-	auto Instance = GetSingletonInstance();
-
-	//
-	// Cannot find reference. This is not error, but return false for notify to caller.
-	if ( !Instance->IsValidLuidInternal( WidgetLuid ) )
-	{
-		return false;
-	}
-
-	//
-	// Remove reference. It will be removed from garbage collecting process.
-	Instance->AddedWidgets[WidgetLuid] = nullptr;
-	Instance->WidgetVisibleStates[WidgetLuid] = false;
-
-	//
-	// Find reference from map.
-	bool bRemove = false;
-	FName RemoveName;
-
-	for ( const auto& Pair : Instance->WidgetsMap )
-	{
-		if ( Pair.Value == WidgetLuid )
-		{
-			bRemove = true;
-			RemoveName = Pair.Key;
-			break;
-		}
-	}
-
-	if ( bRemove )
-	{
-		Instance->WidgetsMap.Remove( RemoveName );
-	}
-
-	//
-	// Add this luid to waiting queue.
-	Instance->WaitingQueue.Enqueue( WidgetLuid );
-
-	return true;
-}
-
-bool UWidgetManager::IsValidLuid( int64 WidgetLuid )
-{
-	return GetSingletonInstance()->IsValidLuidInternal( WidgetLuid ) != nullptr;
-}
-
-bool UWidgetManager::IsShowWidget( int64 WidgetLuid )
-{
-	auto Instance = GetSingletonInstance();
-
-	if ( Instance->IsValidLuidInternal( WidgetLuid ) )
-	{
-		return Instance->WidgetVisibleStates[WidgetLuid];
-	}
-	else
-	{
-		UE_LOG( LogSlow, Error, TEXT( "UWidgetManger::IsShowWidget(): WidgetLuid is invalid." ) );
-		return false;
-	}
-}
-
-int64 UWidgetManager::FindWidget( const FName& WidgetName )
-{
-	auto Instance = GetSingletonInstance();
-	auto ReferencePtr = Instance->WidgetsMap.Find( WidgetName );
-
-	if ( ReferencePtr == nullptr )
-	{
-		return -1;
-	}
-	else
-	{
-		return *ReferencePtr;
-	}
-}
-
-UUserWidget* UWidgetManager::GetWidget( int64 WidgetLuid )
-{
-	auto Instance = GetSingletonInstance();
-
-	if ( Instance->IsValidLuidInternal( WidgetLuid ) )
-	{
-		return Instance->AddedWidgets[WidgetLuid];
-	}
-	else
-	{
-		UE_LOG( LogSlow, Error, TEXT( "UWidgetManager::GetWidget(): WidgetLuid is invalid." ) );
-		return nullptr;
-	}
-}
-
-void UWidgetManager::SetVisibleState( int64 CheckedWidgetLuid, bool bShow )
-{
-	if ( bShow != WidgetVisibleStates[CheckedWidgetLuid] )
-	{
-		auto Widget = AddedWidgets[CheckedWidgetLuid];
-
-		if ( bShow )
-		{
-			Widget->AddToViewport();
-		}
-		else
-		{
-			Widget->RemoveFromParent();
-		}
-
-		WidgetVisibleStates[CheckedWidgetLuid] = bShow;
-	}
-}
-
-int64 UWidgetManager::FindEmptyOrAlloc()
-{
-	if ( WaitingQueue.IsEmpty() )
-	{
-		int64 V = AddedWidgets.Num();
-		AddedWidgets.Emplace( nullptr );
-		WidgetVisibleStates.Emplace( false );
-		return V;
-	}
-	else
-	{
-		int64 V = -1;
-		WaitingQueue.Dequeue( V );
-		return V;
-	}
-}
-
-UUserWidget* UWidgetManager::IsValidLuidInternal( int64 WidgetLuid ) const
-{
-	UUserWidget* Widget = nullptr;
-	bool bExpression = AddedWidgets.Num() <= WidgetLuid || ( Widget = AddedWidgets[WidgetLuid] ) == nullptr;
-	return Widget;
+	return widget;
 }
 
 UWidgetManager* UWidgetManager::GetSingletonInstance()

@@ -14,8 +14,8 @@ class SLOW_API UIntroScene : public USceneBase
 	GENERATED_BODY()
 
 private:
-	TWeakObjectPtr<UIntroWidget> MyMainWidget;
-	int64 MyMainWidgetLuid = 0;
+	UPROPERTY()
+	UIntroWidget* MyMainWidget;
 
 public:
 	void BeginPlay(UObject* Args = nullptr) override;

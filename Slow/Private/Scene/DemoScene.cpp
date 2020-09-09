@@ -23,16 +23,16 @@ void UDemoScene::BeginLevel(ASlowControllerBase* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 
-	int64 luid = UWidgetManager::AddWidgetFromReference(TEXT("MainWidget"), TEXT("Widget.DemoScene.Demo"), true);
-	UDemoWidget* widget = Cast<UDemoWidget>(UWidgetManager::GetWidget(luid));
-	widget->DemoEnded.AddUObject(this, &UDemoScene::OnDemoEnded);
-
-	MyWidgetLuid = luid;
+	MyWidget = UWidgetManager::CreateSlowWidget<UDemoWidget>(TEXT("Widget.DemoScene.Demo"));
+	MyWidget->DemoEnded.AddUObject(this, &UDemoScene::OnDemoEnded);
 }
 
 void UDemoScene::EndPlay()
 {
-	UWidgetManager::RemoveWidget(MyWidgetLuid);
+	if (MyWidget != nullptr) {
+		MyWidget->RemoveFromParent();
+		MyWidget = nullptr;
+	}
 
 	UE_LOG(LogSlow, Log, TEXT("UDemoScene::EndPlay()"));
 }

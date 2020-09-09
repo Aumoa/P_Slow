@@ -3,7 +3,9 @@
 #include "UI/Widget/IntroWidget.h"
 
 #include "UI/Control/SlowTextButton.h"
+#include "UI/Widget/SlowOptionsWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Manager/WidgetManager.h"
 
 void UIntroWidget::NativeConstruct()
 {
@@ -20,9 +22,18 @@ void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 		// Case on play.
 	}
 	else if (InClickedButton == OptionButton) {
-		// Case on options.
+		OptionsWidget = UWidgetManager::CreateSlowWidget<USlowOptionsWidget>(TEXT("Widget.SlowOptionsWidget"));
+		OptionsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_Options);
 	}
 	else if (InClickedButton == ExitButton) {
 		UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
+	}
+}
+
+void UIntroWidget::OnDisposing_Options()
+{
+	if (OptionsWidget != nullptr) {
+		OptionsWidget->RemoveFromParent();
+		OptionsWidget = nullptr;
 	}
 }

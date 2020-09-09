@@ -1,0 +1,21 @@
+// Copyright 2020 Aumoa.lib. All right reserved.
+
+#include "UI/Widget/SlowOptionsWidget.h"
+
+void USlowOptionsWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	Button_Cancel->Clicked.AddUObject(this, &USlowOptionsWidget::OnClicked_Cancel);
+	Button_Ok->Clicked.AddUObject(this, &USlowOptionsWidget::OnClicked_Ok);
+}
+
+void USlowOptionsWidget::OnClicked_Ok(USlowTextButton* InClickedButton)
+{
+	Disposing.Broadcast();
+}
+
+void USlowOptionsWidget::OnClicked_Cancel(USlowTextButton* InClickedButton)
+{
+	Disposing.Broadcast();
+}

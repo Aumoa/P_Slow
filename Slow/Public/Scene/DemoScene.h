@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "Scene/SceneBase.h"
 
 #include "DemoScene.generated.h"
 
 class USlowGameInstance;
+class UDemoWidget;
 
 UCLASS()
 class SLOW_API UDemoScene : public USceneBase
@@ -18,7 +18,8 @@ class SLOW_API UDemoScene : public USceneBase
 private:
 	TWeakObjectPtr<USlowGameInstance> GameInstance;
 
-	int64 MyWidgetLuid = 0;
+	UPROPERTY()
+	UDemoWidget* MyWidget;
 
 public:
 	void BeginPlay( UObject* Args = nullptr ) override;

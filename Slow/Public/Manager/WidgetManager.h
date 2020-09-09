@@ -3,61 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "ManagerBase.h"
 
 #include "WidgetManager.generated.h"
 
 class USlowGameInstance;
-class UUserWidget;
+class USlowWidgetBase;
 
 UCLASS()
 class SLOW_API UWidgetManager : public UManagerBase
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY() TArray<UUserWidget*> AddedWidgets;
-	TArray<bool> WidgetVisibleStates;
-	TMap<FName, int64> WidgetsMap;
-
-	TQueue<int64> WaitingQueue;
-
 public:
 	static bool bClearAllWhenSceneChanged;
 
 public:
-	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
-	static int64 AddWidget( UPARAM( ref ) const FName& WidgetName, class UUserWidget* UserWidget, bool bShow );
-	static int64 AddWidget( UPARAM( ref ) const FName& WidgetName, APlayerController* Owner, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow );
-	UFUNCTION(BlueprintCallable, Category = "WidgetManager")
-	static int64 AddWidgetFromReference(const FName& WidgetName, const FName& InReferenceKey, bool bShow);
-
-	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
-	static void ShowWidget( int64 WidgetLuid, bool bShow );
-
-	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
-	static bool RemoveWidget( int64 WidgetLuid );
-
-	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
-	static bool IsValidLuid( int64 WidgetLuid );
-	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
-	static bool IsShowWidget( int64 WidgetLuid );
-	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
-	static int64 FindWidget( UPARAM( ref ) const FName& WidgetName );
-	UFUNCTION( BlueprintCallable, Category = "WidgetManager" )
-	static UUserWidget* GetWidget( int64 WidgetLuid );
-
-	inline static int64 AddWidget( UPARAM( ref ) const FName& WidgetName, TSubclassOf<UUserWidget> UserWidgetClass, bool bShow )
+	template<class T>
+	static T* CreateSlowWidget(const FName& InReferenceKey, APlayerController* InPlayerController = nullptr, bool bVisible = true)
 	{
-		return AddWidget( WidgetName, nullptr, UserWidgetClass, bShow );
+		USlowWidgetBase* widget = CreateSlowWidgetInternal(InReferenceKey, InPlayerController, bVisible);
+		return Cast<T>(widget);
 	}
 
 private:
-	void SetVisibleState( int64 CheckedWidgetLuid, bool bShow );
-	int64 FindEmptyOrAlloc();
-
-	UUserWidget* IsValidLuidInternal( int64 WidgetLuid ) const;
+	static USlowWidgetBase* CreateSlowWidgetInternal(const FName& InReferenceKey, APlayerController* InPlayerController, bool bVisible);
 
 	static UWidgetManager* GetSingletonInstance();
 };

@@ -19,13 +19,15 @@ void UIntroScene::BeginLevel(ASlowControllerBase* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 
-	MyMainWidgetLuid = UWidgetManager::AddWidgetFromReference(TEXT("MainWidget"), TEXT("Widget.IntroScene.IntroMain"), true);
-	MyMainWidget = Cast<UIntroWidget>(UWidgetManager::GetWidget(MyMainWidgetLuid));
+	MyMainWidget = UWidgetManager::CreateSlowWidget<UIntroWidget>(TEXT("Widget.IntroScene.IntroMain"));
 }
 
 void UIntroScene::EndPlay()
 {
-	UWidgetManager::RemoveWidget(MyMainWidgetLuid);
+	if (MyMainWidget != nullptr) {
+		MyMainWidget->RemoveFromParent();
+		MyMainWidget = nullptr;
+	}
 
 	UE_LOG(LogSlow, Log, TEXT("UIntroScene::EndPlay()"));
 }
