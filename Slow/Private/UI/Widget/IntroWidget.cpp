@@ -19,7 +19,7 @@ void UIntroWidget::NativeConstruct()
 void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 {
 	if (InClickedButton == PlayButton) {
-		// Case on play.
+		USceneManager::LoadScene(TEXT("Gameplay"));
 	}
 	else if (InClickedButton == OptionButton) {
 		if (OptionsWidget == nullptr) {
