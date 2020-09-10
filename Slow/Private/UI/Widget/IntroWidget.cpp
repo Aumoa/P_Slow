@@ -6,6 +6,7 @@
 #include "UI/Widget/SlowOptionsWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Manager/WidgetManager.h"
+#include "Manager/SceneManager.h"
 
 void UIntroWidget::NativeConstruct()
 {
@@ -19,7 +20,7 @@ void UIntroWidget::NativeConstruct()
 void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 {
 	if (InClickedButton == PlayButton) {
-		USceneManager::LoadScene(TEXT("Gameplay"));
+		// Case on play.
 	}
 	else if (InClickedButton == OptionButton) {
 		if (OptionsWidget == nullptr) {
