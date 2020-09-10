@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Manager/WidgetManager.h"
 #include "Manager/SceneManager.h"
+#include "Animation/WidgetAnimation.h"
 
 void UIntroWidget::NativeConstruct()
 {
@@ -15,6 +16,8 @@ void UIntroWidget::NativeConstruct()
 	PlayButton->Clicked.AddUObject(this, &UIntroWidget::OnButtonClicked);
 	OptionButton->Clicked.AddUObject(this, &UIntroWidget::OnButtonClicked);
 	ExitButton->Clicked.AddUObject(this, &UIntroWidget::OnButtonClicked);
+
+	PlayAnimation(FadeIn);
 }
 
 void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)

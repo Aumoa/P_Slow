@@ -9,6 +9,7 @@
 
 class USlowTextButton;
 class USlowOptionsWidget;
+class UWidgetAnimation;
 
 UCLASS()
 class SLOW_API UIntroWidget : public USlowWidgetBase
@@ -22,6 +23,9 @@ private:
 	USlowTextButton* OptionButton;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess = "true"))
 	USlowTextButton* ExitButton;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidgetAnim, AllowPrivateAccess = "true"))
+	UWidgetAnimation* FadeIn;
 
 	UPROPERTY()
 	USlowOptionsWidget* OptionsWidget;
