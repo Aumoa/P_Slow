@@ -29,6 +29,11 @@ private:
 
 	UPROPERTY()
 	USlowOptionsWidget* OptionsWidget;
+	UPROPERTY()
+	UClass* sMyWidgetClass;
+	UPROPERTY()
+	UUserWidget* sMyWidget;
+	
 
 public:
 	void NativeConstruct() override;

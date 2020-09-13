@@ -23,7 +23,22 @@ void UIntroWidget::NativeConstruct()
 void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 {
 	if (InClickedButton == PlayButton) {
-		USceneManager::LoadScene(TEXT("Gameplay"));
+		//USceneManager::LoadScene(TEXT("Gameplay"));
+
+		FStringClassReference sMyWidgetClassRef(TEXT("/Game/Slow/Maps/Intro/UI/WB_StageSelect.WB_StageSelect_C"));
+
+		if (sMyWidgetClass = sMyWidgetClassRef.TryLoadClass <UUserWidget>())
+		{
+			sMyWidget = CreateWidget <UUserWidget>(GetWorld(), sMyWidgetClass);
+			sMyWidget->AddToViewport();
+		}
+		
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Fail Create Widget!"));
+		}
+
+
 	}
 	else if (InClickedButton == OptionButton) {
 		if (OptionsWidget == nullptr) {
