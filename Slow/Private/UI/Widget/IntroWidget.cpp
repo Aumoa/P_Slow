@@ -26,8 +26,9 @@ void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 		//USceneManager::LoadScene(TEXT("Gameplay"));
 
 		FStringClassReference sMyWidgetClassRef(TEXT("/Game/Slow/Maps/Intro/UI/WB_StageSelect.WB_StageSelect_C"));
+		sMyWidgetClass = sMyWidgetClassRef.TryLoadClass <UUserWidget>();
 
-		if (sMyWidgetClass = sMyWidgetClassRef.TryLoadClass <UUserWidget>())
+		if (sMyWidgetClass)
 		{
 			sMyWidget = CreateWidget <UUserWidget>(GetWorld(), sMyWidgetClass);
 			sMyWidget->AddToViewport();
