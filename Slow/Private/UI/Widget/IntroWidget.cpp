@@ -23,28 +23,20 @@ void UIntroWidget::NativeConstruct()
 
 void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 {
-	switch (InClickedButton)
-	{
-	case PlayButton:
+	if (InClickedButton == PlayButton) {
 		if (StageSelectsWidget == nullptr) {
 			StageSelectsWidget = UWidgetManager::CreateSlowWidget<USlowStageSelectsWidget>(TEXT("Widget.SlowStageSelectsWidget"));
 			StageSelectsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_StageSelects);
 		}
-		break;
-
-	case OptionButton:
+	}
+	else if (InClickedButton == OptionButton) {
 		if (OptionsWidget == nullptr) {
 			OptionsWidget = UWidgetManager::CreateSlowWidget<USlowOptionsWidget>(TEXT("Widget.SlowOptionsWidget"));
 			OptionsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_Options);
 		}
-		break;
-
-	case ExitButton:
+	}
+	else if (InClickedButton == ExitButton) {
 		UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
-		break;
-
-	default:
-		break;
 	}
 }
 
