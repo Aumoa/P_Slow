@@ -1,6 +1,6 @@
 // Copyright 2020 Aumoa.lib. All right reserved.
-
 #include "UI/Widget/SlowOptionsWidget.h"
+#include "UI/Control/SlowTextButton.h"
 
 void USlowOptionsWidget::NativeConstruct()
 {

@@ -4,6 +4,7 @@
 
 #include "UI/Control/SlowTextButton.h"
 #include "UI/Widget/SlowOptionsWidget.h"
+#include "UI/Widget/SlowStageSelectsWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Manager/WidgetManager.h"
 #include "Manager/SceneManager.h"
@@ -23,22 +24,10 @@ void UIntroWidget::NativeConstruct()
 void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 {
 	if (InClickedButton == PlayButton) {
-		//USceneManager::LoadScene(TEXT("Gameplay"));
-
-		FStringClassReference sMyWidgetClassRef(TEXT("/Game/Slow/Maps/Intro/UI/WB_StageSelect.WB_StageSelect_C"));
-		sMyWidgetClass = sMyWidgetClassRef.TryLoadClass <UUserWidget>();
-
-		if (sMyWidgetClass)
-		{
-			sMyWidget = CreateWidget <UUserWidget>(GetWorld(), sMyWidgetClass);
-			sMyWidget->AddToViewport();
+		if (StageSelectsWidget == nullptr){
+			StageSelectsWidget = UWidgetManager::CreateSlowWidget<USlowStageSelectsWidget>(TEXT("Widget.SlowStageSelectsWidget"));
+			StageSelectsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_StageSelects);
 		}
-		
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("Fail Create Widget!"));
-		}
-
 
 	}
 	else if (InClickedButton == OptionButton) {
@@ -57,5 +46,13 @@ void UIntroWidget::OnDisposing_Options()
 	if (OptionsWidget != nullptr) {
 		OptionsWidget->RemoveFromParent();
 		OptionsWidget = nullptr;
+	}
+}
+
+void UIntroWidget::OnDisposing_StageSelects()
+{
+	if (StageSelectsWidget != nullptr) {
+		StageSelectsWidget->RemoveFromParent();
+		StageSelectsWidget = nullptr;
 	}
 }

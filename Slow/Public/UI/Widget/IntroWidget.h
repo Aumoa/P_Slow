@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UI/SlowWidgetBase.h"
-
 #include "IntroWidget.generated.h"
 
 class USlowTextButton;
+class USlowStageSelectsWidget;
 class USlowOptionsWidget;
 class UWidgetAnimation;
 
@@ -30,6 +30,8 @@ private:
 	UPROPERTY()
 	USlowOptionsWidget* OptionsWidget;
 	UPROPERTY()
+	USlowStageSelectsWidget* StageSelectsWidget;
+	UPROPERTY()
 	UClass* sMyWidgetClass;
 	UPROPERTY()
 	UUserWidget* sMyWidget;
@@ -41,4 +43,6 @@ public:
 private:
 	void OnButtonClicked(USlowTextButton* InClickedButton);
 	void OnDisposing_Options();
+	void OnDisposing_StageSelects();
 };
+
