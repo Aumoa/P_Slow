@@ -11,8 +11,8 @@ TWeakObjectPtr<UDataTable> UActorReference::DataTable;
 
 UActorReference::UActorReference()
 {
-	static ConstructorHelpers::FObjectFinder<UDataTable> dataTable(TEXT("/Game/Slow/Datatable/UI/DT_ActorReference"));
-	checkf(dataTable.Succeeded(), TEXT("Cannot found datatable in /Game/Slow/Datatable/UI/DT_ActorReference."));
+	static ConstructorHelpers::FObjectFinder<UDataTable> dataTable(TEXT("/Game/Slow/Datatable/Actor/DT_ActorReference"));
+	checkf(dataTable.Succeeded(), TEXT("Cannot found datatable in /Game/Slow/Datatable/Actor/DT_ActorReference."));
 	DataTable = dataTable.Object;
 }
 
