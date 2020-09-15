@@ -26,5 +26,4 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> StartupScene;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> DemoScene;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> IntroScene;
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> GameplayScene;
 };

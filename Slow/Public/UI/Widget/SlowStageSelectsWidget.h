@@ -7,6 +7,7 @@
 #include "SlowStageSelectsWidget.generated.h"
 
 class USlowTextButton;
+class USceneBase;
 
 UCLASS()
 class SLOW_API USlowStageSelectsWidget : public USlowWidgetBase
@@ -27,8 +28,13 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	USlowTextButton* Button_Cancel;
 
+	UPROPERTY()
+	USceneBase* NextScene = nullptr;
+
 public:
 	void NativeConstruct() override;
+
+	USceneBase* GetNextScene() const;
 
 	FDisposingEvent Disposing;
 

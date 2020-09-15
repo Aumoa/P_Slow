@@ -1,8 +1,10 @@
 // Copyright 2020. Team slow, All right reserved.
+
 #include "UI/Widget/SlowStageSelectsWidget.h"
+
 #include "UI/Control/SlowTextButton.h"
 #include "Manager/SceneManager.h"
-
+#include "Scene/GameplayLobbyScene.h"
 
 void USlowStageSelectsWidget::NativeConstruct()
 {
@@ -14,23 +16,29 @@ void USlowStageSelectsWidget::NativeConstruct()
 	Button_Cancel->Clicked.AddUObject(this, &USlowStageSelectsWidget::OnClicked_Cancel);
 }
 
+USceneBase* USlowStageSelectsWidget::GetNextScene() const
+{
+	return NextScene;
+}
+
 void USlowStageSelectsWidget::OnClicked_Stage1_1(USlowTextButton* InClickedButton)
 {
-	USceneManager::LoadScene(TEXT("Gameplay"));
+	NextScene = NewObject<UGameplayLobbyScene>();
 	Disposing.Broadcast();
 }
 
 void USlowStageSelectsWidget::OnClicked_Stage1_2(USlowTextButton* InClickedButton)
 {
-	Disposing.Broadcast();
+
 }
 
 void USlowStageSelectsWidget::OnClicked_Stage1_3(USlowTextButton* InClickedButton)
 {
-	Disposing.Broadcast();
+
 }
 
 void USlowStageSelectsWidget::OnClicked_Cancel(USlowTextButton* InClickedButton)
 {
+	NextScene = nullptr;
 	Disposing.Broadcast();
 }

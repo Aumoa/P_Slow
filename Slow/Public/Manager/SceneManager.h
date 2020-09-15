@@ -39,6 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
 	static void LoadScene(const FString& SceneName, UObject* Args = nullptr);
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
+	static void SwitchScene(USceneBase* InNextScene, UObject* Args = nullptr);
+	UFUNCTION(BlueprintCallable, Category = "SceneManager")
 	static USceneBase* GetCurrentScene();
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
 	static void SendInputAction(const FName& ActionName, bool bPressed);

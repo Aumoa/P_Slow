@@ -17,7 +17,6 @@ void USceneManager::Initialize(USlowGameInstance* GInstance)
 	StartupScene = NewObject<USceneBase>(this, Config->StartupScene);
 	DemoScene = NewObject<USceneBase>(this, Config->DemoScene);
 	IntroScene = NewObject<USceneBase>(this, Config->IntroScene);
-	GameplayScene = NewObject<USceneBase>(this, Config->GameplayScene);
 }
 
 void USceneManager::BeginLevel(ASlowControllerBase* InPlayerController)
@@ -38,11 +37,30 @@ void USceneManager::LoadScene(const FString& SceneName, UObject* Args)
 
 	bool bChanged = false;
 
-	if (Instance->CurrentScene) {
+	if (Instance->CurrentScene != nullptr) {
 		Instance->CurrentScene->EndPlay();
 	}
 
 	Instance->CurrentScene = GetSceneByName(Instance, SceneName, bChanged);
+
+	if (bChanged) {
+		Instance->CurrentScene->BeginPlay(Args);
+	}
+}
+
+void USceneManager::SwitchScene(USceneBase* InNextScene, UObject* Args)
+{
+	auto Instance = GetSingletonInstance();
+	bool bChanged = false;
+
+	if (Instance->CurrentScene != nullptr) {
+		Instance->CurrentScene->EndPlay();
+	}
+
+	if (Instance->CurrentScene != InNextScene) {
+		Instance->CurrentScene = InNextScene;
+		bChanged = true;
+	}
 
 	if (bChanged) {
 		Instance->CurrentScene->BeginPlay(Args);

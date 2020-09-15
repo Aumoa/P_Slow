@@ -51,7 +51,13 @@ void UIntroWidget::OnDisposing_Options()
 void UIntroWidget::OnDisposing_StageSelects()
 {
 	if (StageSelectsWidget != nullptr) {
+		USceneBase* nextScene = StageSelectsWidget->GetNextScene();
+
 		StageSelectsWidget->RemoveFromParent();
 		StageSelectsWidget = nullptr;
+
+		if (nextScene != nullptr) {
+			USceneManager::SwitchScene(nextScene);
+		}
 	}
 }

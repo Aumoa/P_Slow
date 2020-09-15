@@ -13,14 +13,16 @@ class SLOW_API UGameplayScene : public USceneBase
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY( BlueprintReadWrite ) FName CurrentLevel;
-	UPROPERTY( BlueprintReadWrite ) FName NextStreamingLevel;
+private:
+	FName NextStreamingLevel;
+
+protected:
+	void SetNextStreamingLevel(const FName& InNextStreamingLevel);
 	
 public:
-	void BeginPlay( UObject* Args = nullptr ) override;
+	void BeginPlay(UObject* Args = nullptr) override;
 	void EndPlay() override;
 
-private:
-	void ReadyPlayerCharacter();
+	UFUNCTION(BlueprintPure)
+	FName GetNextStreamingLevel() const;
 };

@@ -1,44 +1,32 @@
 // Copyright 2020 Team slow. All right reserved.
 
-
 #include "Scene/GameplayScene.h"
 
-#include "GameFramework/GameStateBase.h"
-
-#include "LogDefine.h"
 #include "SlowGameInstance.h"
-#include "SlowConfig.h"
-#include "SlowPlayableCharacterState.h"
-
-#include "Actor/SlowPlayerState.h"
-
 #include "Kismet/GameplayStatics.h"
 
-void UGameplayScene::BeginPlay( UObject* Args )
+void UGameplayScene::SetNextStreamingLevel(const FName& InNextStreamingLevel)
 {
-	UGameplayStatics::OpenLevel( this, TEXT( "Gameplay" ) );
+	NextStreamingLevel = InNextStreamingLevel;
+}
 
-	NextStreamingLevel = TEXT( "Gameplay_Lobby" );
+void UGameplayScene::BeginPlay(UObject* Args)
+{
+	Super::BeginPlay(Args);
 
-	ReadyPlayerCharacter();
+	USlowGameInstance* gameInstance = USlowGameInstance::GetGameInstance();
+	FString currentName = UGameplayStatics::GetCurrentLevelName(gameInstance);
+	if (currentName != TEXT("Gameplay")) {
+		UGameplayStatics::OpenLevel(gameInstance, TEXT("Gameplay"));
+	}
 }
 
 void UGameplayScene::EndPlay()
 {
-
+	Super::EndPlay();
 }
 
-void UGameplayScene::ReadyPlayerCharacter()
+FName UGameplayScene::GetNextStreamingLevel() const
 {
-	auto GameState = GetWorld()->GetGameState();
-	auto PlayerState = Cast<ASlowPlayerState>( GameState->PlayerArray[0] );
-
-	if ( PlayerState->PC == nullptr )
-	{
-		auto GameInstance = Cast<USlowGameInstance>( UGameplayStatics::GetGameInstance( this ) );
-		auto Config = GameInstance->GetConfig();
-
-		// Empty playable character.
-		PlayerState->PC = NewObject<USlowPlayableCharacterState>( this );
-	}
+	return NextStreamingLevel;
 }

@@ -31,10 +31,6 @@ private:
 	USlowOptionsWidget* OptionsWidget;
 	UPROPERTY()
 	USlowStageSelectsWidget* StageSelectsWidget;
-	UPROPERTY()
-	UClass* sMyWidgetClass;
-	UPROPERTY()
-	UUserWidget* sMyWidget;
 	
 
 public:

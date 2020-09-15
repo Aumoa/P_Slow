@@ -6,7 +6,6 @@
 #include "Scene/StartupScene.h"
 #include "Scene/DemoScene.h"
 #include "Scene/IntroScene.h"
-#include "Scene/GameplayScene.h"
 
 USlowConfig::USlowConfig( const FObjectInitializer& Initializer ) : Super( Initializer )
 {
@@ -16,5 +15,4 @@ USlowConfig::USlowConfig( const FObjectInitializer& Initializer ) : Super( Initi
 	StartupScene = UStartupScene::StaticClass();
 	DemoScene = UDemoScene::StaticClass();
 	IntroScene = UIntroScene::StaticClass();
-	GameplayScene = UGameplayScene::StaticClass();
 }
