@@ -14,6 +14,8 @@ class SLOW_API UBehaviorRequirement : public UCostRequirement
 	GENERATED_BODY()
 
 private:
+	uint8 bCheckIsActivated : 1;
+
 	TSubclassOf<UBehavior> TypeofBehavior;
 
 public:
@@ -23,4 +25,6 @@ public:
 
 	void SetRequirementBehaviorType(TSubclassOf<UBehavior> BehaviorType);
 	TSubclassOf<UBehavior> GetRequirementBehaviorType() const;
+	void SetCheckIsActivated(bool bFlag);
+	bool GetCheckIsActivated() const;
 };

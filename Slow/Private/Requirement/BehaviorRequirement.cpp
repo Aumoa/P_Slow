@@ -8,7 +8,7 @@
 
 UBehaviorRequirement::UBehaviorRequirement()
 {
-
+	bCheckIsActivated = true;
 }
 
 bool UBehaviorRequirement::Query(ASlowCharacter* InCharacter)
@@ -24,7 +24,13 @@ bool UBehaviorRequirement::Query(ASlowCharacter* InCharacter)
 	}
 
 	UBehavior* behavior = Cast<UBehavior>(InCharacter->GetComponentByClass(TypeofBehavior));
-	return behavior != nullptr;
+	if (!bCheckIsActivated) {
+		return behavior != nullptr;
+	}
+	else {
+		return behavior != nullptr
+			&& behavior->IsActivated();
+	}
 }
 
 void UBehaviorRequirement::SetRequirementBehaviorType(TSubclassOf<UBehavior> BehaviorType)
@@ -35,4 +41,14 @@ void UBehaviorRequirement::SetRequirementBehaviorType(TSubclassOf<UBehavior> Beh
 TSubclassOf<UBehavior> UBehaviorRequirement::GetRequirementBehaviorType() const
 {
 	return TypeofBehavior;
+}
+
+void UBehaviorRequirement::SetCheckIsActivated(bool bFlag)
+{
+	bCheckIsActivated = bFlag;
+}
+
+bool UBehaviorRequirement::GetCheckIsActivated() const
+{
+	return bCheckIsActivated;
 }

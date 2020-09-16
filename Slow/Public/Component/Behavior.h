@@ -12,6 +12,15 @@ class SLOW_API UBehavior : public UActorComponent
 {
 	GENERATED_BODY()
 
+private:
+	TArray<bool> ActivateStateStack;
+
 public:
 	UBehavior();
+
+	void SetActivate(bool bInActivate);
+	bool IsActivated() const;
+
+	void PushActivate(bool bInActivate);
+	void PopActivate();
 };
