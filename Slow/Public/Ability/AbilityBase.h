@@ -18,4 +18,5 @@ public:
 	UAbilityBase();
 
 	virtual void ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer);
+	virtual void CancelIndirect();
 };

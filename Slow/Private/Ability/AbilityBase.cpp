@@ -11,3 +11,8 @@ void UAbilityBase::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 {
 
 }
+
+void UAbilityBase::CancelIndirect()
+{
+
+}
