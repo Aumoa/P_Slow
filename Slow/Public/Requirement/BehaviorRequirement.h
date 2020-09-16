@@ -16,7 +16,7 @@ private:
 public:
 	FBehaviorRequirement();
 
-	virtual bool Query(ASlowCharacter* InCharacter);
+	virtual bool Query(ASlowCharacter* InCharacter) const;
 
 	void SetRequirementBehaviorType(TSubclassOf<UBehavior> BehaviorType);
 	TSubclassOf<UBehavior> GetRequirementBehaviorType() const;

@@ -11,7 +11,7 @@ FBehaviorRequirement::FBehaviorRequirement()
 	bCheckIsActivated = true;
 }
 
-bool FBehaviorRequirement::Query(ASlowCharacter* InCharacter)
+bool FBehaviorRequirement::Query(ASlowCharacter* InCharacter) const
 {
 	if (InCharacter == nullptr) {
 		UE_LOG(LogSlow, Error, TEXT("FBehaviorRequirement::Query(): InCharacter parameter is null."));
@@ -30,7 +30,7 @@ bool FBehaviorRequirement::Query(ASlowCharacter* InCharacter)
 		bValidCheck = bValidCheck && behavior->IsActivated();
 	}
 
-	return bValidCheck;
+	return GetResult(bValidCheck);
 }
 
 void FBehaviorRequirement::SetRequirementBehaviorType(TSubclassOf<UBehavior> BehaviorType)
