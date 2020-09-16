@@ -2,7 +2,7 @@
 
 #include "Requirement/RequirementBase.h"
 
-URequirementBase::URequirementBase()
+FRequirementBase::FRequirementBase()
 {
 
 }

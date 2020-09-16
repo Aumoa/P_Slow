@@ -2,7 +2,7 @@
 
 #include "Requirement/CostRequirement.h"
 
-UCostRequirement::UCostRequirement()
+FCostRequirement::FCostRequirement()
 {
 	ConsumeCount = 0;
 }

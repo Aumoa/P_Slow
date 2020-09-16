@@ -3,23 +3,18 @@
 #include "CoreMinimal.h"
 #include "RequirementBase.h"
 
-#include "BehaviorRequirement.generated.h"
-
 class ASlowCharacter;
 class UBehavior;
 
-UCLASS()
-class SLOW_API UBehaviorRequirement : public URequirementBase
+class FBehaviorRequirement : public FRequirementBase
 {
-	GENERATED_BODY()
-
 private:
 	uint8 bCheckIsActivated : 1;
 
 	TSubclassOf<UBehavior> TypeofBehavior;
 
 public:
-	UBehaviorRequirement();
+	FBehaviorRequirement();
 
 	virtual bool Query(ASlowCharacter* InCharacter);
 

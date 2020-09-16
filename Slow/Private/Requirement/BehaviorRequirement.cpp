@@ -6,20 +6,20 @@
 #include "Component/Behavior.h"
 #include "Actor/SlowCharacter.h"
 
-UBehaviorRequirement::UBehaviorRequirement()
+FBehaviorRequirement::FBehaviorRequirement()
 {
 	bCheckIsActivated = true;
 }
 
-bool UBehaviorRequirement::Query(ASlowCharacter* InCharacter)
+bool FBehaviorRequirement::Query(ASlowCharacter* InCharacter)
 {
 	if (InCharacter == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("UBehaviorRequirement::Query(): InCharacter parameter is null."));
+		UE_LOG(LogSlow, Error, TEXT("FBehaviorRequirement::Query(): InCharacter parameter is null."));
 		return false;
 	}
 
 	if (TypeofBehavior == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("UBehaviorRequirement::Query(): TypeofBehavior is null."));
+		UE_LOG(LogSlow, Error, TEXT("FBehaviorRequirement::Query(): TypeofBehavior is null."));
 		return false;
 	}
 
@@ -33,22 +33,22 @@ bool UBehaviorRequirement::Query(ASlowCharacter* InCharacter)
 	return bValidCheck;
 }
 
-void UBehaviorRequirement::SetRequirementBehaviorType(TSubclassOf<UBehavior> BehaviorType)
+void FBehaviorRequirement::SetRequirementBehaviorType(TSubclassOf<UBehavior> BehaviorType)
 {
 	TypeofBehavior = BehaviorType;
 }
 
-TSubclassOf<UBehavior> UBehaviorRequirement::GetRequirementBehaviorType() const
+TSubclassOf<UBehavior> FBehaviorRequirement::GetRequirementBehaviorType() const
 {
 	return TypeofBehavior;
 }
 
-void UBehaviorRequirement::SetCheckIsActivated(bool bFlag)
+void FBehaviorRequirement::SetCheckIsActivated(bool bFlag)
 {
 	bCheckIsActivated = bFlag;
 }
 
-bool UBehaviorRequirement::GetCheckIsActivated() const
+bool FBehaviorRequirement::GetCheckIsActivated() const
 {
 	return bCheckIsActivated;
 }

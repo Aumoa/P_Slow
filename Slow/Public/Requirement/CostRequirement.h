@@ -5,15 +5,10 @@
 #include "CoreMinimal.h"
 #include "RequirementBase.h"
 
-#include "CostRequirement.generated.h"
-
-UCLASS()
-class SLOW_API UCostRequirement : public URequirementBase
+class FCostRequirement : public FRequirementBase
 {
-	GENERATED_BODY()
-
 public:
-	UCostRequirement();
+	FCostRequirement();
 
 	int32 ConsumeCount;
 };
