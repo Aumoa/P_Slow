@@ -12,6 +12,11 @@ struct FCombatTag
 	GENERATED_BODY()
 
 public:
+	FCombatTag();
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	uint8 bCanTarget : 1;
+
+	bool CheckFlagsOn(const FCombatTag& InTag) const;
+	bool CheckFlagsOff(const FCombatTag& InTag) const;
 };
