@@ -23,4 +23,7 @@ public:
 
 	void PushActivate(bool bInActivate);
 	void PopActivate();
+
+protected:
+	void RemoveFromParent();
 };

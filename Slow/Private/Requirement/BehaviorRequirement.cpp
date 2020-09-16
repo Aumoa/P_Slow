@@ -24,13 +24,13 @@ bool UBehaviorRequirement::Query(ASlowCharacter* InCharacter)
 	}
 
 	UBehavior* behavior = Cast<UBehavior>(InCharacter->GetComponentByClass(TypeofBehavior));
-	if (!bCheckIsActivated) {
-		return behavior != nullptr;
+
+	bool bValidCheck = behavior != nullptr && behavior->IsValidLowLevel() && !behavior->IsPendingKill();
+	if (bCheckIsActivated) {
+		bValidCheck = bValidCheck && behavior->IsActivated();
 	}
-	else {
-		return behavior != nullptr
-			&& behavior->IsActivated();
-	}
+
+	return bValidCheck;
 }
 
 void UBehaviorRequirement::SetRequirementBehaviorType(TSubclassOf<UBehavior> BehaviorType)
