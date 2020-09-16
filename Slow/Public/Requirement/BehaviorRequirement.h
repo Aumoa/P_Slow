@@ -1,7 +1,7 @@
 // Copyright 2020 Team slow. All right reserved.
 
 #include "CoreMinimal.h"
-#include "CostRequirement.h"
+#include "RequirementBase.h"
 
 #include "BehaviorRequirement.generated.h"
 
@@ -9,7 +9,7 @@ class ASlowCharacter;
 class UBehavior;
 
 UCLASS()
-class SLOW_API UBehaviorRequirement : public UCostRequirement
+class SLOW_API UBehaviorRequirement : public URequirementBase
 {
 	GENERATED_BODY()
 
