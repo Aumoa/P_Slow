@@ -3,22 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actor/SlowCharacter.h"
+#include "SlowStatBasedCharacter.h"
 
 #include "SlowPlayableCharacter.generated.h"
 
-class UInputComponent;
-class APlayerController;
-class UStatComponent;
-
 UCLASS()
-class SLOW_API ASlowPlayableCharacter : public ASlowCharacter
+class SLOW_API ASlowPlayableCharacter : public ASlowStatBasedCharacter
 {
 	GENERATED_BODY()
-
-private:
-	UPROPERTY()
-	UStatComponent* StatComponent;
 
 public:
 	ASlowPlayableCharacter();

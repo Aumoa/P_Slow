@@ -7,15 +7,11 @@
 #include "SlowInputDefine.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
-#include "Components/StatComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
 
-	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
-	AddOwnedComponent(StatComponent);
 }
 
 void ASlowPlayableCharacter::BeginPlay()

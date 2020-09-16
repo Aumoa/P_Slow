@@ -9,7 +9,12 @@ ASlowCharacter::ASlowCharacter()
 	CombatTag.bCanTarget = true;
 }
 
-const FCombatTag& ASlowCharacter::GetCombatTag() const
+void ASlowCharacter::SetCombatTag(const FCombatTag& InCombatTag)
+{
+	CombatTag = InCombatTag;
+}
+
+FCombatTag ASlowCharacter::GetCombatTag() const
 {
 	return CombatTag;
 }

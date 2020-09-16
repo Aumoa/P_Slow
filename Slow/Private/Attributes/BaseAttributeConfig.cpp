@@ -1,6 +1,6 @@
 // Copyright 2020 Team slow. All right reserved.
 
-#include "Structures/BaseAttributeConfig.h"
+#include "Attributes/BaseAttributeConfig.h"
 
 FBaseAttributeConfig::FBaseAttributeConfig()
 {

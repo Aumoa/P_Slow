@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 
-struct SLOW_API FRelativeDamage
+struct FAttrInstance
 {
-	FRelativeDamage();
-
-	int64 RelativeHealth;
+	int64 HealthPoint;
 };

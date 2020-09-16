@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "SlowControlBase.h"
 
-#include "Structures/SlowTextStyle.h"
+#include "SlowTextStyle.h"
 
 #include "SlowTextButton.generated.h"
 

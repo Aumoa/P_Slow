@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
-#include "Structures/CombatTag.h"
+#include "Attributes/CombatTag.h"
 
 #include "SlowCharacter.generated.h"
 
@@ -21,5 +21,6 @@ protected:
 public:
 	ASlowCharacter();
 
-	const FCombatTag& GetCombatTag() const;
+	void SetCombatTag(const FCombatTag& InCombatTag);
+	FCombatTag GetCombatTag() const;
 };

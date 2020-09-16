@@ -2,14 +2,9 @@
 
 #include "Actor/SlowMobCharacterBase.h"
 
-#include "Components/StatComponent.h"
-
 ASlowMobCharacterBase::ASlowMobCharacterBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
 
-	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
-	AddOwnedComponent(StatComponent);
 }
 
 void ASlowMobCharacterBase::BeginPlay()
