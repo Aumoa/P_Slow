@@ -1,6 +1,6 @@
 // Copyright 2020 Team slow. All right reserved.
 
-#include "Component/ConsumableBehavior.h"
+#include "Components/ConsumableBehavior.h"
 
 UConsumableBehavior::UConsumableBehavior()
 {

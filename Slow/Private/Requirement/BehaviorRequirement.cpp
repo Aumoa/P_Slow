@@ -3,7 +3,7 @@
 #include "Requirement/BehaviorRequirement.h"
 
 #include "LogDefine.h"
-#include "Component/Behavior.h"
+#include "Components/Behavior.h"
 #include "Actor/SlowCharacter.h"
 
 FBehaviorRequirement::FBehaviorRequirement()

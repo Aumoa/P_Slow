@@ -1,6 +1,6 @@
 // Copyright 2020 Team slow. All right reserved.
 
-#include "Component/Behavior.h"
+#include "Components/Behavior.h"
 
 #include "GameFramework/Actor.h"
 
