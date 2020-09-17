@@ -3,33 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilityBase.h"
+#include "BehaviorAbility.h"
 #include "ILocationTargetAbility.h"
-#include "IActorTargetAbility.h"
 
 class ASlowStatBasedCharacter;
 class UCharacterMovementComponent;
+class UMovementBehavior;
 
-class FMoveAbility : virtual public FAbilityBase, virtual public ILocationTargetAbility, virtual public IActorTargetAbility
+class FMoveAbility : public FBehaviorAbility<UMovementBehavior>, virtual public ILocationTargetAbility
 {
 	enum class ETargetType
 	{
+		Unknown,
 		Location,
-		Actor,
 	};
+
+	using LocationMoveAbil = FBehaviorAbility<UMovementBehavior>;
 
 private:
 	TWeakObjectPtr<ASlowStatBasedCharacter> CastPlayer;
 	TWeakObjectPtr<UCharacterMovementComponent> MovementComponent;
 
-	ETargetType TargetType;
-	FVector LocationTarget;
-	TWeakObjectPtr<AActor> ActorTarget;
+	ETargetType TargetType = ETargetType::Unknown;
 
 public:
 	FMoveAbility();
 
 	void ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer) override;
 	void SetTarget(const FVector& InLocation) override;
-	void SetTarget(AActor* InActor) override;
+
+private:
+	void Clear();
 };

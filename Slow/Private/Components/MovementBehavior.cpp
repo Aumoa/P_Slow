@@ -24,7 +24,9 @@ void UMovementBehavior::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			bDirtyMark = false;
 		}
 
-		AddMove(DeltaTime);
+		if (!AddMove(DeltaTime)) {
+			RemoveFromParent();
+		}
 	}
 }
 
@@ -83,7 +85,7 @@ void UMovementBehavior::RebuildPaths()
 	LastDirection.Normalize();
 }
 
-void UMovementBehavior::AddMove(float DeltaTime)
+bool UMovementBehavior::AddMove(float DeltaTime)
 {
 	if (MovementPaths.Num() != 0) {
 		AActor* actor = MovementActor->GetOwner();
@@ -95,7 +97,7 @@ void UMovementBehavior::AddMove(float DeltaTime)
 		// Check that distance is smaller than critical value.
 		if (currentDir.SizeSquared() < 0.001f) {
 			MovementPaths.RemoveAt(0);
-			AddMove(DeltaTime);
+			return AddMove(DeltaTime);
 		}
 
 		//
@@ -106,14 +108,18 @@ void UMovementBehavior::AddMove(float DeltaTime)
 
 			if (cosAngleFromPrev < 0.95f) {
 				MovementPaths.RemoveAt(0);
-				AddMove(DeltaTime);
+				return AddMove(DeltaTime);
 			}
 
 			//
 			// Move actor to next frame location.
 			else {
 				MovementActor->AddInputVector(currentDir * DeltaTime);
+				return true;
 			}
 		}
+	}
+	else {
+		return false;
 	}
 }

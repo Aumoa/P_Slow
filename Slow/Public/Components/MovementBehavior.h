@@ -36,5 +36,5 @@ public:
 
 private:
 	void RebuildPaths();
-	void AddMove(float DeltaTime);
+	bool AddMove(float DeltaTime);
 };
