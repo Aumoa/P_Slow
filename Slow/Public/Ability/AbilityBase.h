@@ -3,19 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-
-#include "AbilityBase.generated.h"
 
 class ASlowStatBasedCharacter;
 
-UCLASS()
-class SLOW_API UAbilityBase : public UObject
+class FAbilityBase : public TSharedFromThis<FAbilityBase>
 {
-	GENERATED_BODY()
-
 public:
-	UAbilityBase();
+	FAbilityBase();
+	virtual ~FAbilityBase();
 
 	virtual void ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer);
 	virtual void CancelIndirect();
