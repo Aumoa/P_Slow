@@ -7,6 +7,10 @@
 #include "Scene/DemoScene.h"
 #include "Scene/IntroScene.h"
 
+#include "Ability/HatchetWeapon.h"
+#include "Ability/SwordWeapon.h"
+#include "Ability/HammerWeapon.h"
+
 USlowConfig::USlowConfig( const FObjectInitializer& Initializer ) : Super( Initializer )
 {
 	EntryPoint = TEXT( "Startup" );
@@ -15,4 +19,8 @@ USlowConfig::USlowConfig( const FObjectInitializer& Initializer ) : Super( Initi
 	StartupScene = UStartupScene::StaticClass();
 	DemoScene = UDemoScene::StaticClass();
 	IntroScene = UIntroScene::StaticClass();
+
+	HatchetWeapon = UHatchetWeapon::StaticClass();
+	SwordWeapon = USwordWeapon::StaticClass();
+	HammerWeapon = UHammerWeapon::StaticClass();
 }

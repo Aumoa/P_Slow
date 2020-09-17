@@ -7,6 +7,7 @@
 #include "Manager/WidgetManager.h"
 #include "Manager/ConfigManager.h"
 #include "Manager/InputManager.h"
+#include "Manager/WeaponManager.h"
 
 void USlowGameInstance::InitializeManagers()
 {
@@ -15,6 +16,7 @@ void USlowGameInstance::InitializeManagers()
 	Managers.Add(NewObject<UWidgetManager>(this));
 	Managers.Add(NewObject<UConfigManager>(this));
 	Managers.Add(NewObject<UInputManager>(this));
+	Managers.Add(NewObject<UWeaponManager>(this));
 
 	for (int32 i = 0, count = Managers.Num(); i < count; ++i) {
 		Managers[i]->Initialize(this);

@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 
 #include "Scene/SceneBase.h"
+#include "Ability/WeaponBase.h"
 #include "Actor/SlowPlayableCharacter.h"
 
 #include "SlowConfig.generated.h"
@@ -26,4 +27,8 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> StartupScene;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> DemoScene;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> IntroScene;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") TSubclassOf <UWeaponBase> HatchetWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") TSubclassOf <UWeaponBase> SwordWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") TSubclassOf <UWeaponBase> HammerWeapon;
 };
