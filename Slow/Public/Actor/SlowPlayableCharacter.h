@@ -5,18 +5,29 @@
 #include "CoreMinimal.h"
 #include "SlowStatBasedCharacter.h"
 
+#include "Ability/AbilitySlot.h"
+
 #include "SlowPlayableCharacter.generated.h"
+
+class FAbilitySlot;
+class FMoveAbility;
 
 UCLASS()
 class SLOW_API ASlowPlayableCharacter : public ASlowStatBasedCharacter
 {
 	GENERATED_BODY()
 
-public:
-	ASlowPlayableCharacter();
+private:
+	TSharedPtr<FMoveAbility> MoveAbility;
+
+	FAbilitySlot MouseActionSlot;
 
 protected:
 	void BeginPlay() override;
+
+public:
+	ASlowPlayableCharacter();
+	~ASlowPlayableCharacter();
 
 public:
 	void Tick(float DeltaTime) override;

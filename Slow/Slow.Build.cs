@@ -7,6 +7,7 @@ public class Slow : ModuleRules
 	public Slow(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		bUseRTTI = true;
 	
 		PublicDependencyModuleNames.AddRange(new string[] {
 			"Core",

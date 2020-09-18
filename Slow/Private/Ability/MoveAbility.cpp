@@ -29,7 +29,7 @@ void FMoveAbility::SetTarget(const FVector& InLocation)
 
 	UMovementBehavior* behavior = LocationMoveAbil::AttachTo(CastPlayer.Get());
 	if (behavior != nullptr) {
-		behavior->SetActorDestination(InLocation);
+		behavior->SetActorDestination(InLocation, true);
 	}
 }
 

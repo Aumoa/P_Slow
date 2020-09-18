@@ -5,8 +5,10 @@
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 #include "LogDefine.h"
-#include "GameFramework/Pawn.h"
+#include "DrawDebugHelpers.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 UMovementBehavior::UMovementBehavior()
 {
@@ -16,28 +18,30 @@ UMovementBehavior::UMovementBehavior()
 	bUseNavigationPath = false;
 }
 
+void UMovementBehavior::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MyOwner = Cast<ACharacter>(GetOwner());
+	MyMovementComponent = MyOwner->GetCharacterMovement();
+}
+
 void UMovementBehavior::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	if (MovementActor.IsValid()) {
+	if (MyMovementComponent.IsValid()) {
 		if (bDirtyMark) {
 			RebuildPaths();
+
+			UCapsuleComponent* capsule = MyOwner->GetCapsuleComponent();
+			ScaledCapsuleRadius = capsule->GetScaledCapsuleRadius();
+
 			bDirtyMark = false;
 		}
 
-		if (!AddMove(DeltaTime)) {
+		if (!AddMove()) {
 			RemoveFromParent();
 		}
 	}
-}
-
-void UMovementBehavior::SetMovementActor(UCharacterMovementComponent* InMovementActor)
-{
-	MovementActor = InMovementActor;
-}
-
-UCharacterMovementComponent* UMovementBehavior::GetMovementActor() const
-{
-	return MovementActor.Get();
 }
 
 void UMovementBehavior::SetActorDestination(const FVector& Dest, bool bFindNavigationPath)
@@ -51,7 +55,7 @@ void UMovementBehavior::RebuildPaths()
 {
 	MovementPaths.SetNum(0, false);
 
-	AActor* actor = MovementActor->GetOwner();
+	AActor* actor = GetOwner();
 	FVector startLocation = actor->GetActorLocation();
 
 	if (bUseNavigationPath) {
@@ -74,6 +78,10 @@ void UMovementBehavior::RebuildPaths()
 		else {
 			// No move.
 		}
+
+		for (int32 i = 0; i < paths.Num(); ++i) {
+			DrawDebugSphere(GetWorld(), paths[i], 5.0f, 5, FColor::Red, false, 5.0f);
+		}
 	}
 
 	if (!bUseNavigationPath) {
@@ -85,36 +93,40 @@ void UMovementBehavior::RebuildPaths()
 	LastDirection.Normalize();
 }
 
-bool UMovementBehavior::AddMove(float DeltaTime)
+bool UMovementBehavior::AddMove()
 {
 	if (MovementPaths.Num() != 0) {
-		AActor* actor = MovementActor->GetOwner();
 
-		FVector actorLocation = actor->GetActorLocation();
+		FVector actorLocation = MyOwner->GetActorLocation();
 		FVector currentDir = MovementPaths[0] - actorLocation;
+		currentDir.Z = 0;
 
 		//
 		// Check that distance is smaller than critical value.
-		if (currentDir.SizeSquared() < 0.001f) {
+		if (currentDir.SizeSquared() < ScaledCapsuleRadius * ScaledCapsuleRadius) {
+			UE_LOG(LogSlow, Log, TEXT("Front of movement path is removed with reason: Check that distance is smaller than critical value. Current path count: %d"), MovementPaths.Num());
 			MovementPaths.RemoveAt(0);
-			return AddMove(DeltaTime);
+			return AddMove();
 		}
 
 		//
 		// Check that current location is exceed the goal of current path.
 		else {
-			currentDir.Normalize();
+			currentDir.Normalize(1.0f);
 			float cosAngleFromPrev = currentDir.CosineAngle2D(LastDirection);
 
-			if (cosAngleFromPrev < 0.95f) {
+			if (cosAngleFromPrev < -0.95f) {
+				UE_LOG(LogSlow, Log, TEXT("Front of movement path is removed with reason: Check that current location is exceed the goal of current path. Current path count: %d"), MovementPaths.Num());
 				MovementPaths.RemoveAt(0);
-				return AddMove(DeltaTime);
+				return AddMove();
 			}
 
 			//
 			// Move actor to next frame location.
 			else {
-				MovementActor->AddInputVector(currentDir * DeltaTime);
+				MyMovementComponent->AddInputVector(currentDir);
+
+				LastDirection = currentDir;
 				return true;
 			}
 		}

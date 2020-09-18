@@ -18,23 +18,24 @@ private:
 	uint8 bDirtyMark : 1;
 	uint8 bUseNavigationPath : 1;
 
-	TWeakObjectPtr<UCharacterMovementComponent> MovementActor;
+	TWeakObjectPtr<ACharacter> MyOwner;
+	TWeakObjectPtr<UCharacterMovementComponent> MyMovementComponent;
 
 	TArray<FVector> MovementPaths;
 	FVector Goal;
 	FVector LastDirection;
 
+	float ScaledCapsuleRadius = 0;
+
 public:
 	UMovementBehavior();
 
+	void BeginPlay() override;
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void SetMovementActor(UCharacterMovementComponent* InMovementActor);
-	UCharacterMovementComponent* GetMovementActor() const;
-
-	void SetActorDestination(const FVector& Dest, bool bFindNavigationPath = false);
+	void SetActorDestination(const FVector& Dest, bool bFindNavigationPath = true);
 
 private:
 	void RebuildPaths();
-	bool AddMove(float DeltaTime);
+	bool AddMove();
 };
