@@ -1,6 +1,6 @@
 // Copyright 2020 Team slow. All right reserved.
 
-#include "Component/Behavior.h"
+#include "Components/Behavior.h"
 
 #include "GameFramework/Actor.h"
 
@@ -34,10 +34,14 @@ void UBehavior::PopActivate()
 
 void UBehavior::RemoveFromParent()
 {
+	FString componentName = GetClass()->GetFName().ToString();
+
 	AActor* owner = GetOwner();
 	if (owner == nullptr) {
 		return;
 	}
 
 	DestroyComponent(false);
+
+	UE_LOG(LogSlow, Log, TEXT("UBehavior::RemoveFromParent(): Component %s is removed."), *componentName);
 }

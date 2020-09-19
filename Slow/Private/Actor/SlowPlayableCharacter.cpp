@@ -8,15 +8,27 @@
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Ability/AbilityBase.h"
+#include "Ability/MoveAbility.h"
+#include "Ability/ILocationTargetAbility.h"
+
+void ASlowPlayableCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MoveAbility = MakeShared<FMoveAbility>();
+
+	MouseActionSlot.SetAbility(MoveAbility.Get());
+}
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {
 
 }
 
-void ASlowPlayableCharacter::BeginPlay()
+ASlowPlayableCharacter::~ASlowPlayableCharacter()
 {
-	Super::BeginPlay();
+
 }
 
 void ASlowPlayableCharacter::Tick(float DeltaTime)
@@ -41,9 +53,19 @@ void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
 		FHitResult HitResult;
 		bool bHit = PlayerController->GetHitResultUnderCursor(ECC_AcceptMouseAction, false, HitResult);
 
-		if (bHit)
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(PlayerController, HitResult.Location);
+		if (bHit) {
+			TSharedPtr<FAbilityBase> ability = MouseActionSlot.GetAbility().Pin();
+			if (!ability.IsValid()) {
+				return;
+			}
+
+			auto targetBasedAbility = dynamic_cast<ILocationTargetAbility*>(ability.Get());
+			if (targetBasedAbility == nullptr) {
+				return;
+			}
+
+			targetBasedAbility->ExecuteIndirect(this);
+			targetBasedAbility->SetTarget(HitResult.Location);
 		}
 	}
 }
