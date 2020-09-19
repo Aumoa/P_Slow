@@ -2,17 +2,22 @@
 
 #include "Ability/AbilityBase.h"
 
-UAbilityBase::UAbilityBase()
+FAbilityBase::FAbilityBase()
 {
 
 }
 
-void UAbilityBase::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
+FAbilityBase::~FAbilityBase()
 {
 
 }
 
-void UAbilityBase::CancelIndirect()
+void FAbilityBase::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
+{
+
+}
+
+void FAbilityBase::CancelIndirect()
 {
 
 }
