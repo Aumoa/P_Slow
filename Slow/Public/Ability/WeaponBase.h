@@ -13,5 +13,8 @@ class SLOW_API UWeaponBase : public UObject
 	GENERATED_BODY()
 
 public:
+	virtual void BeginWeapon();
+	virtual void EndWeapon();
+	virtual bool SwapConditionInternal();
 	//가상함수 구현
 };

@@ -41,4 +41,5 @@ public:
 
 private:
 	static UWeaponManager* GetSingletonInstance();
+	bool SwapCondition(UWeaponBase* Weapon);
 };

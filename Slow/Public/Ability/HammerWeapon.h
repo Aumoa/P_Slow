@@ -13,4 +13,10 @@ class SLOW_API UHammerWeapon : public UWeaponBase
 	GENERATED_BODY()
 
 public:
+	void BeginWeapon() override;
+
+	void EndWeapon() override;
+
+	bool SwapConditionInternal() override;
+
 };

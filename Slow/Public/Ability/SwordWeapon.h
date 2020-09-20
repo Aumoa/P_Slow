@@ -13,4 +13,9 @@ class SLOW_API USwordWeapon : public UWeaponBase
 	GENERATED_BODY()
 
 public:
+	void BeginWeapon() override;
+
+	void EndWeapon() override;
+
+	bool SwapConditionInternal() override;
 };

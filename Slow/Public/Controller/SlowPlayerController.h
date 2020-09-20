@@ -31,4 +31,5 @@ public:
 
 private:
 	void OnMouseActionPressed();
+	void OnWeaponSwapPressed();
 };

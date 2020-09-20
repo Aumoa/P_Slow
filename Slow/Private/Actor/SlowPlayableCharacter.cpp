@@ -11,6 +11,7 @@
 #include "Ability/AbilityBase.h"
 #include "Ability/MoveAbility.h"
 #include "Ability/ILocationTargetAbility.h"
+#include "Manager/WeaponManager.h"
 
 void ASlowPlayableCharacter::BeginPlay()
 {
@@ -41,6 +42,11 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	if (ActionName == IA_MouseAction)
 	{
 		OnMouseAction(bPressed);
+	}
+
+	if (ActionName == IA_WeaponSwap)
+	{
+		UWeaponManager::NextWeapon();
 	}
 }
 

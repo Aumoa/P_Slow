@@ -2,3 +2,19 @@
 
 
 #include "Ability/HammerWeapon.h"
+
+void UHammerWeapon::BeginWeapon()
+{
+
+}
+
+void UHammerWeapon::EndWeapon()
+{
+
+}
+
+bool UHammerWeapon::SwapConditionInternal()
+{
+
+	return true;
+}

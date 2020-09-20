@@ -26,8 +26,9 @@ void ASlowPlayerController::BeginPlay()
 void ASlowPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
+	
 	InputComponent->BindAction(IA_MouseAction, IE_Pressed, this, &ASlowPlayerController::OnMouseActionPressed);
+	InputComponent->BindAction(IA_WeaponSwap, IE_Pressed, this, &ASlowPlayerController::OnWeaponSwapPressed);
 }
 
 void ASlowPlayerController::OnPossess(APawn* Target)
@@ -48,5 +49,13 @@ void ASlowPlayerController::OnMouseActionPressed()
 {
 	if (Possessed != nullptr) {
 		Possessed->OnActionInput(IA_MouseAction, true);
+	}
+}
+
+void ASlowPlayerController::OnWeaponSwapPressed()
+{
+	if (Possessed != nullptr)
+	{
+		Possessed->OnActionInput(IA_WeaponSwap, true);
 	}
 }

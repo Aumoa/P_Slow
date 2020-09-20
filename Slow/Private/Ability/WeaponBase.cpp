@@ -3,3 +3,17 @@
 
 #include "Ability/WeaponBase.h"
 
+void UWeaponBase::BeginWeapon()
+{
+
+}
+
+void UWeaponBase::EndWeapon()
+{
+
+}
+
+bool UWeaponBase::SwapConditionInternal()
+{
+	return true;
+}
