@@ -78,10 +78,6 @@ void UMovementBehavior::RebuildPaths()
 		else {
 			// No move.
 		}
-
-		for (int32 i = 0; i < paths.Num(); ++i) {
-			DrawDebugSphere(GetWorld(), paths[i], 5.0f, 5, FColor::Red, false, 5.0f);
-		}
 	}
 
 	if (!bUseNavigationPath) {
@@ -104,7 +100,6 @@ bool UMovementBehavior::AddMove()
 		//
 		// Check that distance is smaller than critical value.
 		if (currentDir.SizeSquared() < ScaledCapsuleRadius * ScaledCapsuleRadius) {
-			UE_LOG(LogSlow, Log, TEXT("Front of movement path is removed with reason: Check that distance is smaller than critical value. Current path count: %d"), MovementPaths.Num());
 			MovementPaths.RemoveAt(0);
 			return AddMove();
 		}
@@ -116,7 +111,6 @@ bool UMovementBehavior::AddMove()
 			float cosAngleFromPrev = currentDir.CosineAngle2D(LastDirection);
 
 			if (cosAngleFromPrev < -0.95f) {
-				UE_LOG(LogSlow, Log, TEXT("Front of movement path is removed with reason: Check that current location is exceed the goal of current path. Current path count: %d"), MovementPaths.Num());
 				MovementPaths.RemoveAt(0);
 				return AddMove();
 			}
