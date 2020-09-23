@@ -170,15 +170,19 @@ public:
 	template<class O>
 	TVariant(const O& TCopy)
 	{
-		new(Bytes) typename std::remove_reference<O>::type(TCopy);
-		Index = Variant_Impl::GetIndexImpl<O, T...>(0);
+		using Other = std::remove_reference_t<O>;
+
+		new(Bytes) Other(TCopy);
+		Index = Variant_Impl::GetIndexImpl<Other, T...>(0);
 	}
 
 	template<class O>
 	TVariant(O&& TMove)
 	{
-		new(Bytes) typename std::remove_reference<O>::type(TMove);
-		Index = Variant_Impl::GetIndexImpl<O, T...>(0);
+		using Other = std::remove_reference_t<O>;
+
+		new(Bytes) Other(TMove);
+		Index = Variant_Impl::GetIndexImpl<Other, T...>(0);
 	}
 
 	~TVariant()
@@ -220,13 +224,15 @@ public:
 	template<class O>
 	O& Get()
 	{
+		using Other = std::remove_reference_t<O>;
+
 #if WITH_EDITOR
 		size_t index = Variant_Impl::GetIndexImpl<O, T...>(0);
 		if (index != Index) {
 			UE_LOG(LogSlow, Error, TEXT("TVariant<T...>::Get(): Desired template parameter is not equals to value type."));
 		}
 #endif
-		return *(O*)Bytes;
+		return *(Other*)Bytes;
 	}
 
 	TVariant& operator=(const TVariant& InCopy)
@@ -276,6 +282,8 @@ public:
 	template<class O>
 	TVariant& operator=(const O& TCopy)
 	{
+		using Other = std::remove_reference_t<O>;
+
 		size_t targetIndex = Variant_Impl::GetIndexImpl<O>(0);
 
 		if (targetIndex == Index) {
@@ -286,7 +294,7 @@ public:
 				Variant_Impl::Destruct<T...>(Index, Bytes);
 			}
 
-			new(Bytes) typename std::remove_reference<O>::type(TCopy);
+			new(Bytes) Other(TCopy);
 			Index = targetIndex;
 		}
 
