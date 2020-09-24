@@ -19,7 +19,7 @@ class SLOW_API USpawnManager : public UManagerBase
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "SpawnManager")
-	static ASlowPlayableCharacter* SpawnPlayerPawn(FTransform Transform, bool bCorrectionZ = true);
+	static ASlowPlayableCharacter* SpawnPlayerPawn(FTransform Transform);
 
 private:
 	static USpawnManager* GetSingletonInstance();

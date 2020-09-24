@@ -11,34 +11,26 @@
 #include "Datatable/ActorReference.h"
 #include "GameFramework/Actor.h"
 #include "Components/CapsuleComponent.h"
+#include "Statics/SlowNavigationSystem.h"
 
-ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform, bool bCorrectionZ)
+ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform)
 {
-	auto Instance = GetSingletonInstance();
-	auto World = Instance->GetWorld();
+	auto instance = GetSingletonInstance();
+	auto world = instance->GetWorld();
 
-	if (World == nullptr) {
+	if (world == nullptr) {
 		UE_LOG(LogSlow, Error, TEXT("USpawnManager::SpawnPlayerPawn(): GameInstance haven't world context."));
 		return nullptr;
 	}
 
 	TSubclassOf<AActor> _class = UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter"));
-	if (bCorrectionZ) {
-		AActor* actor = _class->GetDefaultObject<AActor>();
-		UCapsuleComponent* capsuleComponent = Cast<UCapsuleComponent>(actor->GetRootComponent());
+	FVector amendedLocation = Transform.GetLocation();
 
-		if (capsuleComponent == nullptr) {
-			UE_LOG(LogSlow, Error, TEXT("USpawnManager::SpawnPlayerPawn(): bCorrectionZ is true but actor is not character(or root is not capsule component.)."));
-		}
-		else {
-			float halfHeight = capsuleComponent->GetScaledCapsuleHalfHeight();
-			FVector location = Transform.GetLocation();
-			location.Z += halfHeight;
-			Transform.SetLocation(location);
-		}
+	if (FSlowNavigationSystem::FindActorStandableLocation(world, Cast<AActor>(_class->GetDefaultObject()), Transform.GetLocation(), &amendedLocation)) {
+		Transform.SetLocation(amendedLocation);
 	}
 
-	return World->SpawnActor<ASlowPlayableCharacter>(UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter")), Transform);
+	return world->SpawnActor<ASlowPlayableCharacter>(UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter")), Transform);
 }
 
 USpawnManager* USpawnManager::GetSingletonInstance()
