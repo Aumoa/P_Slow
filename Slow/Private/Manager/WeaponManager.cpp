@@ -15,6 +15,7 @@ void UWeaponManager::Initialize(USlowGameInstance* GInstance)
 	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->SwordWeapon));
 	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->HammerWeapon));
 	CurrentWeapon = WeaponArray[0];
+	SwapAnimState = false;
 	
 }
 
@@ -24,8 +25,12 @@ void UWeaponManager::NextWeapon()
 
 	if (Instance->SwapCondition(Instance->CurrentWeapon))
 	{
+		Instance->CurrentWeapon->EndWeapon();
+
 		Instance->CurrentWeapon = Instance->WeaponArray[(Instance->WeaponArray.Find(Instance->CurrentWeapon) + 1)
 														%Instance->WeaponArray.Num()];
+
+		Instance->CurrentWeapon->BeginWeapon();
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Swap Weapon : %d"), Instance->WeaponArray.Find(Instance->CurrentWeapon)));
 	}
@@ -57,4 +62,34 @@ bool UWeaponManager::SwapCondition(UWeaponBase *Weapon)
 	{
 		return false;
 	}		
+}
+
+int UWeaponManager::GetWeaponNum()
+{
+	auto Instance = GetSingletonInstance();
+
+	return Instance->CurrentWeapon == nullptr ? -1 : Instance->WeaponArray.Find(Instance->CurrentWeapon);
+}
+
+void UWeaponManager::SetSwapAnimState(const bool Animstate)
+{
+	auto Instance = GetSingletonInstance();
+	
+	Instance->SwapAnimState = Animstate;
+}
+
+bool UWeaponManager::GetSwapAnimState()
+{
+	auto Instance = GetSingletonInstance();
+
+	if (Instance->SwapAnimState)
+	{
+		Instance->SetSwapAnimState(false);
+
+		return true;
+	}
+
+	else
+		return false;
+	
 }

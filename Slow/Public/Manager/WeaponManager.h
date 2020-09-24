@@ -22,6 +22,9 @@ private:
 
 	UPROPERTY()
 	TArray<UWeaponBase*> WeaponArray;
+
+	UPROPERTY()
+	bool SwapAnimState;
 	
 
 public:
@@ -36,10 +39,15 @@ public:
 	// 교체 쿨타임 4초														//
 	//////////////////////////////////////////////////////////////////////////
 
-	static void ThrowingWeapon(); 
+	static void ThrowingWeapon();
+
+	static int GetWeaponNum();
+	static void SetSwapAnimState(const bool Animstate);
+	static bool GetSwapAnimState();
 
 
 private:
 	static UWeaponManager* GetSingletonInstance();
 	bool SwapCondition(UWeaponBase* Weapon);
+	
 };

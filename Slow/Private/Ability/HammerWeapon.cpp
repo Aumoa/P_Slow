@@ -2,10 +2,11 @@
 
 
 #include "Ability/HammerWeapon.h"
+#include "Manager/WeaponManager.h"
 
 void UHammerWeapon::BeginWeapon()
 {
-
+	UWeaponManager::SetSwapAnimState(true);
 }
 
 void UHammerWeapon::EndWeapon()

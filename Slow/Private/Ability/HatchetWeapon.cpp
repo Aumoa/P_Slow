@@ -2,10 +2,11 @@
 
 
 #include "Ability/HatchetWeapon.h"
+#include "Manager/WeaponManager.h"
 
 void UHatchetWeapon::BeginWeapon()
 {
-
+	UWeaponManager::SetSwapAnimState(true);
 }
 
 void UHatchetWeapon::EndWeapon()

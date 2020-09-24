@@ -3,6 +3,7 @@
 #include "AnimInstance/SlowAnimInstance.h"
 
 #include "Actor/SlowPlayableCharacter.h"
+#include "Manager/WeaponManager.h"
 
 USlowAnimInstance::USlowAnimInstance()
 {
@@ -37,6 +38,16 @@ int USlowAnimInstance::GetInt(FName VarName) const
 bool USlowAnimInstance::GetBool(FName VarName) const
 {
 	return GetValueInternal<bool>(VarName);
+}
+
+int USlowAnimInstance::GetCurrentWeaponNum() const
+{
+	return UWeaponManager::GetWeaponNum();
+}
+
+bool USlowAnimInstance::GetSwapAnimState() const
+{
+	return UWeaponManager::GetSwapAnimState();
 }
 
 template<class T>

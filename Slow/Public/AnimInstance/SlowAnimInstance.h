@@ -47,6 +47,12 @@ public:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetBool(FName VarName) const;
 
+	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+	int GetCurrentWeaponNum() const;
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+	bool GetSwapAnimState() const;
+
 private:
 	template<class T>
 	void SetValueInternal(FName VarName, T Value);
