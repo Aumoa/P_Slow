@@ -84,9 +84,11 @@ void UMovementBehavior::RebuildPaths()
 		MovementPaths.Emplace(Goal);
 	}
 
-	FVector firstPathEnd = MovementPaths[0];
-	LastDirection = firstPathEnd - startLocation;
-	LastDirection.Normalize();
+	if (MovementPaths.Num() > 0) {
+		FVector firstPathEnd = MovementPaths[0];
+		LastDirection = firstPathEnd - startLocation;
+		LastDirection.Normalize();
+	}
 }
 
 bool UMovementBehavior::AddMove()
