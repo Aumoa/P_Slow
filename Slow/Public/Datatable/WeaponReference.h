@@ -21,6 +21,6 @@ private:
 public:
 	UWeaponReference();
 
-	FWeaponReferenceTableRow* GetReferenceTableRow(const FName& InReferenceKey);
+	static FWeaponReferenceTableRow* GetReferenceTableRow(const FName& InReferenceKey);
 
 };

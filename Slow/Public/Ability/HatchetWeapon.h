@@ -7,10 +7,15 @@
 
 #include "HatchetWeapon.generated.h"
 
+struct FWeaponReferenceTableRow;
+
 UCLASS()
 class SLOW_API UHatchetWeapon : public UWeaponBase
 {
 	GENERATED_BODY()
+
+private:
+	FWeaponReferenceTableRow *WeaponReferenceTable;
 
 public:
 	void BeginWeapon() override;

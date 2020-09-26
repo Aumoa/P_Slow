@@ -7,10 +7,15 @@
 
 #include "HammerWeapon.generated.h"
 
+struct FWeaponReferenceTableRow;
+
 UCLASS()
 class SLOW_API UHammerWeapon : public UWeaponBase
 {
 	GENERATED_BODY()
+
+private:
+	FWeaponReferenceTableRow *WeaponReferenceTable;
 
 public:
 	void BeginWeapon() override;
