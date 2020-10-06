@@ -20,6 +20,7 @@ void ASlowPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	USceneManager::BeginLevel(this);
 	UInputManager::SetPlayerController(this);
 }
 
