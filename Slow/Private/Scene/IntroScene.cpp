@@ -15,7 +15,7 @@ void UIntroScene::BeginPlay(UObject* Args)
 	UGameplayStatics::OpenLevel(this, TEXT("Intro"));
 }
 
-void UIntroScene::BeginLevel(ASlowControllerBase* InPlayerController)
+void UIntroScene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 

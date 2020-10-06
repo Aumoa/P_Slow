@@ -6,9 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Manager/SpawnManager.h"
 #include "Actor/SlowPlayableCharacter.h"
-#include "Controller/SlowControllerBase.h"
 #include "GameFramework/GameModeBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Controller/SlowPlayerController.h"
 
 void UGameplayLobbyScene::BeginPlay(UObject* Args)
 {
@@ -22,7 +22,7 @@ void UGameplayLobbyScene::BeginPlay(UObject* Args)
 	UGameplayStatics::LoadStreamLevel(gameInstance, TEXT("Loading"), true, true, latentInfo);
 }
 
-void UGameplayLobbyScene::BeginLevel(ASlowControllerBase* InPlayerController)
+void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 

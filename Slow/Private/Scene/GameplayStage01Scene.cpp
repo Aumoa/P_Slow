@@ -7,7 +7,7 @@ void UGameplayStage01Scene::BeginPlay(UObject* Args)
 	Super::BeginPlay(Args);
 }
 
-void UGameplayStage01Scene::BeginLevel(ASlowControllerBase* InPlayerController)
+void UGameplayStage01Scene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 }

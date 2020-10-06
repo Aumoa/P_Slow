@@ -16,7 +16,7 @@ class UIntroScene;
 class UGameplayScene;
 class ULevel;
 class UWorld;
-class ASlowControllerBase;
+class ASlowPlayerController;
 
 UCLASS()
 class SLOW_API USceneManager : public UManagerBase
@@ -34,7 +34,7 @@ private:
 public:
 	void Initialize(USlowGameInstance* GInstance) override;
 
-	static void BeginLevel(ASlowControllerBase* InPlayerController);
+	static void BeginLevel(ASlowPlayerController* InPlayerController);
 
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
 	static void LoadScene(const FString& SceneName, UObject* Args = nullptr);

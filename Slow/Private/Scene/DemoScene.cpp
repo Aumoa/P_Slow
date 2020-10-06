@@ -19,7 +19,7 @@ void UDemoScene::BeginPlay(UObject* Args)
 	OpenNextScene();
 }
 
-void UDemoScene::BeginLevel(ASlowControllerBase* InPlayerController)
+void UDemoScene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 

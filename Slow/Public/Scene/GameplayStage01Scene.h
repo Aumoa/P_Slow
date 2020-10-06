@@ -16,6 +16,6 @@ private:
 
 public:
 	void BeginPlay(UObject* Args = nullptr) override;
-	void BeginLevel(ASlowControllerBase* InPlayerController) override;
+	void BeginLevel(ASlowPlayerController* InPlayerController) override;
 	void EndPlay() override;
 };

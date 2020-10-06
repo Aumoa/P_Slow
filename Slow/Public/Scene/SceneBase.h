@@ -9,7 +9,7 @@
 
 class ULevel;
 class UWorld;
-class ASlowControllerBase;
+class ASlowPlayerController;
 
 UCLASS(Blueprintable)
 class SLOW_API USceneBase : public UObject
@@ -18,7 +18,7 @@ class SLOW_API USceneBase : public UObject
 
 public:
 	virtual void BeginPlay(UObject* Args = nullptr);
-	virtual void BeginLevel(ASlowControllerBase* InPlayerController);
+	virtual void BeginLevel(ASlowPlayerController* InPlayerController);
 	virtual void EndPlay();
 
 	virtual void OnActionInput(const FName& ActionName, bool bPressed);

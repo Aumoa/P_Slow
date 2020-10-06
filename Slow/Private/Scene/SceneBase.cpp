@@ -9,7 +9,7 @@ void USceneBase::BeginPlay(UObject* Args)
 
 }
 
-void USceneBase::BeginLevel(ASlowControllerBase* InPlayerController)
+void USceneBase::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 
 }

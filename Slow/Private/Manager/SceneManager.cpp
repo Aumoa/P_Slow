@@ -19,7 +19,7 @@ void USceneManager::Initialize(USlowGameInstance* GInstance)
 	IntroScene = NewObject<USceneBase>(this, Config->IntroScene);
 }
 
-void USceneManager::BeginLevel(ASlowControllerBase* InPlayerController)
+void USceneManager::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	auto Instance = GetSingletonInstance();
 

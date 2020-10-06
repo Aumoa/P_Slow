@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SlowControllerBase.h"
+#include "GameFramework/PlayerController.h"
 
 #include "SlowPlayerController.generated.h"
 
@@ -12,7 +12,7 @@ class UInputComponent;
 class ASlowPlayableCharacter;
 
 UCLASS()
-class SLOW_API ASlowPlayerController : public ASlowControllerBase
+class SLOW_API ASlowPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
