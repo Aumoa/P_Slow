@@ -3,6 +3,16 @@
 
 #include "Ability/WeaponBase.h"
 
+TArray<TSharedPtr<FRequirementBase>> UWeaponBase::GetAllRequirements() const
+{
+	return { };
+}
+
+TSubclassOf<UBehavior> UWeaponBase::GetEffect() const
+{
+	return nullptr;
+}
+
 void UWeaponBase::BeginWeapon()
 {
 
