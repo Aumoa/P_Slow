@@ -13,14 +13,17 @@ FMoveAbility::FMoveAbility()
 
 }
 
-void FMoveAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
+bool FMoveAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 {
 	CastPlayer = InCastPlayer;
 	MovementComponent = Cast<UCharacterMovementComponent>(InCastPlayer->GetMovementComponent());
 
 	if (MovementComponent == nullptr) {
 		UE_LOG(LogSlow, Error, TEXT("FMoveAbility::ExecuteIndirect(): InCastPlayer must have UCharacterMovementComponent but there is no."));
+		return false;
 	}
+
+	return true;
 }
 
 void FMoveAbility::SetTarget(const FVector& InLocation)

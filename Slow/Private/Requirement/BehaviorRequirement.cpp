@@ -11,6 +11,24 @@ FBehaviorRequirement::FBehaviorRequirement()
 	bCheckIsActivated = true;
 }
 
+bool FBehaviorRequirement::SelfCheck() const
+{
+	return true;
+}
+
+bool FBehaviorRequirement::ActorTargetCheck(AActor* InActor) const
+{
+	auto InCharacter = Cast<ASlowCharacter>(InActor);
+	if (InCharacter == nullptr)
+	{
+		return GetResult(false);
+	}
+	else
+	{
+		return Query(InCharacter);
+	}
+}
+
 bool FBehaviorRequirement::Query(ASlowCharacter* InCharacter) const
 {
 	if (InCharacter == nullptr) {

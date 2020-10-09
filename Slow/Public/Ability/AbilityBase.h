@@ -12,6 +12,6 @@ public:
 	FAbilityBase();
 	virtual ~FAbilityBase();
 
-	virtual void ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer);
+	virtual bool ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer);
 	virtual void CancelIndirect();
 };

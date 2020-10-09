@@ -7,6 +7,11 @@ FRequirementBase::FRequirementBase()
 	bInvertCheck = false;
 }
 
+bool FRequirementBase::SelfCheck() const
+{
+	return GetResult(true);
+}
+
 void FRequirementBase::SetInvertCheck(bool bFlag)
 {
 	bInvertCheck = bFlag;

@@ -1,12 +1,12 @@
 // Copyright 2020 Team slow. All right reserved.
 
 #include "CoreMinimal.h"
-#include "RequirementBase.h"
+#include "ActorTargetRequirement.h"
 
 class ASlowCharacter;
 class UBehavior;
 
-class FBehaviorRequirement : public FRequirementBase
+class FBehaviorRequirement : public FActorTargetRequirement
 {
 private:
 	uint8 bCheckIsActivated : 1;
@@ -15,6 +15,9 @@ private:
 
 public:
 	FBehaviorRequirement();
+
+	bool SelfCheck() const override;
+	bool ActorTargetCheck(AActor* InActor) const override;
 
 	virtual bool Query(ASlowCharacter* InCharacter) const;
 

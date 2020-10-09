@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "AbilityBase.h"
 
-class AActor;
+class ASlowCharacter;
 
 class IActorTargetAbility : virtual public FAbilityBase
 {
 public:
 	IActorTargetAbility();
 
-	virtual void SetTarget(AActor* InActor) = 0;
+	virtual void SetTarget(ASlowCharacter* InActor) = 0;
 };

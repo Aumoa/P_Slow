@@ -29,7 +29,7 @@ private:
 public:
 	FMoveAbility();
 
-	void ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer) override;
+	bool ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer) override;
 	void SetTarget(const FVector& InLocation) override;
 
 private:

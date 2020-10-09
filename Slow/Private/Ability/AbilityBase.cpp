@@ -12,9 +12,9 @@ FAbilityBase::~FAbilityBase()
 
 }
 
-void FAbilityBase::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
+bool FAbilityBase::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 {
-
+	return true;
 }
 
 void FAbilityBase::CancelIndirect()
