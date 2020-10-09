@@ -7,6 +7,7 @@
 
 #include "Attributes/BaseAttributeConfig.h"
 #include "Attributes/AttrInstance.h"
+#include "Attributes/Equipments.h"
 
 #include "SlowStatBasedCharacter.generated.h"
 
@@ -20,8 +21,6 @@ class SLOW_API ASlowStatBasedCharacter : public ASlowCharacter
 private:
 	FAttrInstance AttrInstance;
 
-	uint8 bBeginPlay : 1;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FBaseAttributeConfig InitialAttribute;
 
@@ -32,6 +31,8 @@ public:
 	ASlowStatBasedCharacter();
 
 	void Tick(float DeltaTime) override;
+
+	virtual FEquipments GetCurrentEquipments() const;
 
 	void SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute);
 	FBaseAttributeConfig GetInitialAttribute() const;

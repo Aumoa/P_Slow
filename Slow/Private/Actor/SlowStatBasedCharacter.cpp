@@ -3,17 +3,16 @@
 #include "Actor/SlowStatBasedCharacter.h"
 
 #include "LogDefine.h"
+#include "Components/Behavior.h"
 
 void ASlowStatBasedCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	bBeginPlay = true;
 }
 
 ASlowStatBasedCharacter::ASlowStatBasedCharacter()
 {
-	bBeginPlay = false;
+
 }
 
 void ASlowStatBasedCharacter::Tick(float DeltaTime)
@@ -21,9 +20,14 @@ void ASlowStatBasedCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+FEquipments ASlowStatBasedCharacter::GetCurrentEquipments() const
+{
+	return FEquipments();
+}
+
 void ASlowStatBasedCharacter::SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute)
 {
-	if (!bBeginPlay) {
+	if (!HasActorBegunPlay()) {
 		InitialAttribute = InInitialAttribute;
 	}
 	else {
