@@ -4,6 +4,9 @@
 
 #include "Actor/SlowPlayableCharacter.h"
 #include "Manager/WeaponManager.h"
+#include "SlowGameInstance.h"
+
+bool USlowAnimInstance::ManagerAccessibleState = false;
 
 USlowAnimInstance::USlowAnimInstance()
 {
@@ -40,16 +43,6 @@ bool USlowAnimInstance::GetBool(FName VarName) const
 	return GetValueInternal<bool>(VarName);
 }
 
-int USlowAnimInstance::GetCurrentWeaponNum() const
-{
-	return UWeaponManager::GetWeaponNum();
-}
-
-bool USlowAnimInstance::GetSwapAnimState() const
-{
-	return UWeaponManager::GetSwapAnimState();
-}
-
 template<class T>
 void USlowAnimInstance::SetValueInternal(FName VarName, T Value)
 {
@@ -80,4 +73,28 @@ T USlowAnimInstance::GetValueInternal(FName VarName) const
 	else {
 		return T();
 	}
+}
+
+int USlowAnimInstance::GetCurrentWeaponNum() const
+{
+	if (USlowAnimInstance::ManagerAccessibleState)
+		if (UWeaponManager::GetInstance() != nullptr)
+			return UWeaponManager::GetWeaponNum();
+
+	return -1;
+}
+
+bool USlowAnimInstance::GetSwapAnimState() const
+{
+
+	if (USlowAnimInstance::ManagerAccessibleState)
+		if (UWeaponManager::GetInstance() != nullptr)
+			return UWeaponManager::GetSwapAnimState();
+
+	return false;
+}
+
+void USlowAnimInstance::SetManagerAccessibleState(const bool AccessState)
+{
+	USlowAnimInstance::ManagerAccessibleState = AccessState;
 }

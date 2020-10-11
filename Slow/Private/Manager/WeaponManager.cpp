@@ -19,6 +19,16 @@ void UWeaponManager::Initialize(USlowGameInstance* GInstance)
 	
 }
 
+UWeaponManager* UWeaponManager::GetInstance()
+{
+	auto Instance = GetSingletonInstance();
+
+	if(Instance)
+		return Instance;
+
+	return nullptr;
+}
+
 void UWeaponManager::NextWeapon()
 {
 	auto Instance = GetSingletonInstance();
@@ -31,8 +41,6 @@ void UWeaponManager::NextWeapon()
 														%Instance->WeaponArray.Num()];
 
 		Instance->CurrentWeapon->BeginWeapon();
-
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Swap Weapon : %d"), Instance->WeaponArray.Find(Instance->CurrentWeapon)));
 	}
 	
 }

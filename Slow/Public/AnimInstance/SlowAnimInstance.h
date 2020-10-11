@@ -53,10 +53,15 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	bool GetSwapAnimState() const;
 
+	static void SetManagerAccessibleState(const bool Accessstate);
+	static bool ManagerAccessibleState;
+	
+
 private:
 	template<class T>
 	void SetValueInternal(FName VarName, T Value);
 
 	template<class T>
 	T GetValueInternal(FName VarName) const;
+	
 };
