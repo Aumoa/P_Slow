@@ -23,8 +23,9 @@ private:
 private:
 	TMap<FName, FMyVariant> VariantMap;
 
-	TWeakObjectPtr<ASlowPlayableCharacter> SlowPC;
+	mutable TWeakObjectPtr<ASlowPlayableCharacter> SlowPC;
 	TWeakObjectPtr<UCharacterMovementComponent> MovementComponent;
+	static bool ManagerAccessibleState;
 
 public:
 	USlowAnimInstance();
@@ -54,8 +55,9 @@ public:
 	bool GetSwapAnimState() const;
 
 	static void SetManagerAccessibleState(const bool Accessstate);
-	static bool ManagerAccessibleState;
-	
+	static bool GetManagerAccessibleState();
+
+	bool TrySetSlowPC(ASlowPlayableCharacter *pc) const;
 
 private:
 	template<class T>

@@ -8,7 +8,6 @@
 
 void UHammerWeapon::BeginWeapon()
 {
-	UWeaponManager::SetSwapAnimState(true);
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hammer"));
 }
 

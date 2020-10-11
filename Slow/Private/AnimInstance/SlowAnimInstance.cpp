@@ -5,12 +5,12 @@
 #include "Actor/SlowPlayableCharacter.h"
 #include "Manager/WeaponManager.h"
 #include "SlowGameInstance.h"
+#include "AnimInstance/PCAnimInstance.h"
 
 bool USlowAnimInstance::ManagerAccessibleState = false;
 
 USlowAnimInstance::USlowAnimInstance()
 {
-
 }
 
 void USlowAnimInstance::SetFloat(FName VarName, float Value)
@@ -77,19 +77,23 @@ T USlowAnimInstance::GetValueInternal(FName VarName) const
 
 int USlowAnimInstance::GetCurrentWeaponNum() const
 {
-	if (USlowAnimInstance::ManagerAccessibleState)
-		if (UWeaponManager::GetInstance() != nullptr)
-			return UWeaponManager::GetWeaponNum();
 
-	return -1;
+	if (USlowAnimInstance::ManagerAccessibleState && SlowPC != nullptr)
+	{
+		return SlowPC->GetCurrentWeaponNum();
+	}
+
+
+	return -2;
 }
 
 bool USlowAnimInstance::GetSwapAnimState() const
 {
 
-	if (USlowAnimInstance::ManagerAccessibleState)
-		if (UWeaponManager::GetInstance() != nullptr)
-			return UWeaponManager::GetSwapAnimState();
+	if (USlowAnimInstance::ManagerAccessibleState && SlowPC != nullptr)
+	{
+		return SlowPC->GetSwapAinmState();
+	}
 
 	return false;
 }
@@ -97,4 +101,19 @@ bool USlowAnimInstance::GetSwapAnimState() const
 void USlowAnimInstance::SetManagerAccessibleState(const bool AccessState)
 {
 	USlowAnimInstance::ManagerAccessibleState = AccessState;
+}
+
+bool USlowAnimInstance::GetManagerAccessibleState()
+{
+	return ManagerAccessibleState;
+}
+
+bool USlowAnimInstance::TrySetSlowPC(ASlowPlayableCharacter *pc) const
+{
+	if (pc != nullptr)
+	{
+		SlowPC = pc;
+	}
+
+	return SlowPC != nullptr ? true : false;
 }

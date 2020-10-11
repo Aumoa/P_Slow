@@ -8,7 +8,6 @@
 
 void USwordWeapon::BeginWeapon()
 {
-	UWeaponManager::SetSwapAnimState(true);
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Sword"));
 	
 }

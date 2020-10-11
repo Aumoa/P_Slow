@@ -8,7 +8,6 @@
 
 void UHatchetWeapon::BeginWeapon()
 {
-	UWeaponManager::SetSwapAnimState(true);
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hatchet"));
 }
 

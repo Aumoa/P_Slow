@@ -19,7 +19,12 @@ void ASlowPlayableCharacter::BeginPlay()
 
 	MoveAbility = MakeShared<FMoveAbility>();
 
+	WeaponManager = NewObject<UWeaponManager>(this);
+	WeaponManager->Init();
+
 	MouseActionSlot.SetAbility(MoveAbility.Get());
+
+	
 }
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
@@ -46,8 +51,28 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	if (ActionName == IA_WeaponSwap)
 	{
-		UWeaponManager::NextWeapon();
+		WeaponManager->NextWeapon();
 	}
+}
+
+int ASlowPlayableCharacter::GetCurrentWeaponNum() const
+{
+	if (WeaponManager != nullptr)
+	{
+		return WeaponManager->GetWeaponNum();
+	}
+
+	return -1;
+}
+
+bool ASlowPlayableCharacter::GetSwapAinmState() const
+{
+	if (WeaponManager != nullptr)
+	{
+		return WeaponManager->GetSwapAnimState();
+	}
+	
+	return false;
 }
 
 void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
