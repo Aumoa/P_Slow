@@ -30,6 +30,7 @@ private:
 public:
 	void Initialize(USlowGameInstance* GInstance) override;
 
+	static UWeaponManager* GetInstance();
 	static void NextWeapon(); 
 	//////////////////////////////////////////////////////////////////////////
 	// <Client Request>														//

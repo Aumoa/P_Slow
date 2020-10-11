@@ -10,7 +10,6 @@ void UHatchetWeapon::BeginWeapon()
 {
 	UWeaponManager::SetSwapAnimState(true);
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hatchet"));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Hatchet Damage : %d"), WeaponReferenceTable->Damage));
 }
 
 void UHatchetWeapon::EndWeapon()

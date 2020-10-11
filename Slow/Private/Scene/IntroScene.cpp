@@ -7,6 +7,7 @@
 #include "Manager/WidgetManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/Widget/IntroWidget.h"
+#include "AnimInstance/SlowAnimInstance.h"
 
 void UIntroScene::BeginPlay(UObject* Args)
 {
@@ -18,6 +19,8 @@ void UIntroScene::BeginPlay(UObject* Args)
 void UIntroScene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
+
+	USlowAnimInstance::SetManagerAccessibleState(true);
 
 	MyMainWidget = UWidgetManager::CreateSlowWidget<UIntroWidget>(TEXT("Widget.IntroScene.IntroMain"));
 }
