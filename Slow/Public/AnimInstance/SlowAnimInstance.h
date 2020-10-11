@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 
-#include "Misc/Variant.h"
+#include "Misc/SlowVariant.h"
 
 #include "SlowAnimInstance.generated.h"
 
@@ -18,7 +18,7 @@ class SLOW_API USlowAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 private:
-	using FMyVariant = TVariant<int, float, bool>;
+	using FMyVariant = TSlowVariant<int, float, bool>;
 
 private:
 	TMap<FName, FMyVariant> VariantMap;
