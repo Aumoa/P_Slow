@@ -12,6 +12,7 @@
 #include "SlowStatBasedCharacter.generated.h"
 
 struct FAttrInstance;
+class FStatModifyLinearEffect;
 
 UCLASS()
 class SLOW_API ASlowStatBasedCharacter : public ASlowCharacter
@@ -34,6 +35,16 @@ public:
 
 	virtual FEquipments GetCurrentEquipments() const;
 
-	void SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute);
 	FBaseAttributeConfig GetInitialAttribute() const;
+
+	virtual void ApplyEffect(const FStatModifyLinearEffect& InEffect);
+	FAttrInstance GetCurrentAttributes() const;
+
+protected:
+	void SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute);
+
+	virtual void OnActorKill();
+
+private:
+	void StatValidCheck();
 };
