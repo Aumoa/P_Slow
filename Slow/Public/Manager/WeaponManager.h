@@ -20,11 +20,17 @@ class SLOW_API UWeaponManager : public UObject
 private:
 	UPROPERTY()
 	UWeaponBase *CurrentWeapon;
-
 	UPROPERTY()
 	TArray<UWeaponBase*> WeaponArray;
-
 	UPROPERTY()
+	UWeaponBase *HammerWeapon;
+	UPROPERTY()
+	UWeaponBase *SwordWeapon;
+	UPROPERTY()
+	UWeaponBase *HatchetWeapon;
+
+
+	int CurrentWeaponNum;
 	bool SwapAnimState;
 	
 
@@ -34,7 +40,6 @@ public:
 	UWeaponManager();
 	void Init();
 
-	//UWeaponManager* GetInstance();
 	void NextWeapon(); 
 	//////////////////////////////////////////////////////////////////////////
 	// <Client Request>														//
@@ -46,13 +51,12 @@ public:
 
 	void ThrowingWeapon();
 
-	int GetWeaponNum();
+	int GetWeaponNum() const;
 	void SetSwapAnimState(const bool Animstate);
 	bool GetSwapAnimState();
 
 
 private:
-	//static UWeaponManager* GetSingletonInstance();
 	bool SwapCondition(UWeaponBase* Weapon);
 	
 };

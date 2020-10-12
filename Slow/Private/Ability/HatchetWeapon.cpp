@@ -9,6 +9,7 @@
 void UHatchetWeapon::BeginWeapon()
 {
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hatchet"));
+	UE_LOG(LogTemp, Display, TEXT("Hatchet!"));
 }
 
 void UHatchetWeapon::EndWeapon()

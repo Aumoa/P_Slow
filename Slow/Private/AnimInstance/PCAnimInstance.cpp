@@ -17,12 +17,10 @@ ASlowPlayableCharacter* UPCAnimInstance::TryGetLastUpdatedPC() const
 			return nullptr;
 		}
 		LastUpdatedPC = pc;
-
-		TrySetSlowPC(pc);
 	}
 
 	
-
+	TrySetSlowPC(LastUpdatedPC.Get());
 	return LastUpdatedPC.Get();
 }
 

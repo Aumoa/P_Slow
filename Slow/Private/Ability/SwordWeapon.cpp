@@ -9,7 +9,7 @@
 void USwordWeapon::BeginWeapon()
 {
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Sword"));
-	
+	UE_LOG(LogTemp, Display, TEXT("Sword!"));
 }
 
 void USwordWeapon::EndWeapon()

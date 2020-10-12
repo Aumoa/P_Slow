@@ -5,6 +5,10 @@
 #include "SlowConfig.h"
 #include "SlowGameInstance.h"
 #include "Manager/ManagerBase.h"
+#include "Ability/WeaponBase.h"
+#include "Ability/HatchetWeapon.h"
+#include "Ability/HammerWeapon.h"
+#include "Ability/SwordWeapon.h"
 
 /*void UWeaponManager::Initialize(USlowGameInstance* GInstance)
 {
@@ -26,11 +30,17 @@ void UWeaponManager::Init()
 	USlowGameInstance* GInstance = USlowGameInstance::GetGameInstance();
 	auto Config = GInstance->GetConfig();
 
-	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->HatchetWeapon));
-	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->SwordWeapon));
-	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->HammerWeapon));
+	WeaponArray.Empty();
+
+	HammerWeapon = NewObject<UWeaponBase>(this, Config->HammerWeapon);
+	SwordWeapon = NewObject<UWeaponBase>(this, Config->SwordWeapon);
+	HatchetWeapon = NewObject<UWeaponBase>(this, Config->HatchetWeapon);
+
+	WeaponArray.Emplace(HammerWeapon);
+	WeaponArray.Emplace(SwordWeapon);
+	WeaponArray.Emplace(HatchetWeapon);
 	CurrentWeapon = WeaponArray[0];
-	
+	UE_LOG(LogTemp, Log, TEXT("Init In!"));
 }
 
 UWeaponManager::UWeaponManager()
@@ -38,28 +48,27 @@ UWeaponManager::UWeaponManager()
 	SwapAnimState = false;
 }
 
-/*UWeaponManager* UWeaponManager::GetInstance()
-{
-	auto Instance = GetSingletonInstance();
 
-	if(Instance)
-		return Instance;
-
-	return nullptr;
-}*/
 
 void UWeaponManager::NextWeapon()
 {
-	if (SwapCondition(CurrentWeapon))
+	if (CurrentWeapon != nullptr)
 	{
-		CurrentWeapon->EndWeapon();
+		if (WeaponArray.Find(CurrentWeapon) != INDEX_NONE)
+		{
+			if (SwapCondition(CurrentWeapon))
+			{
+				CurrentWeapon->EndWeapon();
 
-		CurrentWeapon = WeaponArray[(WeaponArray.Find(CurrentWeapon) + 1)
-														%WeaponArray.Num()];
-
-		CurrentWeapon->BeginWeapon();
-		SetSwapAnimState(true);
+				CurrentWeapon = WeaponArray[(WeaponArray.Find(CurrentWeapon)+1)%WeaponArray.Num()];
+				
+				CurrentWeapon->BeginWeapon();
+				SetSwapAnimState(true);
+			}
+			
+		}
 	}
+	
 	
 }
 
@@ -68,10 +77,6 @@ void UWeaponManager::ThrowingWeapon()
 
 }
 
-/*UWeaponManager* UWeaponManager::GetSingletonInstance()
-{
-	return Super::GetSingletonInstance<UWeaponManager>();
-}*/
 
 bool UWeaponManager::SwapCondition(UWeaponBase *Weapon)
 {
@@ -83,19 +88,22 @@ bool UWeaponManager::SwapCondition(UWeaponBase *Weapon)
 
 			return true;
 		}
-
-		else
-		{
-			return false;
-		}
 	}
 
 	return false;
+	return true;
 }
 
-int UWeaponManager::GetWeaponNum()
+int UWeaponManager::GetWeaponNum() const
 {
-	return CurrentWeapon == nullptr ? -1 : WeaponArray.Find(CurrentWeapon);
+	if (CurrentWeapon != nullptr)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Fix after Num :: %d"), WeaponArray.Find(CurrentWeapon));
+		//UE_LOG(LogTemp, Log, TEXT("Weapon[0]Name :: %s"), *WeaponArray[0]->GetName());
+		
+		return WeaponArray.Find(CurrentWeapon);
+	}
+	return -3;
 }
 
 void UWeaponManager::SetSwapAnimState(const bool Animstate)

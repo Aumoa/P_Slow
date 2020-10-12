@@ -112,7 +112,10 @@ bool USlowAnimInstance::TrySetSlowPC(ASlowPlayableCharacter *pc) const
 {
 	if (pc != nullptr)
 	{
-		SlowPC = pc;
+		if (SlowPC != pc)
+		{
+			SlowPC = pc;
+		}
 	}
 
 	return SlowPC != nullptr ? true : false;

@@ -24,6 +24,7 @@ private:
 
 	FAbilitySlot MouseActionSlot;
 
+	UPROPERTY()
 	UWeaponManager *WeaponManager;
 
 protected:
@@ -37,9 +38,12 @@ public:
 	void Tick(float DeltaTime) override;
 	void OnActionInput(const FName& ActionName, bool bPressed);
 
-	int GetCurrentWeaponNum() const;
-	bool GetSwapAinmState() const;
+	int GetCurrentWeaponNum();
+	bool GetSwapAinmState();
+
+	void NewWeaponManager();
 
 private:
 	void OnMouseAction(bool bPressed);
+	
 };

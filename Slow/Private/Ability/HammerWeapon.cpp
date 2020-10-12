@@ -9,6 +9,7 @@
 void UHammerWeapon::BeginWeapon()
 {
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hammer"));
+	UE_LOG(LogTemp, Display, TEXT("Hammer!"));
 }
 
 void UHammerWeapon::EndWeapon()
