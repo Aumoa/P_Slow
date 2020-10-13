@@ -9,8 +9,10 @@
 
 #include "SlowPlayableCharacter.generated.h"
 
+class UWeaponManager;
 class FAbilitySlot;
 class FMoveAbility;
+
 
 UCLASS()
 class SLOW_API ASlowPlayableCharacter : public ASlowStatBasedCharacter
@@ -21,6 +23,9 @@ private:
 	TSharedPtr<FMoveAbility> MoveAbility;
 
 	FAbilitySlot MouseActionSlot;
+
+	UPROPERTY()
+	UWeaponManager *WeaponManager;
 
 protected:
 	void BeginPlay() override;
@@ -33,6 +38,12 @@ public:
 	void Tick(float DeltaTime) override;
 	void OnActionInput(const FName& ActionName, bool bPressed);
 
+	int GetCurrentWeaponNum();
+	bool GetSwapAinmState();
+
+	void NewWeaponManager();
+
 private:
 	void OnMouseAction(bool bPressed);
+	
 };

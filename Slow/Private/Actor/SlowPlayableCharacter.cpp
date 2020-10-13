@@ -19,7 +19,11 @@ void ASlowPlayableCharacter::BeginPlay()
 
 	MoveAbility = MakeShared<FMoveAbility>();
 
+	NewWeaponManager();
+
 	MouseActionSlot.SetAbility(MoveAbility.Get());
+
+	
 }
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
@@ -46,8 +50,34 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	if (ActionName == IA_WeaponSwap)
 	{
-		UWeaponManager::NextWeapon();
+		if (WeaponManager != nullptr)
+		{
+			WeaponManager->NextWeapon();
+		}
+			
 	}
+}
+
+int ASlowPlayableCharacter::GetCurrentWeaponNum()
+{
+	if (WeaponManager != nullptr)
+	{
+		//UE_LOG(LogTemp,Log,TEXT("SlowPlayableCharacter->GetCurrentWeaponNum() In"));
+		return WeaponManager->GetWeaponNum();
+	}
+	//UE_LOG(LogTemp, Log, TEXT("SlowPlayableCharacter->GetCurrentWeaponNum() Lost"));
+
+	return -1;
+}
+
+bool ASlowPlayableCharacter::GetSwapAinmState()
+{
+	if (WeaponManager != nullptr)
+	{
+		return WeaponManager->GetSwapAnimState();
+	}
+
+	return false;
 }
 
 void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
@@ -74,4 +104,11 @@ void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
 			targetBasedAbility->SetTarget(HitResult.Location);
 		}
 	}
+}
+
+void ASlowPlayableCharacter::NewWeaponManager()
+{
+	WeaponManager = NewObject<UWeaponManager>(this);
+	WeaponManager->Init();
+	UE_LOG(LogTemp,Warning,TEXT("New WeaponManager()"));
 }

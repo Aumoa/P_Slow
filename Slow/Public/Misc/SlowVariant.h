@@ -142,7 +142,7 @@ namespace Variant_Impl
 }
 
 template<class... T>
-class TVariant
+class TSlowVariant
 {
 	static constexpr size_t InvalidIndex = -1;
 
@@ -150,25 +150,25 @@ class TVariant
 	size_t Index = InvalidIndex;
 
 public:
-	TVariant()
+	TSlowVariant()
 	{
 
 	}
 
-	TVariant(const TVariant& InCopy)
+	TSlowVariant(const TSlowVariant& InCopy)
 	{
 		Variant_Impl::CopyConstruct<T...>(InCopy.Index, Bytes, InCopy.Bytes);
 		Index = InCopy.Index;
 	}
 
-	TVariant(TVariant&& InMove)
+	TSlowVariant(TSlowVariant&& InMove)
 	{
 		Variant_Impl::MoveConstruct<T...>(InMove.Index, Bytes, InMove.Bytes);
 		Index = InMove.Index;
 	}
 
 	template<class O>
-	TVariant(const O& TCopy)
+	TSlowVariant(const O& TCopy)
 	{
 		using Other = std::remove_reference_t<O>;
 
@@ -177,7 +177,7 @@ public:
 	}
 
 	template<class O>
-	TVariant(O&& TMove)
+	TSlowVariant(O&& TMove)
 	{
 		using Other = std::remove_reference_t<O>;
 
@@ -185,7 +185,7 @@ public:
 		Index = Variant_Impl::GetIndexImpl<Other, T...>(0);
 	}
 
-	~TVariant()
+	~TSlowVariant()
 	{
 		if (Index != InvalidIndex) {
 			Variant_Impl::Destruct<T...>(Index, Bytes);
@@ -215,7 +215,7 @@ public:
 #if WITH_EDITOR
 		size_t index = Variant_Impl::GetIndexImpl<O, T...>(0);
 		if (index != Index) {
-			UE_LOG(LogSlow, Error, TEXT("TVariant<T...>::Get(): Desired template parameter is not equals to value type."));
+			UE_LOG(LogSlow, Error, TEXT("TSlowVariant<T...>::Get(): Desired template parameter is not equals to value type."));
 		}
 #endif
 		return *(const O*)Bytes;
@@ -229,13 +229,13 @@ public:
 #if WITH_EDITOR
 		size_t index = Variant_Impl::GetIndexImpl<O, T...>(0);
 		if (index != Index) {
-			UE_LOG(LogSlow, Error, TEXT("TVariant<T...>::Get(): Desired template parameter is not equals to value type."));
+			UE_LOG(LogSlow, Error, TEXT("TSlowVariant<T...>::Get(): Desired template parameter is not equals to value type."));
 		}
 #endif
 		return *(Other*)Bytes;
 	}
 
-	TVariant& operator=(const TVariant& InCopy)
+	TSlowVariant& operator=(const TSlowVariant& InCopy)
 	{
 		if (InCopy.IsValid()) {
 			if (Index == InCopy.Index) {
@@ -257,7 +257,7 @@ public:
 		return *this;
 	}
 
-	TVariant& operator=(TVariant&& InMove)
+	TSlowVariant& operator=(TSlowVariant&& InMove)
 	{
 		if (InMove.IsValid()) {
 			if (Index == InMove.Index) {
@@ -280,7 +280,7 @@ public:
 	}
 
 	template<class O>
-	TVariant& operator=(const O& TCopy)
+	TSlowVariant& operator=(const O& TCopy)
 	{
 		using Other = std::remove_reference_t<O>;
 
@@ -302,7 +302,7 @@ public:
 	}
 
 	template<class O>
-	TVariant& operator=(O&& TMove)
+	TSlowVariant& operator=(O&& TMove)
 	{
 		using Other = std::remove_reference_t<O>;
 

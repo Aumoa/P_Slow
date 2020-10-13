@@ -4,8 +4,13 @@
 #include "Manager/WeaponManager.h"
 #include "SlowConfig.h"
 #include "SlowGameInstance.h"
+#include "Manager/ManagerBase.h"
+#include "Ability/WeaponBase.h"
+#include "Ability/HatchetWeapon.h"
+#include "Ability/HammerWeapon.h"
+#include "Ability/SwordWeapon.h"
 
-void UWeaponManager::Initialize(USlowGameInstance* GInstance)
+/*void UWeaponManager::Initialize(USlowGameInstance* GInstance)
 {
 	Super::Initialize(GInstance);
 
@@ -17,82 +22,101 @@ void UWeaponManager::Initialize(USlowGameInstance* GInstance)
 	CurrentWeapon = WeaponArray[0];
 	SwapAnimState = false;
 	
-}
+}*/
 
-UWeaponManager* UWeaponManager::GetInstance()
+
+void UWeaponManager::Init()
 {
-	auto Instance = GetSingletonInstance();
+	USlowGameInstance* GInstance = USlowGameInstance::GetGameInstance();
+	auto Config = GInstance->GetConfig();
 
-	if(Instance)
-		return Instance;
+	WeaponArray.Empty();
 
-	return nullptr;
+	HammerWeapon = NewObject<UWeaponBase>(this, Config->HammerWeapon);
+	SwordWeapon = NewObject<UWeaponBase>(this, Config->SwordWeapon);
+	HatchetWeapon = NewObject<UWeaponBase>(this, Config->HatchetWeapon);
+
+	WeaponArray.Emplace(HammerWeapon);
+	WeaponArray.Emplace(SwordWeapon);
+	WeaponArray.Emplace(HatchetWeapon);
+	CurrentWeapon = WeaponArray[0];
+	UE_LOG(LogTemp, Log, TEXT("Init In!"));
 }
+
+UWeaponManager::UWeaponManager()
+{
+	SwapAnimState = false;
+}
+
+
 
 void UWeaponManager::NextWeapon()
 {
-	auto Instance = GetSingletonInstance();
-
-	if (Instance->SwapCondition(Instance->CurrentWeapon))
+	if (CurrentWeapon != nullptr)
 	{
-		Instance->CurrentWeapon->EndWeapon();
+		if (WeaponArray.Find(CurrentWeapon) != INDEX_NONE)
+		{
+			if (SwapCondition(CurrentWeapon))
+			{
+				CurrentWeapon->EndWeapon();
 
-		Instance->CurrentWeapon = Instance->WeaponArray[(Instance->WeaponArray.Find(Instance->CurrentWeapon) + 1)
-														%Instance->WeaponArray.Num()];
-
-		Instance->CurrentWeapon->BeginWeapon();
+				CurrentWeapon = WeaponArray[(WeaponArray.Find(CurrentWeapon)+1)%WeaponArray.Num()];
+				
+				CurrentWeapon->BeginWeapon();
+				SetSwapAnimState(true);
+			}
+			
+		}
 	}
+	
 	
 }
 
 void UWeaponManager::ThrowingWeapon()
 {
-	auto Instance = GetSingletonInstance();
-
 
 }
 
-UWeaponManager* UWeaponManager::GetSingletonInstance()
-{
-	return Super::GetSingletonInstance<UWeaponManager>();
-}
 
 bool UWeaponManager::SwapCondition(UWeaponBase *Weapon)
 {
-	if (Weapon->SwapConditionInternal())
+	if (Weapon != nullptr)
 	{
-		//무기 외부 고려 사항 (예시: 기절, 침묵 상태 등 무기를 교체할 수 없는 상황 정의)
+		if (Weapon->SwapConditionInternal())
+		{
+			//무기 외부 고려 사항 (예시: 기절, 침묵 상태 등 무기를 교체할 수 없는 상황 정의)
 
-		return true;
+			return true;
+		}
 	}
 
-	else
-	{
-		return false;
-	}		
+	return false;
+	return true;
 }
 
-int UWeaponManager::GetWeaponNum()
+int UWeaponManager::GetWeaponNum() const
 {
-	auto Instance = GetSingletonInstance();
-
-	return Instance->CurrentWeapon == nullptr ? -1 : Instance->WeaponArray.Find(Instance->CurrentWeapon);
+	if (CurrentWeapon != nullptr)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Fix after Num :: %d"), WeaponArray.Find(CurrentWeapon));
+		//UE_LOG(LogTemp, Log, TEXT("Weapon[0]Name :: %s"), *WeaponArray[0]->GetName());
+		
+		return WeaponArray.Find(CurrentWeapon);
+	}
+	return -3;
 }
 
 void UWeaponManager::SetSwapAnimState(const bool Animstate)
 {
-	auto Instance = GetSingletonInstance();
-	
-	Instance->SwapAnimState = Animstate;
+	SwapAnimState = Animstate;
 }
 
 bool UWeaponManager::GetSwapAnimState()
 {
-	auto Instance = GetSingletonInstance();
 
-	if (Instance->SwapAnimState)
+	if (SwapAnimState)
 	{
-		Instance->SetSwapAnimState(false);
+		SetSwapAnimState(false);
 
 		return true;
 	}

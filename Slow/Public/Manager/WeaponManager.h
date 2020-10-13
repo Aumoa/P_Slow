@@ -9,9 +9,10 @@
 
 class USlowGameInstance;
 class UWeaponBase;
+class UManagerBase;
 
 UCLASS()
-class SLOW_API UWeaponManager : public UManagerBase
+class SLOW_API UWeaponManager : public UObject
 {
 	GENERATED_BODY()
 
@@ -19,19 +20,27 @@ class SLOW_API UWeaponManager : public UManagerBase
 private:
 	UPROPERTY()
 	UWeaponBase *CurrentWeapon;
-
 	UPROPERTY()
 	TArray<UWeaponBase*> WeaponArray;
-
 	UPROPERTY()
+	UWeaponBase *HammerWeapon;
+	UPROPERTY()
+	UWeaponBase *SwordWeapon;
+	UPROPERTY()
+	UWeaponBase *HatchetWeapon;
+
+
+	int CurrentWeaponNum;
 	bool SwapAnimState;
 	
 
 public:
-	void Initialize(USlowGameInstance* GInstance) override;
+	//void Initialize(USlowGameInstance* GInstance) override;
 
-	static UWeaponManager* GetInstance();
-	static void NextWeapon(); 
+	UWeaponManager();
+	void Init();
+
+	void NextWeapon(); 
 	//////////////////////////////////////////////////////////////////////////
 	// <Client Request>														//
 	//______________________________________________________________________//
@@ -40,15 +49,14 @@ public:
 	// 교체 쿨타임 4초														//
 	//////////////////////////////////////////////////////////////////////////
 
-	static void ThrowingWeapon();
+	void ThrowingWeapon();
 
-	static int GetWeaponNum();
-	static void SetSwapAnimState(const bool Animstate);
-	static bool GetSwapAnimState();
+	int GetWeaponNum() const;
+	void SetSwapAnimState(const bool Animstate);
+	bool GetSwapAnimState();
 
 
 private:
-	static UWeaponManager* GetSingletonInstance();
 	bool SwapCondition(UWeaponBase* Weapon);
 	
 };
