@@ -22,7 +22,7 @@ void FStatModifyLinearEffect::Apply(AActor* InTarget)
 	auto StatBasedCharacter = Cast<ASlowStatBasedCharacter>(InTarget);
 	if (StatBasedCharacter == nullptr)
 	{
-		UE_LOG(LogSlow, Error, TEXT("StatModifyLinearEffect::Apply(): InTarget 매개변수는 null이 될 수 없습니다.");
+		UE_LOG(LogSlow, Error, TEXT("StatModifyLinearEffect::Apply(): InTarget 매개변수는 null이 될 수 없습니다."));
 		return;
 	}
 
@@ -36,5 +36,5 @@ FAttrInstance FStatModifyLinearEffect::GetModifyValue() const
 
 AActor* FStatModifyLinearEffect::GetCaster() const
 {
-	return Caster;
+	return Caster.Get();
 }
