@@ -8,8 +8,8 @@
 
 void UHammerWeapon::BeginWeapon()
 {
-	UWeaponManager::SetSwapAnimState(true);
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hammer"));
+	//WeaponMesh = ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Weapon(TEXT("Game/Slow/Meshes/Weapon/Hammer/SM_WeaponHammer.SM_WeaponHammer"));
 }
 
 void UHammerWeapon::EndWeapon()

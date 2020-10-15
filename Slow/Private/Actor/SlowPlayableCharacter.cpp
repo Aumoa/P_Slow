@@ -18,7 +18,7 @@ void ASlowPlayableCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	MoveAbility = MakeShared<FMoveAbility>();
-
+	
 	NewWeaponManager();
 
 	MouseActionSlot.SetAbility(MoveAbility.Get());
@@ -62,10 +62,8 @@ int ASlowPlayableCharacter::GetCurrentWeaponNum()
 {
 	if (WeaponManager != nullptr)
 	{
-		//UE_LOG(LogTemp,Log,TEXT("SlowPlayableCharacter->GetCurrentWeaponNum() In"));
 		return WeaponManager->GetWeaponNum();
 	}
-	//UE_LOG(LogTemp, Log, TEXT("SlowPlayableCharacter->GetCurrentWeaponNum() Lost"));
 
 	return -1;
 }

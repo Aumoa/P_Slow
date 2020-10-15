@@ -16,6 +16,8 @@ class SLOW_API UHammerWeapon : public UWeaponBase
 
 private:
 	FWeaponReferenceTableRow *WeaponReferenceTable;
+	//UPROPERTY()
+	//UStaticMeshComponent *WeaponMesh;
 
 public:
 	void BeginWeapon() override;

@@ -27,6 +27,9 @@ private:
 	UPROPERTY()
 	UWeaponManager *WeaponManager;
 
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UStaticMeshComponent *Weapon;
+
 protected:
 	void BeginPlay() override;
 
