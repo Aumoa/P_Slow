@@ -30,6 +30,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	UStaticMeshComponent *Weapon;
 
+	FName WeaponSocket;
+
 protected:
 	void BeginPlay() override;
 
@@ -45,6 +47,7 @@ public:
 	bool GetSwapAinmState();
 
 	void NewWeaponManager();
+	void SetWeaponMesh();
 
 private:
 	void OnMouseAction(bool bPressed);

@@ -15,9 +15,13 @@ class SLOW_API UHammerWeapon : public UWeaponBase
 	GENERATED_BODY()
 
 private:
+	UHammerWeapon();
+
+
 	FWeaponReferenceTableRow *WeaponReferenceTable;
-	//UPROPERTY()
-	//UStaticMeshComponent *WeaponMesh;
+
+	UPROPERTY()
+	UStaticMesh *StaticMesh_Weapon;
 
 public:
 	void BeginWeapon() override;
@@ -26,4 +30,5 @@ public:
 
 	bool SwapConditionInternal() override;
 
+	UStaticMesh* GetWeaponMesh();
 };

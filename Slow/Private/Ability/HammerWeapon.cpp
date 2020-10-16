@@ -6,10 +6,16 @@
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
 
+UHammerWeapon::UHammerWeapon()
+{
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_W(TEXT("StaticMesh'/Game/Slow/Meshes/Weapon/Hammer/SM_WeaponHammer.SM_WeaponHammer'"));
+	StaticMesh_Weapon = SM_W.Object;
+}
+
 void UHammerWeapon::BeginWeapon()
 {
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hammer"));
-	//WeaponMesh = ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Weapon(TEXT("Game/Slow/Meshes/Weapon/Hammer/SM_WeaponHammer.SM_WeaponHammer"));
+	
 }
 
 void UHammerWeapon::EndWeapon()
@@ -21,4 +27,9 @@ bool UHammerWeapon::SwapConditionInternal()
 {
 
 	return true;
+}
+
+UStaticMesh* UHammerWeapon::GetWeaponMesh()
+{
+	return StaticMesh_Weapon;
 }

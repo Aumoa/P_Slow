@@ -21,14 +21,19 @@ void ASlowPlayableCharacter::BeginPlay()
 	
 	NewWeaponManager();
 
+	//Weapon = NewObject<UStaticMeshComponent>(this);
+
 	MouseActionSlot.SetAbility(MoveAbility.Get());
 
-	
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 }
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {
+	WeaponSocket = TEXT("WeaponPoint");
 
+	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));	
+	
 }
 
 ASlowPlayableCharacter::~ASlowPlayableCharacter()
@@ -53,6 +58,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		if (WeaponManager != nullptr)
 		{
 			WeaponManager->NextWeapon();
+			SetWeaponMesh();
 		}
 			
 	}
@@ -109,4 +115,31 @@ void ASlowPlayableCharacter::NewWeaponManager()
 	WeaponManager = NewObject<UWeaponManager>(this);
 	WeaponManager->Init();
 	UE_LOG(LogTemp,Warning,TEXT("New WeaponManager()"));
+}
+
+void ASlowPlayableCharacter::SetWeaponMesh()
+{
+	if (GetMesh()->DoesSocketExist(WeaponSocket))
+	{
+		
+		UStaticMesh *WeaponMeshObject = WeaponManager->GetWeaponMeshObject();
+
+		if (WeaponMeshObject != nullptr)
+		{
+			Weapon->SetStaticMesh(WeaponMeshObject);
+			UE_LOG(LogTemp, Warning, TEXT("WeaponMeshObject is StaticMesh."));
+		}
+		
+		else
+		{
+			UE_LOG(LogTemp,Warning,TEXT("WeaponMeshObject is Nullptr."));
+		}
+		
+
+		
+		//Weapon->SetupAttachment(GetMesh(), WeaponSocket);
+		//Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,WeaponSocket);
+		//Weapon->AttachTo(GetMesh(),WeaponSocket);
+	}
+	
 }

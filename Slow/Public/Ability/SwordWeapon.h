@@ -15,7 +15,13 @@ class SLOW_API USwordWeapon : public UWeaponBase
 	GENERATED_BODY()
 
 private:
+	USwordWeapon();
+
+private:
 	FWeaponReferenceTableRow *WeaponReferenceTable;
+
+	UPROPERTY()
+	UStaticMesh* StaticMesh_Weapon;
 
 public:
 	void BeginWeapon() override;
@@ -23,4 +29,6 @@ public:
 	void EndWeapon() override;
 
 	bool SwapConditionInternal() override;
+
+	UStaticMesh* GetWeaponMesh();
 };

@@ -9,6 +9,7 @@
 
 class FRequirementBase;
 class UBehavior;
+class UStaticMesh;
 
 UCLASS(Blueprintable)
 class SLOW_API UWeaponBase : public UObject
@@ -29,5 +30,6 @@ public:
 	virtual void BeginWeapon();
 	virtual void EndWeapon();
 	virtual bool SwapConditionInternal();
+	virtual UStaticMesh* GetWeaponMesh();
 	//가상함수 구현
 };

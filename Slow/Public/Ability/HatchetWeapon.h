@@ -15,7 +15,12 @@ class SLOW_API UHatchetWeapon : public UWeaponBase
 	GENERATED_BODY()
 
 private:
+	UHatchetWeapon();
+
+private:
 	FWeaponReferenceTableRow *WeaponReferenceTable;
+	UPROPERTY()
+	UStaticMesh* StaticMesh_Weapon;
 
 public:
 	void BeginWeapon() override;
@@ -23,4 +28,6 @@ public:
 	void EndWeapon() override;
 
 	bool SwapConditionInternal() override;
+
+	UStaticMesh* GetWeaponMesh();
 };

@@ -10,6 +10,7 @@
 class USlowGameInstance;
 class UWeaponBase;
 class UManagerBase;
+class UStaticMesh;
 
 UCLASS()
 class SLOW_API UWeaponManager : public UObject
@@ -54,6 +55,7 @@ public:
 	int GetWeaponNum() const;
 	void SetSwapAnimState(const bool Animstate);
 	bool GetSwapAnimState();
+	UStaticMesh* GetWeaponMeshObject();
 
 
 private:

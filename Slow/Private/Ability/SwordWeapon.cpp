@@ -6,6 +6,12 @@
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
 
+USwordWeapon::USwordWeapon()
+{
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_W(TEXT("StaticMesh'/Game/Slow/Meshes/Weapon/Sword/SM_WeaponSword.SM_WeaponSword'"));
+	StaticMesh_Weapon = SM_W.Object;
+}
+
 void USwordWeapon::BeginWeapon()
 {
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Sword"));
@@ -20,4 +26,9 @@ bool USwordWeapon::SwapConditionInternal()
 {
 
 	return true;
+}
+
+UStaticMesh* USwordWeapon::GetWeaponMesh()
+{
+	return StaticMesh_Weapon;
 }

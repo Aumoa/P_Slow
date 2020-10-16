@@ -39,13 +39,15 @@ void UWeaponManager::Init()
 	WeaponArray.Emplace(HammerWeapon);
 	WeaponArray.Emplace(SwordWeapon);
 	WeaponArray.Emplace(HatchetWeapon);
-	CurrentWeapon = WeaponArray[0];
+	//CurrentWeapon = WeaponArray[0];
 	UE_LOG(LogTemp, Log, TEXT("Init In!"));
 }
 
 UWeaponManager::UWeaponManager()
 {
 	SwapAnimState = false;
+
+
 }
 
 
@@ -64,9 +66,15 @@ void UWeaponManager::NextWeapon()
 				
 				CurrentWeapon->BeginWeapon();
 				SetSwapAnimState(true);
+
 			}
 			
 		}
+	}
+
+	else
+	{
+		CurrentWeapon = WeaponArray[0];
 	}
 	
 	
@@ -124,4 +132,14 @@ bool UWeaponManager::GetSwapAnimState()
 	else
 		return false;
 	
+}
+
+UStaticMesh* UWeaponManager::GetWeaponMeshObject()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetWeaponMesh();
+	}
+
+	return nullptr;
 }

@@ -27,3 +27,12 @@ bool UWeaponBase::SwapConditionInternal()
 {
 	return true;
 }
+
+UStaticMesh* UWeaponBase::GetWeaponMesh()
+{
+	return nullptr;
+}
+
+
+
+
