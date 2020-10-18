@@ -51,6 +51,7 @@ void USlowAnimInstance::SetTrigger(FName VarName)
 		if (!it->IsValidType<FTriggerBool>())
 		{
 			UE_LOG(LogSlow, Error, TEXT("UPCAnimInstance::GetValueInternal(): Type FTriggerBool is not same to exist type."));
+			return;
 		}
 
 		auto& Value = it->Get<FTriggerBool>();
