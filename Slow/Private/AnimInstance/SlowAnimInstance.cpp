@@ -1,16 +1,31 @@
-// Copyright 2020 Team slow. All right reserved.
+﻿// Copyright 2020 Team slow. All right reserved.
 
 #include "AnimInstance/SlowAnimInstance.h"
 
 #include "Actor/SlowPlayableCharacter.h"
 #include "Manager/WeaponManager.h"
 #include "SlowGameInstance.h"
+#include "LogDefine.h"
 
 bool USlowAnimInstance::ManagerAccessibleState = false;
 
 USlowAnimInstance::USlowAnimInstance()
 {
 
+}
+
+void USlowAnimInstance::NativeUpdateAnimation(float InDeltaSeconds)
+{
+	// 다음 애니메이션 업데이트를 수행하기 전 모든 트리거 부울 형식을 초기화합니다.
+	for (auto& Item : VariantMap)
+	{
+		if (Item.Value.IsValidType<FTriggerBool>())
+		{
+			Item.Value.Get<FTriggerBool>().SetValue(false);
+		}
+	}
+
+	Super::NativeUpdateAnimation(InDeltaSeconds);
 }
 
 void USlowAnimInstance::SetFloat(FName VarName, float Value)
@@ -28,6 +43,25 @@ void USlowAnimInstance::SetBool(FName VarName, bool Value)
 	SetValueInternal<bool>(VarName, Value);
 }
 
+void USlowAnimInstance::SetTrigger(FName VarName)
+{
+	FMyVariant* it = VariantMap.Find(VarName);
+	if (it != nullptr)
+	{
+		if (!it->IsValidType<FTriggerBool>())
+		{
+			UE_LOG(LogSlow, Error, TEXT("UPCAnimInstance::GetValueInternal(): Type FTriggerBool is not same to exist type."));
+		}
+
+		auto& Value = it->Get<FTriggerBool>();
+		Value.SetValue(true);
+	}
+	else
+	{
+		VariantMap.Add(VarName, FTriggerBool(true));
+	}
+}
+
 float USlowAnimInstance::GetFloat(FName VarName) const
 {
 	return GetValueInternal<float>(VarName);
@@ -41,6 +75,11 @@ int USlowAnimInstance::GetInt(FName VarName) const
 bool USlowAnimInstance::GetBool(FName VarName) const
 {
 	return GetValueInternal<bool>(VarName);
+}
+
+bool USlowAnimInstance::GetTriggerBool(FName VarName) const
+{
+	return GetValueInternal<FTriggerBool>(VarName).GetValue();
 }
 
 template<class T>

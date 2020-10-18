@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 
 #include "Misc/SlowVariant.h"
+#include "Misc/TriggerBool.h"
 
 #include "SlowAnimInstance.generated.h"
 
@@ -18,7 +19,7 @@ class SLOW_API USlowAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 private:
-	using FMyVariant = TSlowVariant<int, float, bool>;
+	using FMyVariant = TSlowVariant<int, float, bool, FTriggerBool>;
 
 private:
 	TMap<FName, FMyVariant> VariantMap;
@@ -30,6 +31,8 @@ private:
 public:
 	USlowAnimInstance();
 
+	void NativeUpdateAnimation(float InDeltaSeconds) override;
+
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	void SetFloat(FName VarName, float Value);
 
@@ -39,6 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	void SetBool(FName VarName, bool Value);
 
+	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+	void SetTrigger(FName VarName);
+
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	float GetFloat(FName VarName) const;
 
@@ -47,6 +53,9 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetBool(FName VarName) const;
+
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
+	bool GetTriggerBool(FName VarName) const;
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	int GetCurrentWeaponNum() const;
