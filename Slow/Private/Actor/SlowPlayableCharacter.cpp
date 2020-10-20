@@ -12,6 +12,7 @@
 #include "Ability/MoveAbility.h"
 #include "Ability/ILocationTargetAbility.h"
 #include "Manager/WeaponManager.h"
+#include "AnimInstance/SlowAnimInstance.h"
 
 void ASlowPlayableCharacter::BeginPlay()
 {
@@ -32,6 +33,8 @@ ASlowPlayableCharacter::ASlowPlayableCharacter()
 {
 	WeaponSocket = TEXT("WeaponPoint");
 
+	IsFindInteractionObject = false;
+
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));	
 	
 }
@@ -48,40 +51,31 @@ void ASlowPlayableCharacter::Tick(float DeltaTime)
 
 void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPressed)
 {
+
 	if (ActionName == IA_MouseAction)
 	{
 		OnMouseAction(bPressed);
 	}
 
-	if (ActionName == IA_WeaponSwap)
+	else if (ActionName == IA_WeaponSwap)
 	{
 		if (WeaponManager != nullptr)
 		{
 			WeaponManager->NextWeapon();
 			SetWeaponMesh();
 		}
-			
 	}
-}
 
-int ASlowPlayableCharacter::GetCurrentWeaponNum()
-{
-	if (WeaponManager != nullptr)
+	else if (ActionName == IA_Interaction)
 	{
-		return WeaponManager->GetWeaponNum();
+		//트레이스로 상호작용 물체 체크
+		IsFindInteractionObject = true;
 	}
 
-	return -1;
-}
-
-bool ASlowPlayableCharacter::GetSwapAinmState()
-{
-	if (WeaponManager != nullptr)
+	else if (ActionName == IA_Roll)
 	{
-		return WeaponManager->GetSwapAnimState();
+		
 	}
-
-	return false;
 }
 
 void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
@@ -117,29 +111,64 @@ void ASlowPlayableCharacter::NewWeaponManager()
 	UE_LOG(LogTemp,Warning,TEXT("New WeaponManager()"));
 }
 
+
+
+#pragma region Internal Data Get/Set
+int ASlowPlayableCharacter::GetCurrentWeaponNum()
+{
+	if (WeaponManager != nullptr)
+	{
+		return WeaponManager->GetWeaponNum();
+	}
+
+	return -1;
+}
+
+bool ASlowPlayableCharacter::GetSwapAinmState()
+{
+	if (WeaponManager != nullptr)
+	{
+		return WeaponManager->GetSwapAnimState();
+	}
+
+	return false;
+}
+
+bool ASlowPlayableCharacter::GetIsFindInteractionObject()
+{
+	if (IsFindInteractionObject)
+	{
+		IsFindInteractionObject = false;
+		return true;
+	}
+
+	return false;
+}
+
 void ASlowPlayableCharacter::SetWeaponMesh()
 {
 	if (GetMesh()->DoesSocketExist(WeaponSocket))
 	{
-		
-		UStaticMesh *WeaponMeshObject = WeaponManager->GetWeaponMeshObject();
+
+		UStaticMesh* WeaponMeshObject = WeaponManager->GetWeaponMeshObject();
 
 		if (WeaponMeshObject != nullptr)
 		{
 			Weapon->SetStaticMesh(WeaponMeshObject);
 			UE_LOG(LogTemp, Warning, TEXT("WeaponMeshObject is StaticMesh."));
 		}
-		
+
 		else
 		{
-			UE_LOG(LogTemp,Warning,TEXT("WeaponMeshObject is Nullptr."));
+			UE_LOG(LogTemp, Warning, TEXT("WeaponMeshObject is Nullptr."));
 		}
-		
-
-		
 		//Weapon->SetupAttachment(GetMesh(), WeaponSocket);
 		//Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,WeaponSocket);
 		//Weapon->AttachTo(GetMesh(),WeaponSocket);
 	}
-	
+
 }
+
+
+#pragma endregion
+

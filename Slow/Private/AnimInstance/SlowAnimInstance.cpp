@@ -134,6 +134,19 @@ bool USlowAnimInstance::GetSwapAnimState() const
 	return false;
 }
 
+bool USlowAnimInstance::GetIsFindInteractionObject() const
+{
+	if(USlowAnimInstance::ManagerAccessibleState)
+	{
+		if (SlowPC != nullptr)
+		{
+			return SlowPC->GetIsFindInteractionObject();
+		}
+	}
+
+	return false;
+}
+
 void USlowAnimInstance::SetManagerAccessibleState(const bool AccessState)
 {
 	USlowAnimInstance::ManagerAccessibleState = AccessState;

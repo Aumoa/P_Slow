@@ -32,6 +32,8 @@ private:
 
 	FName WeaponSocket;
 
+	bool IsFindInteractionObject;
+
 protected:
 	void BeginPlay() override;
 
@@ -45,6 +47,7 @@ public:
 
 	int GetCurrentWeaponNum();
 	bool GetSwapAinmState();
+	bool GetIsFindInteractionObject();
 
 	void NewWeaponManager();
 	void SetWeaponMesh();

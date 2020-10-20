@@ -57,11 +57,14 @@ public:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetTriggerBool(FName VarName) const;
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	int GetCurrentWeaponNum() const;
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetSwapAnimState() const;
+
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
+	bool GetIsFindInteractionObject() const;
 
 	static void SetManagerAccessibleState(const bool Accessstate);
 	static bool GetManagerAccessibleState();
