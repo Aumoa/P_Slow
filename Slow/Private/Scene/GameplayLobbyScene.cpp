@@ -14,7 +14,7 @@ void UGameplayLobbyScene::BeginPlay(UObject* Args)
 {
 	Super::BeginPlay(Args);
 
-	SetNextStreamingLevel(TEXT("Gameplay_Lobby"));
+	SetNextStreamingLevel(TEXT("Map_1S"));
 
 	USlowGameInstance* gameInstance = USlowGameInstance::GetGameInstance();
 
@@ -27,7 +27,7 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 	Super::BeginLevel(InPlayerController);
 
 	FTransform initialSpawn = FTransform::Identity;
-	initialSpawn.SetLocation(FVector(0, 0, 10.0f));
+	initialSpawn.SetLocation(FVector(-33620.0f, 72330.0f, 16130.0f));
 	TempSpawn = USpawnManager::SpawnPlayerPawn(initialSpawn);
 	InPlayerController->Possess(TempSpawn);
 }

@@ -70,14 +70,17 @@ void UMovementBehavior::RebuildPaths()
 			UE_LOG(LogSlow, Warning, TEXT("UMovementBehavior::RebuildPaths(): Options that path building with navigation system is enabled but build paths failed. Use direct path instead."));
 			bUseNavigationPath = false;
 		}
-
-		auto& paths = buildedPath->PathPoints;
-		if (paths.Num() > 1) {
-			MovementPaths.Append(paths.GetData() + 1, paths.Num() - 1);
+		else
+		{
+			auto& paths = buildedPath->PathPoints;
+			if (paths.Num() > 1) {
+				MovementPaths.Append(paths.GetData() + 1, paths.Num() - 1);
+			}
+			else {
+				// No move.
+			}
 		}
-		else {
-			// No move.
-		}
+		
 	}
 
 	if (!bUseNavigationPath) {

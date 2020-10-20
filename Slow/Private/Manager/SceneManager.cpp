@@ -94,6 +94,10 @@ USceneBase* USceneManager::GetSceneByName(USceneManager* Instance, const FString
 	else if (SceneName == TEXT("Gameplay")) {
 		NextScene = Instance->GameplayScene;
 	}
+	else if (SceneName == TEXT("Map_1S")) {
+		NextScene = Instance->GameplayScene;
+	}
+
 	else {
 		UE_LOG(LogSlow, Error, TEXT("Scene name: [%s] is not registered."), *SceneName);
 		return Instance->CurrentScene;;

@@ -16,8 +16,8 @@ void UGameplayScene::BeginPlay(UObject* Args)
 
 	USlowGameInstance* gameInstance = USlowGameInstance::GetGameInstance();
 	FString currentName = UGameplayStatics::GetCurrentLevelName(gameInstance);
-	if (currentName != TEXT("Gameplay")) {
-		UGameplayStatics::OpenLevel(gameInstance, TEXT("Gameplay"));
+	if (currentName != TEXT("Map_1S")) {
+		UGameplayStatics::OpenLevel(gameInstance, TEXT("Map_1S"));
 	}
 }
 
