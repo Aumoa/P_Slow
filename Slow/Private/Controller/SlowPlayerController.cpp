@@ -22,6 +22,8 @@ void ASlowPlayerController::BeginPlay()
 
 	USceneManager::BeginLevel(this);
 	UInputManager::SetPlayerController(this);
+
+	//bShowMouseCursor = false;
 }
 
 void ASlowPlayerController::SetupInputComponent()
@@ -32,7 +34,6 @@ void ASlowPlayerController::SetupInputComponent()
 	InputComponent->BindAction(IA_WeaponSwap, IE_Pressed, this, &ASlowPlayerController::OnWeaponSwapButtonPressed);
 	InputComponent->BindAction(IA_Interaction, IE_Pressed, this, &ASlowPlayerController::OnInteractionButtonPressed);
 	InputComponent->BindAction(IA_Roll, IE_Pressed, this, &ASlowPlayerController::OnRollButtonPressed);
-
 }
 
 void ASlowPlayerController::OnPossess(APawn* Target)
@@ -79,3 +80,5 @@ void ASlowPlayerController::OnRollButtonPressed()
 		Possessed->OnActionInput(IA_Roll, true);
 	}
 }
+
+

@@ -49,6 +49,15 @@ void ASlowPlayableCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ASlowPlayableCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	InputComponent->BindAxis(AX_Turn, this, &ASlowPlayableCharacter::AddYawInput);
+	InputComponent->BindAxis(AX_LookUp, this, &ASlowPlayableCharacter::AddPitchInput);
+	UE_LOG(LogTemp, Warning, TEXT("SetupPlayerInputComponent Called"));
+}
+
 void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPressed)
 {
 
@@ -76,6 +85,16 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	{
 		
 	}
+}
+
+void ASlowPlayableCharacter::AddYawInput(float NewAxisValue)
+{
+	AddControllerYawInput(NewAxisValue);
+}
+
+void ASlowPlayableCharacter::AddPitchInput(float NewAxisValue)
+{
+	AddControllerPitchInput(NewAxisValue);
 }
 
 void ASlowPlayableCharacter::OnMouseAction(bool bPressed)

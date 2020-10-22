@@ -6,3 +6,6 @@
 #define IA_WeaponSwap TEXT("WeaponSwap")
 #define IA_Interaction TEXT("Interaction")
 #define IA_Roll TEXT("Roll")
+
+#define AX_Turn TEXT("Turn")
+#define AX_LookUp TEXT("LookUp")

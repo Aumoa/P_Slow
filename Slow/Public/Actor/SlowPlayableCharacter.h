@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SlowStatBasedCharacter.h"
-
 #include "Ability/AbilitySlot.h"
 
 #include "SlowPlayableCharacter.generated.h"
@@ -43,7 +42,10 @@ public:
 
 public:
 	void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	void OnActionInput(const FName& ActionName, bool bPressed);
+	void AddYawInput(float NewAxisValue);
+	void AddPitchInput(float NewAxisValue);
 
 	int GetCurrentWeaponNum();
 	bool GetSwapAinmState();
