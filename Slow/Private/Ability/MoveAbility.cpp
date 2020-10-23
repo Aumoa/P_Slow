@@ -34,6 +34,8 @@ void FMoveAbility::SetTarget(const FVector& InLocation)
 	if (behavior != nullptr) {
 		behavior->SetActorDestination(InLocation, true);
 	}
+
+	
 }
 
 void FMoveAbility::Clear()

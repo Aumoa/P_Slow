@@ -11,6 +11,8 @@
 class UWeaponManager;
 class FAbilitySlot;
 class FMoveAbility;
+class USpringArmComponent;
+class UCameraComponent;
 
 
 UCLASS()
@@ -23,11 +25,19 @@ private:
 
 	FAbilitySlot MouseActionSlot;
 
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+	USpringArmComponent *SpringArm;
+
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UCameraComponent *Camera;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UStaticMeshComponent* Weapon;
+
 	UPROPERTY()
 	UWeaponManager *WeaponManager;
 
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	UStaticMeshComponent *Weapon;
+	
 
 	FName WeaponSocket;
 
@@ -36,6 +46,8 @@ private:
 protected:
 	void BeginPlay() override;
 
+	void SetControlMode(int32 ControlMode);
+
 public:
 	ASlowPlayableCharacter();
 	~ASlowPlayableCharacter();
@@ -43,18 +55,25 @@ public:
 public:
 	void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	
 	void OnActionInput(const FName& ActionName, bool bPressed);
-	void AddYawInput(float NewAxisValue);
-	void AddPitchInput(float NewAxisValue);
+	
 
 	int GetCurrentWeaponNum();
 	bool GetSwapAinmState();
 	bool GetIsFindInteractionObject();
 
-	void NewWeaponManager();
+	
 	void SetWeaponMesh();
 
 private:
+	void NewWeaponManager();
+	void NewSpringArm();
+
 	void OnMouseAction(bool bPressed);
-	
+
+	void OnMoveForward(float NewAxisValue);
+	void OnMoveRight(float NewAxisValue);
+	void AddYawInput(float NewAxisValue);
+	void AddPitchInput(float NewAxisValue);
 };

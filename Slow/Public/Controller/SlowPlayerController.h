@@ -19,6 +19,7 @@ class SLOW_API ASlowPlayerController : public APlayerController
 private:
 	UPROPERTY()
 	ASlowPlayableCharacter* Possessed;
+	bool CursorUsable;
 
 public:
 	ASlowPlayerController();
@@ -34,4 +35,6 @@ private:
 	void OnWeaponSwapButtonPressed();
 	void OnInteractionButtonPressed();
 	void OnRollButtonPressed();
+	void OnCursorActionPressed();
+	void OnJumpButtonPressed();
 };

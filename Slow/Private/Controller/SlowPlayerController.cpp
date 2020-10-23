@@ -13,7 +13,7 @@
 
 ASlowPlayerController::ASlowPlayerController()
 {
-	bShowMouseCursor = true;
+	bShowMouseCursor = CursorUsable = true;
 }
 
 void ASlowPlayerController::BeginPlay()
@@ -23,7 +23,6 @@ void ASlowPlayerController::BeginPlay()
 	USceneManager::BeginLevel(this);
 	UInputManager::SetPlayerController(this);
 
-	//bShowMouseCursor = false;
 }
 
 void ASlowPlayerController::SetupInputComponent()
@@ -34,6 +33,8 @@ void ASlowPlayerController::SetupInputComponent()
 	InputComponent->BindAction(IA_WeaponSwap, IE_Pressed, this, &ASlowPlayerController::OnWeaponSwapButtonPressed);
 	InputComponent->BindAction(IA_Interaction, IE_Pressed, this, &ASlowPlayerController::OnInteractionButtonPressed);
 	InputComponent->BindAction(IA_Roll, IE_Pressed, this, &ASlowPlayerController::OnRollButtonPressed);
+	InputComponent->BindAction(IA_Cursor, IE_Pressed, this, &ASlowPlayerController::OnCursorActionPressed);
+	InputComponent->BindAction(IA_Jump, IE_Pressed, this, &ASlowPlayerController::OnJumpButtonPressed);
 }
 
 void ASlowPlayerController::OnPossess(APawn* Target)
@@ -80,5 +81,18 @@ void ASlowPlayerController::OnRollButtonPressed()
 		Possessed->OnActionInput(IA_Roll, true);
 	}
 }
+
+void ASlowPlayerController::OnCursorActionPressed()
+{
+	bShowMouseCursor = CursorUsable = CursorUsable ? false : true;
+}
+
+void ASlowPlayerController::OnJumpButtonPressed()
+{
+	if (Possessed != nullptr) {
+		Possessed->OnActionInput(IA_Jump, true);
+	}
+}
+
 
 
