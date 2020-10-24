@@ -56,6 +56,7 @@ public:
 	void SetSwapAnimState(const bool Animstate);
 	bool GetSwapAnimState();
 	UStaticMesh* GetWeaponMeshObject();
+	FName GetSocketName();
 
 
 private:

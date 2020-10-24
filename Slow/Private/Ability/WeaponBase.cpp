@@ -33,6 +33,11 @@ UStaticMesh* UWeaponBase::GetWeaponMesh()
 	return nullptr;
 }
 
+FName UWeaponBase::GetSocketName()
+{
+	return FName();
+}
+
 
 
 

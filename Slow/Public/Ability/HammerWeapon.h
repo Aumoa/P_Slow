@@ -22,6 +22,8 @@ private:
 
 	UPROPERTY()
 	UStaticMesh *StaticMesh_Weapon;
+	UPROPERTY()
+	FName SocketName;
 
 public:
 	void BeginWeapon() override;
@@ -30,5 +32,7 @@ public:
 
 	bool SwapConditionInternal() override;
 
-	UStaticMesh* GetWeaponMesh();
+	UStaticMesh* GetWeaponMesh() override;
+
+	FName GetSocketName() override;
 };

@@ -27,7 +27,7 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 	Super::BeginLevel(InPlayerController);
 
 	FTransform initialSpawn = FTransform::Identity;
-	initialSpawn.SetLocation(FVector(-33620.0f, 72330.0f, 16130.0f));
+	initialSpawn.SetLocation(FVector(4200.0f, 72400.0f, 12600.0f));
 	TempSpawn = USpawnManager::SpawnPlayerPawn(initialSpawn);
 	InPlayerController->Possess(TempSpawn);
 }

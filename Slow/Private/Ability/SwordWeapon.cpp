@@ -10,6 +10,8 @@ USwordWeapon::USwordWeapon()
 {
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_W(TEXT("StaticMesh'/Game/Slow/Meshes/Weapon/Sword/SM_WeaponSword.SM_WeaponSword'"));
 	StaticMesh_Weapon = SM_W.Object;
+
+	SocketName = TEXT("SwordSocket");
 }
 
 void USwordWeapon::BeginWeapon()
@@ -31,4 +33,9 @@ bool USwordWeapon::SwapConditionInternal()
 UStaticMesh* USwordWeapon::GetWeaponMesh()
 {
 	return StaticMesh_Weapon;
+}
+
+FName USwordWeapon::GetSocketName()
+{
+	return SocketName;
 }

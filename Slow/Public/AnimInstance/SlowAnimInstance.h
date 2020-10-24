@@ -66,6 +66,9 @@ public:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetIsFindInteractionObject() const;
 
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
+	bool GetRollAnimState() const;
+
 	static void SetManagerAccessibleState(const bool Accessstate);
 	static bool GetManagerAccessibleState();
 

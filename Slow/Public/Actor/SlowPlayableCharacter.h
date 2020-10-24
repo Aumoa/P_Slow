@@ -42,6 +42,7 @@ private:
 	FName WeaponSocket;
 
 	bool IsFindInteractionObject;
+	bool RollInput;
 
 protected:
 	void BeginPlay() override;
@@ -62,9 +63,11 @@ public:
 	int GetCurrentWeaponNum();
 	bool GetSwapAinmState();
 	bool GetIsFindInteractionObject();
+	bool GetRollAnimState();
 
 	
 	void SetWeaponMesh();
+	void SetWeaponSocketName();
 
 private:
 	void NewWeaponManager();

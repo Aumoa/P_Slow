@@ -40,7 +40,6 @@ void UWeaponManager::Init()
 	WeaponArray.Emplace(SwordWeapon);
 	WeaponArray.Emplace(HatchetWeapon);
 	//CurrentWeapon = WeaponArray[0];
-	UE_LOG(LogTemp, Log, TEXT("Init In!"));
 }
 
 UWeaponManager::UWeaponManager()
@@ -142,4 +141,14 @@ UStaticMesh* UWeaponManager::GetWeaponMeshObject()
 	}
 
 	return nullptr;
+}
+
+FName UWeaponManager::GetSocketName()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetSocketName();
+	}
+
+	return TEXT("None_Socket");
 }

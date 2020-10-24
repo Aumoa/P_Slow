@@ -31,5 +31,6 @@ public:
 	virtual void EndWeapon();
 	virtual bool SwapConditionInternal();
 	virtual UStaticMesh* GetWeaponMesh();
+	virtual FName GetSocketName();
 	//가상함수 구현
 };

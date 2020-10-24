@@ -18,6 +18,16 @@
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 
+ASlowPlayableCharacter::ASlowPlayableCharacter()
+{	
+	IsFindInteractionObject = false;
+	RollInput = false;
+
+	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
+
+	NewSpringArm();
+}
+
 void ASlowPlayableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -29,11 +39,15 @@ void ASlowPlayableCharacter::BeginPlay()
 	//Weapon = NewObject<UStaticMeshComponent>(this);
 
 	MouseActionSlot.SetAbility(MoveAbility.Get());
-
-	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
-
 	
 	SetControlMode(0);
+
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("HammerSocket"));
+}
+
+void ASlowPlayableCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -41,33 +55,18 @@ void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
 	if (ControlMode == 0)
 	{
 		SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
-		SpringArm->bDoCollisionTest = true;
+		//SpringArm->bDoCollisionTest = true;
 		//bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	}
 }
-
-ASlowPlayableCharacter::ASlowPlayableCharacter()
-{
-	WeaponSocket = TEXT("WeaponPoint");
-
-	IsFindInteractionObject = false;
-
-	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));	
-	
-	NewSpringArm();
-}
-
 ASlowPlayableCharacter::~ASlowPlayableCharacter()
 {
 	
 }
 
-void ASlowPlayableCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
+
 
 void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPressed)
 {
@@ -83,6 +82,10 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		{
 			WeaponManager->NextWeapon();
 			SetWeaponMesh();
+			SetWeaponSocketName();
+			UE_LOG(LogTemp,Warning,TEXT("Weapon : %s"),*WeaponSocket.ToString());
+
+			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 		}
 	}
 
@@ -94,7 +97,8 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	else if (ActionName == IA_Roll)
 	{
-		
+		RollInput = true;
+		bPressedJump = true;
 	}
 	
 	else if (ActionName == IA_Jump)
@@ -203,6 +207,7 @@ void ASlowPlayableCharacter::OnMoveRight(float NewAxisValue)
 
 void ASlowPlayableCharacter::AddYawInput(float NewAxisValue)
 {
+	
 	if(NewAxisValue == 0.0f) 
 	{
 		return;
@@ -213,6 +218,7 @@ void ASlowPlayableCharacter::AddYawInput(float NewAxisValue)
 
 void ASlowPlayableCharacter::AddPitchInput(float NewAxisValue)
 {
+
 	if (NewAxisValue == 0.0f)
 	{
 		return;
@@ -254,6 +260,20 @@ bool ASlowPlayableCharacter::GetIsFindInteractionObject()
 
 	return false;
 }
+bool ASlowPlayableCharacter::GetRollAnimState()
+{
+	if (RollInput)
+	{
+		RollInput = false;
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
+}
+
 
 void ASlowPlayableCharacter::SetWeaponMesh()
 {
@@ -277,6 +297,17 @@ void ASlowPlayableCharacter::SetWeaponMesh()
 		//Weapon->AttachTo(GetMesh(),WeaponSocket);
 	}
 
+}
+
+void ASlowPlayableCharacter::SetWeaponSocketName()
+{
+	/*if (WeaponManager != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WeaponManager is Nullptr."));
+		return;
+	}*/
+
+	WeaponSocket = WeaponManager->GetSocketName();
 }
 
 

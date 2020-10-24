@@ -147,6 +147,19 @@ bool USlowAnimInstance::GetIsFindInteractionObject() const
 	return false;
 }
 
+bool USlowAnimInstance::GetRollAnimState() const
+{
+	if (USlowAnimInstance::ManagerAccessibleState)
+	{
+		if (SlowPC != nullptr)
+		{
+			return SlowPC->GetRollAnimState();
+		}
+	}
+
+	return false;
+}
+
 void USlowAnimInstance::SetManagerAccessibleState(const bool AccessState)
 {
 	USlowAnimInstance::ManagerAccessibleState = AccessState;
