@@ -33,4 +33,7 @@ public:
 	virtual UStaticMesh* GetWeaponMesh();
 	virtual FName GetSocketName();
 	//가상함수 구현
+	virtual int GetMaxComboCount();
+	virtual UAnimMontage* GetAttackMontage();
+	virtual TArray<FName> GetComboList();
 };

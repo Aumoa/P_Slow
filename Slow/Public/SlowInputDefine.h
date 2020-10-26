@@ -3,6 +3,7 @@
 #pragma once
 
 #define IA_MouseAction TEXT( "MouseAction" )
+#define IA_MouseSelection TEXT("MouseSelection")
 #define IA_WeaponSwap TEXT("WeaponSwap")
 #define IA_Interaction TEXT("Interaction")
 #define IA_Roll TEXT("Roll")

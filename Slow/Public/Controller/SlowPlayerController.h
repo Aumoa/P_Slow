@@ -32,6 +32,8 @@ public:
 
 private:
 	void OnMouseActionPressed();
+	void OnMouseSelectionPressed();
+	void OnMouseSelectionReleased();
 	void OnWeaponSwapButtonPressed();
 	void OnInteractionButtonPressed();
 	void OnRollButtonPressed();

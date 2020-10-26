@@ -8,6 +8,7 @@
 #include "HatchetWeapon.generated.h"
 
 struct FWeaponReferenceTableRow;
+class UAnimMontage;
 
 UCLASS()
 class SLOW_API UHatchetWeapon : public UWeaponBase
@@ -19,11 +20,17 @@ private:
 
 private:
 	FWeaponReferenceTableRow *WeaponReferenceTable;
+
 	UPROPERTY()
 	UStaticMesh* StaticMesh_Weapon;
-	
 	UPROPERTY()
 	FName SocketName;
+
+	UPROPERTY()
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY()
+	TArray<FName> ComboList;
 
 public:
 	void BeginWeapon() override;
@@ -35,4 +42,8 @@ public:
 	UStaticMesh* GetWeaponMesh() override;
 
 	FName GetSocketName() override;
+
+	int GetMaxComboCount() override;
+	UAnimMontage* GetAttackMontage() override;
+	TArray<FName> GetComboList() override;
 };

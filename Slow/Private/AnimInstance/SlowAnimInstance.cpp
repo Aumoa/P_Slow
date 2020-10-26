@@ -160,6 +160,19 @@ bool USlowAnimInstance::GetRollAnimState() const
 	return false;
 }
 
+bool USlowAnimInstance::GetIsBattle() const
+{
+	if (USlowAnimInstance::ManagerAccessibleState)
+	{
+		if (SlowPC != nullptr)
+		{
+			return SlowPC->GetIsBattle();
+		}
+	}
+
+	return false;
+}
+
 void USlowAnimInstance::SetManagerAccessibleState(const bool AccessState)
 {
 	USlowAnimInstance::ManagerAccessibleState = AccessState;

@@ -59,15 +59,14 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	int GetCurrentWeaponNum() const;
-
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetSwapAnimState() const;
-
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetIsFindInteractionObject() const;
-
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetRollAnimState() const;
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
+	bool GetIsBattle() const;
 
 	static void SetManagerAccessibleState(const bool Accessstate);
 	static bool GetManagerAccessibleState();

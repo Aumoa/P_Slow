@@ -15,12 +15,12 @@ TSubclassOf<UBehavior> UWeaponBase::GetEffect() const
 
 void UWeaponBase::BeginWeapon()
 {
-
+	
 }
 
 void UWeaponBase::EndWeapon()
 {
-
+	
 }
 
 bool UWeaponBase::SwapConditionInternal()
@@ -36,6 +36,21 @@ UStaticMesh* UWeaponBase::GetWeaponMesh()
 FName UWeaponBase::GetSocketName()
 {
 	return FName();
+}
+
+int UWeaponBase::GetMaxComboCount()
+{
+	return 0;
+}
+
+UAnimMontage* UWeaponBase::GetAttackMontage()
+{
+	return nullptr;
+}
+
+TArray<FName> UWeaponBase::GetComboList()
+{
+	return TArray<FName>();
 }
 
 

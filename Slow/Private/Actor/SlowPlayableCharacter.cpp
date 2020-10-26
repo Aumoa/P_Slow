@@ -15,8 +15,8 @@
 #include "AnimInstance/SlowAnimInstance.h"
 #include "GameFramework/Actor.h"
 #include "Engine/Classes/GameFramework/SpringArmComponent.h"
-#include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/Character.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -39,15 +39,26 @@ void ASlowPlayableCharacter::BeginPlay()
 	//Weapon = NewObject<UStaticMeshComponent>(this);
 
 	MouseActionSlot.SetAbility(MoveAbility.Get());
+
+	IsAttack = false;
+	IsOverlapAttack = false;
+	ComboCount = 0;
 	
 	SetControlMode(0);
 
+	
+
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("HammerSocket"));
+
+	AnimInstance = GetMesh()->GetAnimInstance();
 }
 
 void ASlowPlayableCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	
+	
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -76,14 +87,25 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		OnMouseAction(bPressed);
 	}
 
+	if (ActionName == IA_MouseSelection)
+	{
+		OnMouseSelection(bPressed);
+	}
+
 	else if (ActionName == IA_WeaponSwap)
 	{
 		if (WeaponManager != nullptr)
 		{
 			WeaponManager->NextWeapon();
-			SetWeaponMesh();
+			UE_LOG(LogTemp, Warning, TEXT("GetIsBattle :: %s"), GetIsBattle() ? TEXT("True") : TEXT("False"));
 			SetWeaponSocketName();
-			UE_LOG(LogTemp,Warning,TEXT("Weapon : %s"),*WeaponSocket.ToString());
+			SetWeaponMesh();
+
+			AttackMontage = WeaponManager->GetAttackMontage();
+			ComboList = WeaponManager->GetComboList();
+			MaxComboCount = WeaponManager->GetMaxComboCount();
+
+			UE_LOG(LogTemp,Warning,TEXT("ASlowPlayableCharacter::OnActionInput : Weapon : %s"),*WeaponSocket.ToString());
 
 			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 		}
@@ -99,6 +121,9 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	{
 		RollInput = true;
 		bPressedJump = true;
+		//FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
+		//Direction*=300.0f;
+		//GetMesh()->AddImpulseAtLocation(GetVelocity() * 300.0f, GetActorLocation());
 	}
 	
 	else if (ActionName == IA_Jump)
@@ -133,6 +158,83 @@ void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
 	}
 }
 
+void ASlowPlayableCharacter::OnMouseSelection(bool bPressed)
+{
+	if (bPressed)
+	{
+		if (IsAttack == false)
+		{
+			OnPlayerAttack();
+		}
+
+		else
+		{
+			IsOverlapAttack = true;
+		}
+	}
+
+	else
+	{
+		
+	}
+}
+
+void ASlowPlayableCharacter::OnPlayerAttack()
+{
+	if (AnimInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No AnimInstance! :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+	}
+		
+	else if (AttackMontage == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Attack Montage! :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+	}
+		
+	else if (ComboList.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No ComboList. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+	}
+
+	else
+	{
+		IsAttack = true;
+
+		AnimInstance->Montage_Play(AttackMontage);
+
+		if (!(AnimInstance->Montage_IsPlaying(AttackMontage)))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Not Playing"));
+		}
+
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Playing"));
+			AnimInstance->Montage_JumpToSection(ComboList[ComboCount],AttackMontage);
+		}
+	}
+}
+
+void ASlowPlayableCharacter::OnPlayerAttackEnd()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AttackEnd ::"));
+	IsAttack = false;
+
+	if(ComboCount+1 == MaxComboCount)
+		ComboCount = 0;
+}
+
+void ASlowPlayableCharacter::OnAttackInputChecking()	
+{
+	if (IsOverlapAttack)
+	{
+		ComboCount = (ComboCount+1) % MaxComboCount;
+		
+		IsOverlapAttack = false;
+		OnPlayerAttack();
+	}
+}
+
 void ASlowPlayableCharacter::NewWeaponManager()
 {
 	WeaponManager = NewObject<UWeaponManager>(this);
@@ -148,9 +250,11 @@ void ASlowPlayableCharacter::NewSpringArm()
 	SpringArm->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArm);
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f,0.0f,-88.0f),FRotator(0.0f,-90.0f,0.0f));
-	SpringArm->TargetArmLength = 400.0f;
+	SpringArm->TargetArmLength = 700.0f;
 	SpringArm->SetRelativeRotation(FRotator(-15.0f,0.0f,0.0f));
 }
+
+
 
 #pragma region Axis Input Function
 void ASlowPlayableCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -274,12 +378,22 @@ bool ASlowPlayableCharacter::GetRollAnimState()
 	}
 }
 
+bool ASlowPlayableCharacter::GetIsBattle()
+{
+	if (WeaponManager != nullptr)
+	{
+		return WeaponManager->GetIsBattle();
+	}
+
+	return false;
+}
+
 
 void ASlowPlayableCharacter::SetWeaponMesh()
 {
 	if (GetMesh()->DoesSocketExist(WeaponSocket))
 	{
-
+		UE_LOG(LogTemp, Warning, TEXT("SetWeaponMesh Init."));
 		UStaticMesh* WeaponMeshObject = WeaponManager->GetWeaponMeshObject();
 
 		if (WeaponMeshObject != nullptr)
@@ -308,6 +422,7 @@ void ASlowPlayableCharacter::SetWeaponSocketName()
 	}*/
 
 	WeaponSocket = WeaponManager->GetSocketName();
+	UE_LOG(LogTemp, Warning, TEXT("SetSocket :: SetSocketName :: %s"), *WeaponSocket.ToString());
 }
 
 

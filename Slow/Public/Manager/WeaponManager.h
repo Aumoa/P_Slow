@@ -11,6 +11,7 @@ class USlowGameInstance;
 class UWeaponBase;
 class UManagerBase;
 class UStaticMesh;
+class UAnimMontage;
 
 UCLASS()
 class SLOW_API UWeaponManager : public UObject
@@ -33,6 +34,7 @@ private:
 
 	int CurrentWeaponNum;
 	bool SwapAnimState;
+	bool IsBattle;
 	
 
 public:
@@ -55,8 +57,13 @@ public:
 	int GetWeaponNum() const;
 	void SetSwapAnimState(const bool Animstate);
 	bool GetSwapAnimState();
+	bool GetIsBattle();
+
 	UStaticMesh* GetWeaponMeshObject();
 	FName GetSocketName();
+	int GetMaxComboCount();
+	UAnimMontage* GetAttackMontage();
+	TArray<FName> GetComboList();
 
 
 private:

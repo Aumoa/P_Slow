@@ -30,6 +30,11 @@ void ASlowPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	
 	InputComponent->BindAction(IA_MouseAction, IE_Pressed, this, &ASlowPlayerController::OnMouseActionPressed);
+
+	InputComponent->BindAction(IA_MouseSelection,IE_Pressed, this, &ASlowPlayerController::OnMouseSelectionPressed);
+	InputComponent->BindAction(IA_MouseSelection,IE_Released, this, &ASlowPlayerController::OnMouseSelectionReleased);
+
+
 	InputComponent->BindAction(IA_WeaponSwap, IE_Pressed, this, &ASlowPlayerController::OnWeaponSwapButtonPressed);
 	InputComponent->BindAction(IA_Interaction, IE_Pressed, this, &ASlowPlayerController::OnInteractionButtonPressed);
 	InputComponent->BindAction(IA_Roll, IE_Pressed, this, &ASlowPlayerController::OnRollButtonPressed);
@@ -55,6 +60,21 @@ void ASlowPlayerController::OnMouseActionPressed()
 {
 	if (Possessed != nullptr) {
 		Possessed->OnActionInput(IA_MouseAction, true);
+	}
+}
+
+void ASlowPlayerController::OnMouseSelectionPressed()
+{
+	if (Possessed != nullptr) {
+		Possessed->OnActionInput(IA_MouseSelection, true);
+	}
+}
+
+void ASlowPlayerController::OnMouseSelectionReleased()
+{
+	
+	if (Possessed != nullptr) {
+		Possessed->OnActionInput(IA_MouseSelection, false);
 	}
 }
 
@@ -93,6 +113,3 @@ void ASlowPlayerController::OnJumpButtonPressed()
 		Possessed->OnActionInput(IA_Jump, true);
 	}
 }
-
-
-

@@ -9,6 +9,7 @@
 #include "Ability/HatchetWeapon.h"
 #include "Ability/HammerWeapon.h"
 #include "Ability/SwordWeapon.h"
+#include "Animation/AnimMontage.h"
 
 /*void UWeaponManager::Initialize(USlowGameInstance* GInstance)
 {
@@ -39,7 +40,9 @@ void UWeaponManager::Init()
 	WeaponArray.Emplace(HammerWeapon);
 	WeaponArray.Emplace(SwordWeapon);
 	WeaponArray.Emplace(HatchetWeapon);
-	//CurrentWeapon = WeaponArray[0];
+	CurrentWeapon = WeaponArray[0];
+
+	IsBattle = false;
 }
 
 UWeaponManager::UWeaponManager()
@@ -53,27 +56,21 @@ UWeaponManager::UWeaponManager()
 
 void UWeaponManager::NextWeapon()
 {
-	if (CurrentWeapon != nullptr)
+
+	if (WeaponArray.Find(CurrentWeapon) != INDEX_NONE)
 	{
-		if (WeaponArray.Find(CurrentWeapon) != INDEX_NONE)
+		if (SwapCondition(CurrentWeapon))
 		{
-			if (SwapCondition(CurrentWeapon))
-			{
-				CurrentWeapon->EndWeapon();
+			CurrentWeapon->EndWeapon();
 
-				CurrentWeapon = WeaponArray[(WeaponArray.Find(CurrentWeapon)+1)%WeaponArray.Num()];
+			CurrentWeapon = WeaponArray[(WeaponArray.Find(CurrentWeapon)+1)%WeaponArray.Num()];
 				
-				CurrentWeapon->BeginWeapon();
-				SetSwapAnimState(true);
+			CurrentWeapon->BeginWeapon();
+			SetSwapAnimState(true);
 
-			}
-			
+			IsBattle = true;
 		}
-	}
-
-	else
-	{
-		CurrentWeapon = WeaponArray[0];
+				
 	}
 	
 	
@@ -98,7 +95,6 @@ bool UWeaponManager::SwapCondition(UWeaponBase *Weapon)
 	}
 
 	return false;
-	return true;
 }
 
 int UWeaponManager::GetWeaponNum() const
@@ -133,6 +129,11 @@ bool UWeaponManager::GetSwapAnimState()
 	
 }
 
+bool UWeaponManager::GetIsBattle()
+{
+	return IsBattle;
+}
+
 UStaticMesh* UWeaponManager::GetWeaponMeshObject()
 {
 	if (CurrentWeapon != nullptr)
@@ -151,4 +152,34 @@ FName UWeaponManager::GetSocketName()
 	}
 
 	return TEXT("None_Socket");
+}
+
+int UWeaponManager::GetMaxComboCount()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetMaxComboCount();
+	}
+
+	return -1;
+}
+
+UAnimMontage* UWeaponManager::GetAttackMontage()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetAttackMontage();
+	}
+	
+	return nullptr;
+}
+
+TArray<FName> UWeaponManager::GetComboList()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetComboList();
+	}
+
+	return TArray<FName>();
 }

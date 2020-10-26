@@ -8,6 +8,7 @@
 #include "SwordWeapon.generated.h"
 
 struct FWeaponReferenceTableRow;
+class UAnimMontage;
 
 UCLASS()
 class SLOW_API USwordWeapon : public UWeaponBase
@@ -26,6 +27,12 @@ private:
 	UPROPERTY()
 	FName SocketName;
 
+	UPROPERTY()
+	class UAnimMontage* AttackMontage;
+
+	UPROPERTY()
+	TArray<FName> ComboList;
+
 public:
 	void BeginWeapon() override;
 
@@ -36,4 +43,8 @@ public:
 	UStaticMesh* GetWeaponMesh() override;
 
 	FName GetSocketName() override;
+
+	int GetMaxComboCount() override;
+	UAnimMontage* GetAttackMontage() override;
+	TArray<FName> GetComboList() override;
 };

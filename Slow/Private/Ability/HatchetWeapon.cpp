@@ -11,12 +11,19 @@ UHatchetWeapon::UHatchetWeapon()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_W(TEXT("StaticMesh'/Game/Slow/Meshes/Weapon/Hatchet/SM_WeaponHatchet.SM_WeaponHatchet'"));
 	StaticMesh_Weapon = SM_W.Object;
 	
-	SocketName = TEXT("HatchetSocket");
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_MTG(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Attack_Hat.MTG_PC_Attack_Hat'"));
+	AttackMontage = Attack_MTG.Object;
 }
 
 void UHatchetWeapon::BeginWeapon()
 {
+	SocketName = TEXT("HatchetSocket");
+
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hatchet"));
+
+	ComboList.Empty();
+	ComboList.Emplace(TEXT("Hatchet_Combo1"));
+	ComboList.Emplace(TEXT("Hatchet_Combo2"));
 }
 
 void UHatchetWeapon::EndWeapon()
@@ -38,4 +45,24 @@ UStaticMesh* UHatchetWeapon::GetWeaponMesh()
 FName UHatchetWeapon::GetSocketName()
 {
 	return SocketName;
+}
+
+int UHatchetWeapon::GetMaxComboCount()
+{
+	return ComboList.Num();
+}
+
+UAnimMontage* UHatchetWeapon::GetAttackMontage()
+{
+	if (AttackMontage == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HammerWeapon, AttackMontage is Nullptr."));
+	}
+
+	return AttackMontage;
+}
+
+TArray<FName> UHatchetWeapon::GetComboList()
+{
+	return ComboList;
 }

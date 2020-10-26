@@ -13,6 +13,7 @@ class FAbilitySlot;
 class FMoveAbility;
 class USpringArmComponent;
 class UCameraComponent;
+class UAnimMontage;
 
 
 UCLASS()
@@ -25,10 +26,10 @@ private:
 
 	FAbilitySlot MouseActionSlot;
 
-	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UPROPERTY(EditAnyWhere, Category = Camera)
 	USpringArmComponent *SpringArm;
 
-	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UPROPERTY(EditAnywhere, Category = Camera)
 	UCameraComponent *Camera;
 
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
@@ -37,12 +38,27 @@ private:
 	UPROPERTY()
 	UWeaponManager *WeaponManager;
 
-	
+	UPROPERTY()
+	UAnimMontage *AttackMontage;
+
+	UPROPERTY()
+	UAnimInstance *AnimInstance;
+
+	TArray<FName> ComboList;
+	int MaxComboCount;
+	int ComboCount;
 
 	FName WeaponSocket;
 
+	//상호작용 체크
 	bool IsFindInteractionObject;
+	//구르기 체크
 	bool RollInput;
+	//공격 중인지 체크
+	bool IsAttack;
+	//중복 공격 체크
+	bool IsOverlapAttack;
+	
 
 protected:
 	void BeginPlay() override;
@@ -59,11 +75,18 @@ public:
 	
 	void OnActionInput(const FName& ActionName, bool bPressed);
 	
-
+	/// <summary>
+	/// 현재 무기의 식별 번호를 가져옵니다.
+	/// </summary>
 	int GetCurrentWeaponNum();
+
+	/// <summary>
+	/// 애니메이션 스왑 식별 불린을 가져옵니다.
+	/// </summary>
 	bool GetSwapAinmState();
 	bool GetIsFindInteractionObject();
 	bool GetRollAnimState();
+	bool GetIsBattle();
 
 	
 	void SetWeaponMesh();
@@ -74,6 +97,14 @@ private:
 	void NewSpringArm();
 
 	void OnMouseAction(bool bPressed);
+	void OnMouseSelection(bool bPressed);
+
+	void OnPlayerAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void OnPlayerAttackEnd();
+	UFUNCTION(BlueprintCallable)
+	void OnAttackInputChecking();
 
 	void OnMoveForward(float NewAxisValue);
 	void OnMoveRight(float NewAxisValue);
