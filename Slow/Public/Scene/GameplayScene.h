@@ -20,6 +20,8 @@ protected:
 	void SetNextStreamingLevel(const FName& InNextStreamingLevel);
 	
 public:
+	UGameplayScene();
+
 	void BeginPlay(UObject* Args = nullptr) override;
 	void EndPlay() override;
 

@@ -13,7 +13,7 @@
 
 ASlowPlayerController::ASlowPlayerController()
 {
-	bShowMouseCursor = CursorUsable = false;
+
 }
 
 void ASlowPlayerController::BeginPlay()

@@ -5,6 +5,11 @@
 #include "SlowGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
+UGameplayScene::UGameplayScene()
+{
+	SetCursorVisibleOverride(false);
+}
+
 void UGameplayScene::SetNextStreamingLevel(const FName& InNextStreamingLevel)
 {
 	NextStreamingLevel = InNextStreamingLevel;
