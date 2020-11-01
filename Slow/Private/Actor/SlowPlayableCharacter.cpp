@@ -2,9 +2,9 @@
 
 #include "Actor/SlowPlayableCharacter.h"
 
-#include "SlowTraceChannels.h"
-#include "LogDefine.h"
-#include "SlowInputDefine.h"
+#include "Common/SlowLogDefine.h"
+#include "Common/SlowInputDefine.h"
+#include "Common/SlowTraceChannels.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"

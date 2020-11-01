@@ -2,7 +2,8 @@
 
 #include "Actor/SlowCharacter.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
+#include "Common/SlowCommonMacros.h"
 
 ASlowCharacter::ASlowCharacter()
 {
@@ -35,7 +36,7 @@ USlowAnimInstance* ASlowCharacter::GetAnimInstance() const
 		QueryAnimInstance();
 		if (bCanAnimErrorLog && !SlowAnimInstance.IsValid())
 		{
-			UE_LOG(LogSlow, Error, TEXT("ASlowCharacter::GetAnimInstance(): 애니메이션 인스턴스를 불러오는데 실패하였습니다. 이 로그는 한 번만 출력됩니다."));
+			UE_LOG(LogSlow, Error, TEXT("%s: 애니메이션 인스턴스를 불러오는데 실패하였습니다. 이 로그는 한 번만 출력됩니다."), __FUNCTIONT__);
 			bCanAnimErrorLog = false;
 		}
 	}
@@ -48,14 +49,14 @@ void ASlowCharacter::QueryAnimInstance() const
 	USkeletalMeshComponent* SkeletalMesh = Cast<USkeletalMeshComponent>(GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 	if (SkeletalMesh == nullptr)
 	{
-		UE_LOG(LogSlow, Error, TEXT("ASlowCharacter::QueryAnimInstance(): 스켈레탈 메시가 설정되지 않았습니다."));
+		UE_LOG(LogSlow, Error, TEXT("%s: 스켈레탈 메시가 설정되지 않았습니다."), __FUNCTIONT__);
 		return;
 	}
 
 	UAnimInstance* AnimInstance = SkeletalMesh->GetAnimInstance();
 	if (AnimInstance == nullptr)
 	{
-		UE_LOG(LogSlow, Error, TEXT("ASlowCharacter::QueryAnimInstance(): 스켈레탈 메시에 애니메이션이 설정되지 않았습니다."));
+		UE_LOG(LogSlow, Error, TEXT("%s: 스켈레탈 메시에 애니메이션이 설정되지 않았습니다."), __FUNCTIONT__);
 		return;
 	}
 

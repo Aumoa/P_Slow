@@ -5,7 +5,7 @@
 #include "Actor/SlowPlayableCharacter.h"
 #include "Manager/WeaponManager.h"
 #include "SlowGameInstance.h"
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 
 bool USlowAnimInstance::ManagerAccessibleState = false;
 
@@ -50,7 +50,7 @@ void USlowAnimInstance::SetTrigger(FName VarName)
 	{
 		if (!it->IsValidType<FTriggerBool>())
 		{
-			UE_LOG(LogSlow, Error, TEXT("UPCAnimInstance::GetValueInternal(): Type FTriggerBool is not same to exist type."));
+			UE_LOG(LogSlow, Error, TEXT("%s: Type %s is not same to exist type."), __FUNCTIONT__, nameof_c(FTriggerBool));
 			return;
 		}
 
@@ -89,7 +89,7 @@ void USlowAnimInstance::SetValueInternal(FName VarName, T Value)
 	FMyVariant* it = VariantMap.Find(VarName);
 	if (it != nullptr) {
 		if (!it->IsValidType<T>()) {
-			UE_LOG(LogSlow, Error, TEXT("UPCAnimInstance::SetValueInternal(): Type T is not same to exist type."));
+			UE_LOG(LogSlow, Error, TEXT("%s: Type %s is not same to exist type."), __FUNCTIONT__, nameof_c(T));
 		}
 
 		(*it) = Value;
@@ -105,7 +105,7 @@ T USlowAnimInstance::GetValueInternal(FName VarName) const
 	const FMyVariant* it = VariantMap.Find(VarName);
 	if (it != nullptr) {
 		if (!it->IsValidType<T>()) {
-			UE_LOG(LogSlow, Error, TEXT("UPCAnimInstance::GetValueInternal(): Type T is not same to exist type."));
+			UE_LOG(LogSlow, Error, TEXT("%s: Type %s is not same to exist type."), __FUNCTIONT__, nameof_c(T));
 		}
 
 		return it->Get<T>();

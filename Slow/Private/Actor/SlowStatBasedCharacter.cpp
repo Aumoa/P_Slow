@@ -2,7 +2,6 @@
 
 #include "Actor/SlowStatBasedCharacter.h"
 
-#include "LogDefine.h"
 #include "Components/Behavior.h"
 #include "Effect/StatModifyLinearEffect.h"
 

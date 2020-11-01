@@ -2,7 +2,7 @@
 
 #include "Datatable/WeaponReference.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/DataTable.h"
 #include "TableRow/WeaponReferenceTableRow.h"
@@ -20,7 +20,7 @@ FWeaponReferenceTableRow* UWeaponReference::GetReferenceTableRow(const FName& In
 {
 	auto tableRow = DataTable->FindRow<FWeaponReferenceTableRow>(InReferenceKey, TEXT(""));
 	if (tableRow == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("InReferenceKey from WeaponReference table cannot be found."));
+		UE_LOG(LogSlow, Error, TEXT("%s from %s table cannot be found."), nameof(InReferenceKey), nameof_c(UWeaponReference));
 		return nullptr;
 	}
 

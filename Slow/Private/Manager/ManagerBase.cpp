@@ -3,7 +3,6 @@
 #include "Manager/ManagerBase.h"
 
 #include "SlowGameInstance.h"
-#include "LogDefine.h"
 
 USlowGameInstance* UManagerBase::GameInstance;
 

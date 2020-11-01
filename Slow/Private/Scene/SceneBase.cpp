@@ -2,7 +2,6 @@
 
 #include "Scene/SceneBase.h"
 
-#include "LogDefine.h"
 #include "GameFramework/PlayerController.h"
 
 USceneBase::USceneBase()

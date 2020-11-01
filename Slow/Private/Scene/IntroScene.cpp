@@ -2,7 +2,7 @@
 
 #include "Scene/IntroScene.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 #include "Manager/SceneManager.h"
 #include "Manager/WidgetManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -11,8 +11,6 @@
 
 void UIntroScene::BeginPlay(UObject* Args)
 {
-	UE_LOG(LogSlow, Log, TEXT("UIntroScene::BeginPlay()"));
-
 	UGameplayStatics::OpenLevel(this, TEXT("Intro"));
 }
 
@@ -31,8 +29,6 @@ void UIntroScene::EndPlay()
 		MyMainWidget->RemoveFromParent();
 		MyMainWidget = nullptr;
 	}
-
-	UE_LOG(LogSlow, Log, TEXT("UIntroScene::EndPlay()"));
 }
 
 void UIntroScene::OnActionInput(const FName& ActionName, bool bPressed)

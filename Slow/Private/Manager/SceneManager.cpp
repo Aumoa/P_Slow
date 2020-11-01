@@ -4,7 +4,7 @@
 
 #include "SlowGameInstance.h"
 #include "SlowConfig.h"
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 
 #include "Kismet/GameplayStatics.h"
 

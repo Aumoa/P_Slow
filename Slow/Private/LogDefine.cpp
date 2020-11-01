@@ -1,3 +1,3 @@
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 
 DEFINE_LOG_CATEGORY( LogSlow );

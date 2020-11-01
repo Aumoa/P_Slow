@@ -2,7 +2,8 @@
 
 #include "Ability/MoveAbility.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
+#include "Common/SlowCommonMacros.h"
 #include "Actor/SlowStatBasedCharacter.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,7 +20,7 @@ bool FMoveAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 	MovementComponent = Cast<UCharacterMovementComponent>(InCastPlayer->GetMovementComponent());
 
 	if (MovementComponent == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("FMoveAbility::ExecuteIndirect(): InCastPlayer must have UCharacterMovementComponent but there is no."));
+		UE_LOG(LogSlow, Error, TEXT("%s: %s must have UCharacterMovementComponent but there is no."), __FUNCTIONT__, nameof(InCastPlayer), nameof_c(UCharacterMovementComponent));
 		return false;
 	}
 

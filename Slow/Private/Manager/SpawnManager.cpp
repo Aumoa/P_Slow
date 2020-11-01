@@ -5,7 +5,7 @@
 #include "SlowGameInstance.h"
 #include "SlowConfig.h"
 #include "SlowPlayableCharacterState.h"
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 #include "Actor/SlowPlayableCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Datatable/ActorReference.h"
@@ -19,7 +19,7 @@ ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform)
 	auto world = instance->GetWorld();
 
 	if (world == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("USpawnManager::SpawnPlayerPawn(): GameInstance haven't world context."));
+		UE_LOG(LogSlow, Error, TEXT("%s: GameInstance haven't world context."), __FUNCTIONT__);
 		return nullptr;
 	}
 

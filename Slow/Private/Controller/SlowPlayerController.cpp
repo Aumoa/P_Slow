@@ -3,26 +3,46 @@
 #include "Controller/SlowPlayerController.h"
 
 #include "SlowGameInstance.h"
-#include "LogDefine.h"
-#include "SlowInputDefine.h"
+#include "Common/SlowInputDefine.h"
 #include "Manager/SceneManager.h"
 #include "Manager/InputManager.h"
 #include "Components/InputComponent.h"
 #include "Scene/SceneBase.h"
 #include "Actor/SlowPlayableCharacter.h"
+#include "Common/SlowCommonMacros.h"
+
+ASlowPlayerController::FGameThreadActionDelegateArgs::FGameThreadActionDelegateArgs(UObject* InSender, UObject* InArgs)
+{
+	this->Sender = InSender;
+	this->Args = InArgs;
+}
+
+void ASlowPlayerController::FGameThreadActionDelegateArgs::ResolveInGameThread()
+{
+	if (!Sender.IsValid())
+	{
+		Sender = nullptr;
+	}
+
+	if (!Args.IsValid())
+	{
+		Args = nullptr;
+	}
+}
 
 ASlowPlayerController::ASlowPlayerController()
 {
-
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void ASlowPlayerController::BeginPlay()
 {
+	GameThreadCS = MakeUnique<FCriticalSection>();
+
 	Super::BeginPlay();
 
 	USceneManager::BeginLevel(this);
 	UInputManager::SetPlayerController(this);
-
 }
 
 void ASlowPlayerController::SetupInputComponent()
@@ -54,6 +74,30 @@ void ASlowPlayerController::OnUnPossess()
 	Super::OnUnPossess();
 
 	Possessed = nullptr;
+}
+
+void ASlowPlayerController::Tick(float InDeltaSeconds)
+{
+	TArray<FGameThreadActionPair> SwapQueue;
+	{
+		ScopedLock(GameThreadCS);
+		Swap(SwapQueue, GameThreadActionQueue);
+	}
+
+	for (auto& Item : SwapQueue)
+	{
+		auto&& Func = MoveTemp(Item.Key);
+		auto&& Args = MoveTemp(Item.Value);
+
+		Args.ResolveInGameThread();
+		Func(Args.Sender.Get(), Args.Args.Get());
+	}
+}
+
+void ASlowPlayerController::EnqueueGameThreadAction(FGameThreadActionDelegate CallbackProc, const FGameThreadActionDelegateArgs& InArgs)
+{
+	ScopedLock(GameThreadCS);
+	GameThreadActionQueue.Emplace(CallbackProc, InArgs);
 }
 
 void ASlowPlayerController::OnMouseActionPressed()

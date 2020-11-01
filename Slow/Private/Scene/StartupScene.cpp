@@ -3,17 +3,13 @@
 
 #include "Scene/StartupScene.h"
 
-#include "LogDefine.h"
 #include "SlowGameInstance.h"
-
+#include "Common/SlowLogDefine.h"
 #include "Kismet/GameplayStatics.h"
-
 #include "Manager/SceneManager.h"
 
 void UStartupScene::BeginPlay( UObject* Args )
 {
-	UE_LOG( LogSlow, Log, TEXT( "UStartupScene::BeginPlay()" ) );
-
 	UGameplayStatics::OpenLevel( this, TEXT( "Startup" ) );
 
 	OpenDemoScene();
@@ -21,7 +17,7 @@ void UStartupScene::BeginPlay( UObject* Args )
 
 void UStartupScene::EndPlay()
 {
-	UE_LOG( LogSlow, Log, TEXT( "UStartupScene::EndPlay()" ) );
+
 }
 
 void UStartupScene::OpenDemoScene()

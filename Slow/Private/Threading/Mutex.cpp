@@ -2,8 +2,6 @@
 
 #include "Threading/Mutex.h"
 
-#include "LogDefine.h"
-
 FMutexSafeLockState::FMutexSafeLockState()
 {
 

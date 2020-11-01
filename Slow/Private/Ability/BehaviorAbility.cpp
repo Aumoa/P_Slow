@@ -2,7 +2,8 @@
 
 #include "Ability/BehaviorAbility.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
+#include "Common/SlowCommonMacros.h"
 #include "Actor/SlowCharacter.h"
 #include "Components/Behavior.h"
 
@@ -25,7 +26,7 @@ UBehavior* FBehaviorAbility_Impl::AttachTo(ASlowCharacter* TargetCharacter)
 	UBehavior* behavior = NewObject<UBehavior>(TargetCharacter, BehaviorType);
 	if (behavior == nullptr) {
 		FString className = BehaviorType->GetFName().ToString();
-		UE_LOG(LogSlow, Error, TEXT("FBehaviorAbility_Impl::AttachTo(): Cannot create behavior component in type: %s"), *className);
+		UE_LOG(LogSlow, Error, TEXT("%s: Cannot create behavior component in type: %s"), __FUNCTIONT__, *className);
 		return nullptr;
 	}
 

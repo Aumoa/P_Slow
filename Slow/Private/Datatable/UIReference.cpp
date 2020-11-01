@@ -2,7 +2,7 @@
 
 #include "Datatable/UIReference.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/DataTable.h"
 #include "TableRow/UIReferenceTableRow.h"
@@ -20,7 +20,7 @@ TSubclassOf<UUserWidget> UUIReference::GetReference(const FName& InReferenceKey)
 {
 	auto tableRow = DataTable->FindRow<FUIReferenceTableRow>(InReferenceKey, TEXT(""));
 	if (tableRow == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("InReferenceKey from UIReference table cannot be found."));
+		UE_LOG(LogSlow, Error, TEXT("%s from %s table cannot be found."), nameof(InReferenceKey), nameof_c(UUIReference));
 		return nullptr;
 	}
 

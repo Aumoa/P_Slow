@@ -31,6 +31,7 @@ public:
 	virtual void OnActionInput(const FName& ActionName, bool bPressed);
 
 	bool GetCursorVisibleOverride() const;
+	APlayerController* GetCurrentPlayerController() const;
 
 protected:
 	void SetCursorVisibleOverride(bool bVisible);

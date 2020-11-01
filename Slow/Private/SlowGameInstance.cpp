@@ -4,16 +4,13 @@
 #include "SlowGameInstance.h"
 
 #include "SlowConfig.h"
-#include "LogDefine.h"
-
+#include "Common/SlowLogDefine.h"
 #include "Manager/ManagerBase.h"
 
 USlowGameInstance* USlowGameInstance::Instance;
 
 void USlowGameInstance::Init()
 {
-	UE_LOG(LogSlow, Log, TEXT("USlowGameInstance::Init()"));
-
 	Config = NewObject<USlowConfig>(this);
 
 	Instance = this;
@@ -38,6 +35,6 @@ UManagerBase* USlowGameInstance::GetManager(TSubclassOf<UManagerBase> ClassType)
 		}
 	}
 
-	checkfSlow(false, TEXT("USlowGameInstance::GetManager(): Unknown manager class."));
+	checkfSlow(false, TEXT("%s: Unknown manager class."), __FUNCTIONT__);
 	return nullptr;
 }

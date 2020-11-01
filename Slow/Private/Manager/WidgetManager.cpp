@@ -2,7 +2,6 @@
 
 #include "Manager/WidgetManager.h"
 
-#include "LogDefine.h"
 #include "SlowGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Datatable/UIReference.h"

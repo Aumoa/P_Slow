@@ -4,8 +4,8 @@
 
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
-#include "LogDefine.h"
 #include "DrawDebugHelpers.h"
+#include "Common/SlowLogDefine.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -67,7 +67,7 @@ void UMovementBehavior::RebuildPaths()
 		);
 
 		if (buildedPath == nullptr) {
-			UE_LOG(LogSlow, Warning, TEXT("UMovementBehavior::RebuildPaths(): Options that path building with navigation system is enabled but build paths failed. Use direct path instead."));
+			UE_LOG(LogSlow, Warning, TEXT("%s: Options that path building with navigation system is enabled but build paths failed. Use direct path instead."), __FUNCTIONT__);
 			bUseNavigationPath = false;
 		}
 		else

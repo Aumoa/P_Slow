@@ -2,7 +2,7 @@
 
 #include "Effect/StatModifyLinearEffect.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 #include "Actor/SlowStatBasedCharacter.h"
 
 FStatModifyLinearEffect::FStatModifyLinearEffect(AActor* InCaster)
@@ -22,7 +22,7 @@ void FStatModifyLinearEffect::Apply(AActor* InTarget)
 	auto StatBasedCharacter = Cast<ASlowStatBasedCharacter>(InTarget);
 	if (StatBasedCharacter == nullptr)
 	{
-		UE_LOG(LogSlow, Error, TEXT("StatModifyLinearEffect::Apply(): InTarget 매개변수는 null이 될 수 없습니다."));
+		UE_LOG(LogSlow, Error, TEXT("%s: %s 매개변수는 null이 될 수 없습니다."), __FUNCTIONT__, nameof(InTarget));
 		return;
 	}
 

@@ -11,6 +11,13 @@ inline const char* __nameof__(const T&, const char* xx)
 	return xx;
 }
 
+template<class T>
+inline const char* __nameof__(const char* xx)
+{
+	return xx;
+}
+
 #define ScopedLock(x) FScopeLock lock_##x(x.Get())
 #define __FUNCTIONT__ *FString(__FUNCTION__)
 #define nameof(x) *FString(__nameof__(x, #x))
+#define nameof_c(x) *FString(__nameof__<x>(#x))

@@ -3,7 +3,6 @@
 
 #include "Scene/DemoScene.h"
 
-#include "LogDefine.h"
 #include "SlowGameInstance.h"
 #include "SlowConfig.h"
 #include "Manager/SceneManager.h"
@@ -13,8 +12,6 @@
 
 void UDemoScene::BeginPlay(UObject* Args)
 {
-	UE_LOG(LogSlow, Log, TEXT("UDemoScene::BeginPlay()"));
-
 	GameInstance = USlowGameInstance::GetGameInstance();
 	OpenNextScene();
 }
@@ -33,8 +30,6 @@ void UDemoScene::EndPlay()
 		MyWidget->RemoveFromParent();
 		MyWidget = nullptr;
 	}
-
-	UE_LOG(LogSlow, Log, TEXT("UDemoScene::EndPlay()"));
 }
 
 void UDemoScene::OnDemoEnded()

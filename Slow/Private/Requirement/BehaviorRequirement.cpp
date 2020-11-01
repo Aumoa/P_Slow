@@ -2,7 +2,7 @@
 
 #include "Requirement/BehaviorRequirement.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 #include "Components/Behavior.h"
 #include "Actor/SlowCharacter.h"
 
@@ -32,12 +32,12 @@ bool FBehaviorRequirement::ActorTargetCheck(AActor* InActor) const
 bool FBehaviorRequirement::Query(ASlowCharacter* InCharacter) const
 {
 	if (InCharacter == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("FBehaviorRequirement::Query(): InCharacter parameter is null."));
+		UE_LOG(LogSlow, Error, TEXT("%s: %s parameter is null."), __FUNCTIONT__, nameof(InCharacter));
 		return false;
 	}
 
 	if (TypeofBehavior == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("FBehaviorRequirement::Query(): TypeofBehavior is null."));
+		UE_LOG(LogSlow, Error, TEXT("%s: %s is null."), __FUNCTIONT__, nameof(TypeofBehavior));
 		return false;
 	}
 

@@ -2,7 +2,8 @@
 
 #include "Ability/AttackAbility.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
+#include "Common/SlowCommonMacros.h"
 #include "Actor/SlowStatBasedCharacter.h"
 #include "Ability/WeaponBase.h"
 #include "Requirement/ActorTargetRequirement.h"
@@ -17,7 +18,7 @@ bool FAttackAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 {
 	if (!MyTarget.IsValid() || InCastPlayer == nullptr)
 	{
-		UE_LOG(LogSlow, Error, TEXT("FAttackAbility::ExecuteIndirect(): 타겟이 지정되지 않았거나 시전 플레이어가 null입니다."));
+		UE_LOG(LogSlow, Error, TEXT("%s: 타겟이 지정되지 않았거나 시전 플레이어가 null입니다."), __FUNCTIONT__);
 		return false;
 	}
 
@@ -26,7 +27,7 @@ bool FAttackAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 	FEquipments Equips = InCastPlayer->GetCurrentEquipments();
 	if (!Equips.Weapon.IsValid())
 	{
-		UE_LOG(LogSlow, Warning, TEXT("FAttackAbility::ExecuteIndirect(): 시전 플레이어가 공격에 적합한 무기를 소유하고 있지 않습니다. InCastPlayer->GetCurrentEquipments()에서 반환되었습니다."));
+		UE_LOG(LogSlow, Warning, TEXT("%s: 시전 플레이어가 공격에 적합한 무기를 소유하고 있지 않습니다. %s->GetCurrentEquipments()에서 반환되었습니다."), __FUNCTIONT__, nameof(InCastPlayer));
 		return false;
 	}
 
@@ -74,14 +75,14 @@ bool FAttackAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 	TSubclassOf<UBehavior> EffectClass = CurrentWeaponResolve->GetEffect();
 	if (EffectClass == nullptr)
 	{
-		UE_LOG(LogSlow, Warning, TEXT("FAttackAbility::ExecuteIndirect(): 공격을 시도하려는 무기에 공격 효과가 없습니다. 오류는 아니지만, GetEffect() 함수가 오버라이드 되지 않았을 수 있습니다."));
+		UE_LOG(LogSlow, Warning, TEXT("%s: 공격을 시도하려는 무기에 공격 효과가 없습니다. 오류는 아니지만, GetEffect() 함수가 오버라이드 되지 않았을 수 있습니다."), __FUNCTIONT__);
 		return false;
 	}
 
 	auto EffectInstance = NewObject<UBehavior>(MyTargetResolve, EffectClass);
 	if (EffectInstance == nullptr)
 	{
-		UE_LOG(LogSlow, Error, TEXT("FAttackAbility::ExecuteIndirect(): 공격을 시도하려는 무기에 공격 효과 클래스가 잘못 설정되었습니다. UBehavior를 상속하는 올바른 클래스 값이 전달되어야 합니다."));
+		UE_LOG(LogSlow, Error, TEXT("%s: 공격을 시도하려는 무기에 공격 효과 클래스가 잘못 설정되었습니다. %s를 상속하는 올바른 클래스 값이 전달되어야 합니다."), __FUNCTIONT__, nameof_c(UBehavior));
 		return false;
 	}
 

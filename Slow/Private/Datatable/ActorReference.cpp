@@ -2,7 +2,7 @@
 
 #include "Datatable/ActorReference.h"
 
-#include "LogDefine.h"
+#include "Common/SlowLogDefine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/DataTable.h"
 #include "TableRow/ActorReferenceTableRow.h"
@@ -20,7 +20,7 @@ TSubclassOf<AActor> UActorReference::GetReference(const FName& InReferenceKey)
 {
 	auto tableRow = DataTable->FindRow<FActorReferenceTableRow>(InReferenceKey, TEXT(""));
 	if (tableRow == nullptr) {
-		UE_LOG(LogSlow, Error, TEXT("InReferenceKey from ActorReference table cannot be found."));
+		UE_LOG(LogSlow, Error, TEXT("%s from %s table cannot be found."), nameof(InReferenceKey), nameof_c(UActorReference));
 		return nullptr;
 	}
 
