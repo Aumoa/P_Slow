@@ -10,6 +10,5 @@ public class SlowTarget : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.AddRange( new string[] { "Slow" } );
-		CppStandard = CppStandardVersion.Cpp17;
 	}
 }
