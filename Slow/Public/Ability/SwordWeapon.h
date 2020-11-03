@@ -9,6 +9,7 @@
 
 struct FWeaponReferenceTableRow;
 class UAnimMontage;
+class UCapsuleComponent;
 
 UCLASS()
 class SLOW_API USwordWeapon : public UWeaponBase
@@ -23,6 +24,9 @@ private:
 
 	UPROPERTY()
 	UStaticMesh* StaticMesh_Weapon;
+	
+	UPROPERTY()
+	UCapsuleComponent* Collision_Weapon;
 
 	UPROPERTY()
 	FName SocketName;

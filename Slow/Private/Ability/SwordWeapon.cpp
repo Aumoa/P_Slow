@@ -5,6 +5,7 @@
 #include "Manager/WeaponManager.h"
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
+#include "Components/CapsuleComponent.h"
 
 USwordWeapon::USwordWeapon()
 {
@@ -13,6 +14,8 @@ USwordWeapon::USwordWeapon()
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_MTG(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Attack_Sword.MTG_PC_Attack_Sword'"));
 	AttackMontage = Attack_MTG.Object;
+
+	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(FName("Collision_Weapon"));
 }
 
 void USwordWeapon::BeginWeapon()

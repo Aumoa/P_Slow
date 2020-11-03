@@ -46,8 +46,6 @@ void ASlowPlayableCharacter::BeginPlay()
 	
 	SetControlMode(0);
 
-	
-
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("HammerSocket"));
 
 	AnimInstance = GetMesh()->GetAnimInstance();
@@ -56,9 +54,6 @@ void ASlowPlayableCharacter::BeginPlay()
 void ASlowPlayableCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	
-	
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -76,8 +71,6 @@ ASlowPlayableCharacter::~ASlowPlayableCharacter()
 {
 	
 }
-
-
 
 void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPressed)
 {
@@ -97,15 +90,12 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		if (WeaponManager != nullptr)
 		{
 			WeaponManager->NextWeapon();
-			UE_LOG(LogTemp, Warning, TEXT("GetIsBattle :: %s"), GetIsBattle() ? TEXT("True") : TEXT("False"));
 			SetWeaponSocketName();
 			SetWeaponMesh();
 
 			AttackMontage = WeaponManager->GetAttackMontage();
 			ComboList = WeaponManager->GetComboList();
 			MaxComboCount = WeaponManager->GetMaxComboCount();
-
-			UE_LOG(LogTemp,Warning,TEXT("ASlowPlayableCharacter::OnActionInput : Weapon : %s"),*WeaponSocket.ToString());
 
 			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 		}
@@ -306,12 +296,11 @@ void ASlowPlayableCharacter::OnMoveRight(float NewAxisValue)
 
 	AddMovementInput(right, NewAxisValue);
 	*/
-	
+
 }
 
 void ASlowPlayableCharacter::AddYawInput(float NewAxisValue)
 {
-	
 	if(NewAxisValue == 0.0f) 
 	{
 		return;

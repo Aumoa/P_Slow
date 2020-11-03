@@ -5,6 +5,7 @@
 #include "Manager/WeaponManager.h"
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
+#include "Components/CapsuleComponent.h"
 
 UHatchetWeapon::UHatchetWeapon()
 {
@@ -13,6 +14,8 @@ UHatchetWeapon::UHatchetWeapon()
 	
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_MTG(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Attack_Hat.MTG_PC_Attack_Hat'"));
 	AttackMontage = Attack_MTG.Object;
+
+	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(FName("Collision_Weapon"));
 }
 
 void UHatchetWeapon::BeginWeapon()

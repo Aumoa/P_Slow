@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 
-#include "SourceCodeNavigation.h"
-
 #include "Templates/SharedPointer.h"
 
 class FMutex;

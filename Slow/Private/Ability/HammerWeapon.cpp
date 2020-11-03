@@ -6,6 +6,7 @@
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
 #include "Animation/AnimMontage.h"
+#include "Components/CapsuleComponent.h"
 
 UHammerWeapon::UHammerWeapon()
 {
@@ -15,6 +16,7 @@ UHammerWeapon::UHammerWeapon()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_MTG(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Attack_ham.MTG_PC_Attack_ham'"));
 	AttackMontage = Attack_MTG.Object;
 
+	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(FName("Collision_Weapon"));
 }
 
 void UHammerWeapon::BeginWeapon()
