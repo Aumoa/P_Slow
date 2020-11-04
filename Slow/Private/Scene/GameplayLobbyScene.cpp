@@ -10,6 +10,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Controller/SlowPlayerController.h"
 #include "Common/SlowCommonMacros.h"
+#include "Common/SlowLogDefine.h"
 #include "Engine/LevelStreaming.h"
 
 UGameplayLobbyScene::UGameplayLobbyScene()
