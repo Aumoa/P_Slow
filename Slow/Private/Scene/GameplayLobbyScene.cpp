@@ -1,4 +1,4 @@
-// Copyright 2020 Team slow. All right reserved.
+ï»¿// Copyright 2020 Team slow. All right reserved.
 
 #include "Scene/GameplayLobbyScene.h"
 
@@ -25,7 +25,7 @@ void UGameplayLobbyScene::BeginPlay(UObject* Args)
 
 	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
 
-	// ÆÛ½Ã½ºÅÏÆ® ·¹º§À» ºÒ·¯¿É´Ï´Ù.
+	// í¼ì‹œìŠ¤í„´íŠ¸ ë ˆë²¨ì„ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.
 	UGameplayStatics::OpenLevel(WorldContext, TEXT("Map_1S"));
 }
 
@@ -37,7 +37,7 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
 	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Loading"), true, true, LatentInfo);
 
-	// ºñµ¿±â ·Îµù ÀÛ¾÷À» ÁøÇàÇÕ´Ï´Ù.
+	// ë¹„ë™ê¸° ë¡œë”© ì‘ì—…ì„ ì§„í–‰í•©ë‹ˆë‹¤.
 	LatentInfo.CallbackTarget = this;
 	LatentInfo.ExecutionFunction = TEXT("OnStreamLoaded_Base");
 	LatentInfo.UUID = 1;
@@ -54,13 +54,13 @@ void UGameplayLobbyScene::OnStreamLoaded()
 {
 	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
 	ASlowPlayerController* const PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(WorldContext, 0));
-	checkf(PlayerController != nullptr, TEXT("%s: %s¿¡¼­ °¡Á®¿Â %s°¡ nullptrÀÔ´Ï´Ù."), __FUNCTIONT__, nameof(WorldContext), nameof(PlayerController));
+	checkf(PlayerController != nullptr, TEXT("%s: %sì—ì„œ ê°€ì ¸ì˜¨ %sê°€ nullptrì…ë‹ˆë‹¤."), __FUNCTIONT__, nameof(WorldContext), nameof(PlayerController));
 
 	PlayerController->EnqueueGameThreadAction([&, WeakPlayerController = TWeakObjectPtr<ASlowPlayerController>(PlayerController)](UObject* InSender, UObject* InArgs)
 		{
 			if (!WeakPlayerController.IsValid())
 			{
-				UE_LOG(LogSlow, Error, TEXT("%s: %s°¡ ¿Ã¹Ù¸£Áö ¾ÊÀº °ªÀ» ÂüÁ¶ÇÕ´Ï´Ù. GC ¶Ç´Â ½º·¹µå ¿À·ùÀÏ ¼ö ÀÖ½À´Ï´Ù."), __FUNCTIONT__, nameof(WeakPlayerController));
+				UE_LOG(LogSlow, Error, TEXT("%s: %sê°€ ì˜¬ë°”ë¥´ì§€ ì•Šì€ ê°’ì„ ì°¸ì¡°í•©ë‹ˆë‹¤. GC ë˜ëŠ” ìŠ¤ë ˆë“œ ì˜¤ë¥˜ì¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤."), __FUNCTIONT__, nameof(WeakPlayerController));
 				return;
 			}
 
