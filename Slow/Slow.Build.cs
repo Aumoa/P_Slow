@@ -10,6 +10,7 @@ public class Slow : ModuleRules
 		bUseRTTI = true;
 	
 		PublicDependencyModuleNames.AddRange(new string[] {
+			/* EngineCore */
 			"Core",
 			"CoreUObject",
 			"Engine",
@@ -18,7 +19,10 @@ public class Slow : ModuleRules
 			"AIModule",
 			"UMG",
 			"Slate",
-			"SlateCore"
+			"SlateCore",
+
+			/* Plugins */
+			"ApexDestruction"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
