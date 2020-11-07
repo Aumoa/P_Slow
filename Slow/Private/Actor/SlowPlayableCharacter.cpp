@@ -5,9 +5,6 @@
 #include "Common/SlowLogDefine.h"
 #include "Common/SlowInputDefine.h"
 #include "Common/SlowTraceChannels.h"
-#include "GameFramework/PlayerController.h"
-#include "Components/InputComponent.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Ability/AbilityBase.h"
 #include "Ability/MoveAbility.h"
 #include "Ability/AttackAbility.h"
@@ -19,7 +16,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
-#include "Attributes/Equipments.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -129,7 +125,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	else if (ActionName == IA_Interaction)
 	{
-		//Æ®·¹ÀÌ½º·Î »óÈ£ÀÛ¿ë ¹°Ã¼ Ã¼Å©
+		//Æ®ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½Ã¼ Ã¼Å©
 		IsFindInteractionObject = true;
 	}
 

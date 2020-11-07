@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "SlowStatBasedCharacter.h"
 
-#include "SlowPlayableCharacter.generated.h"
+#include "SlowPlayerMovement.generated.h"
 
-UClass()
+UCLASS()
 class SLOW_API ASlowPlayerMovement : public ASlowPlayableCharacter
 {
 	GENERATED_BODY()

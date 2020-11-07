@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "BehaviorAbility.h"
 #include "ILocationTargetAbility.h"
 

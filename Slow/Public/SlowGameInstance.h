@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
+
 
 #include "Manager/ManagerBase.h"
 

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "ActorEffect.h"
 
 #include "Attributes/AttrInstance.h"

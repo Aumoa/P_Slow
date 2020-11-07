@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "Scene/SceneBase.h"
+
 #include "IntroScene.generated.h"
 
 class UIntroWidget;

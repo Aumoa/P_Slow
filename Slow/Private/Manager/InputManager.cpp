@@ -2,8 +2,6 @@
 
 #include "Manager/InputManager.h"
 
-#include "GameFramework/PlayerController.h"
-
 void UInputManager::SetPlayerController(APlayerController* playerController)
 {
 	auto instance = GetSingletonInstance();

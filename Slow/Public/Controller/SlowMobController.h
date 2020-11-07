@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "SlowAIController.h"
 
 #include "SlowMobController.generated.h"

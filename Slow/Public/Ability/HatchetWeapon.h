@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "Ability/WeaponBase.h"
 
 #include "HatchetWeapon.generated.h"

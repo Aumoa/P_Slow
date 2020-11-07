@@ -5,10 +5,8 @@
 #include "UI/Control/SlowTextButton.h"
 #include "UI/Widget/SlowOptionsWidget.h"
 #include "UI/Widget/SlowStageSelectsWidget.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Manager/WidgetManager.h"
 #include "Manager/SceneManager.h"
-#include "Animation/WidgetAnimation.h"
 
 void UIntroWidget::NativeConstruct()
 {

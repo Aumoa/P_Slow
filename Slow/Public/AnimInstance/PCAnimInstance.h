@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "SlowAnimInstance.h"
 
 #include "PCAnimInstance.generated.h"

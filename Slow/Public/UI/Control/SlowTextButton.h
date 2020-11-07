@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "SlowControlBase.h"
 
 #include "SlowTextStyle.h"

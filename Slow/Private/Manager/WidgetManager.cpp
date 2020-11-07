@@ -3,7 +3,6 @@
 #include "Manager/WidgetManager.h"
 
 #include "SlowGameInstance.h"
-#include "Kismet/GameplayStatics.h"
 #include "Datatable/UIReference.h"
 #include "UI/SlowWidgetBase.h"
 

@@ -3,8 +3,6 @@
 #include "Datatable/WeaponReference.h"
 
 #include "Common/SlowLogDefine.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Engine/DataTable.h"
 #include "TableRow/WeaponReferenceTableRow.h"
 
 TWeakObjectPtr<UDataTable> UWeaponReference::DataTable;

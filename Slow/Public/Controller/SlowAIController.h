@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Controller.h"
+
 
 #include "SlowAIController.generated.h"
 

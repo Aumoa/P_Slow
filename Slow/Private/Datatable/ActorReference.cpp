@@ -3,8 +3,6 @@
 #include "Datatable/ActorReference.h"
 
 #include "Common/SlowLogDefine.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Engine/DataTable.h"
 #include "TableRow/ActorReferenceTableRow.h"
 
 TWeakObjectPtr<UDataTable> UActorReference::DataTable;

@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+
 
 #include "WeaponBase.generated.h"
 
 class FRequirementBase;
 class UBehavior;
 class UStaticMesh;
+class UAnimMontage;
 class UCapsuleComponent;
 
 UCLASS(Blueprintable)

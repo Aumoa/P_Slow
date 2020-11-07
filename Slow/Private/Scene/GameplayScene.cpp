@@ -3,7 +3,6 @@
 #include "Scene/GameplayScene.h"
 
 #include "SlowGameInstance.h"
-#include "Kismet/GameplayStatics.h"
 
 UGameplayScene::UGameplayScene()
 {

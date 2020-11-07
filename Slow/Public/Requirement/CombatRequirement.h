@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "RequirementBase.h"
 
 #include "Attributes/CombatTag.h"

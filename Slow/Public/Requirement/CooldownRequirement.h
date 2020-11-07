@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "RequirementBase.h"
 
 class FCooldownRequirement : public FRequirementBase

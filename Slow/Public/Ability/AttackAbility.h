@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "AbilityBase.h"
 #include "BehaviorAbility.h"
 #include "IActorTargetAbility.h"

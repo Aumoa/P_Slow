@@ -6,8 +6,10 @@ public class Slow : ModuleRules
 {
 	public Slow(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		PCHUsage = PCHUsageMode.NoSharedPCHs;
 		bUseRTTI = true;
+		PrivatePCHHeaderFile = "Slow.h";
+		CppStandard = CppStandardVersion.Cpp17;
 	
 		PublicDependencyModuleNames.AddRange(new string[] {
 			/* EngineCore */

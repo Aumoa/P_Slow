@@ -2,8 +2,6 @@
 
 #include "Components/Behavior.h"
 
-#include "GameFramework/Actor.h"
-
 UBehavior::UBehavior()
 {
 	ActivateStateStack.Push(true);

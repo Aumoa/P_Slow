@@ -2,9 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/StaticMeshComponent.h"
-
 #include "SokobanGameSlot.generated.h"
 
 class USokobanGameItem;

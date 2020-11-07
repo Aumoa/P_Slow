@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+
 
 #include "SlowWidgetBase.generated.h"
 

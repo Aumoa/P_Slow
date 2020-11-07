@@ -5,7 +5,6 @@
 
 #include "SlowGameInstance.h"
 #include "Common/SlowLogDefine.h"
-#include "Kismet/GameplayStatics.h"
 #include "Manager/SceneManager.h"
 
 void UStartupScene::BeginPlay( UObject* Args )

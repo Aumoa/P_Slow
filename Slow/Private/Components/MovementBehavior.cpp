@@ -2,13 +2,7 @@
 
 #include "Components/MovementBehavior.h"
 
-#include "NavigationSystem.h"
-#include "NavigationPath.h"
-#include "DrawDebugHelpers.h"
 #include "Common/SlowLogDefine.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
 
 UMovementBehavior::UMovementBehavior()
 {

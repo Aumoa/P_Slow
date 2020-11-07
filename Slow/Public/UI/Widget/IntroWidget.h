@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "UI/SlowWidgetBase.h"
+
 #include "IntroWidget.generated.h"
 
 class USlowTextButton;

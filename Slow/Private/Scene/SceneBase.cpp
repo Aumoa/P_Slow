@@ -2,8 +2,6 @@
 
 #include "Scene/SceneBase.h"
 
-#include "GameFramework/PlayerController.h"
-
 USceneBase::USceneBase()
 {
 	bCursorVisibleOverride = true;

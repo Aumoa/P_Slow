@@ -1,12 +1,9 @@
 // Copyright 2020. Team slow, All right reserved.
 
-
 #include "Ability/HammerWeapon.h"
 #include "Manager/WeaponManager.h"
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
-#include "Animation/AnimMontage.h"
-#include "Components/CapsuleComponent.h"
 
 UHammerWeapon::UHammerWeapon()
 {

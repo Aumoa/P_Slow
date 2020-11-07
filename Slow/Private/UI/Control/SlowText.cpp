@@ -2,11 +2,6 @@
 
 #include "UI/Control/SlowText.h"
 
-#include "Components/VerticalBox.h"
-#include "Components/HorizontalBox.h"
-#include "Components/TextBlock.h"
-#include "Blueprint/WidgetTree.h"
-
 void USlowText::NativeConstruct()
 {
 	Super::NativeConstruct();

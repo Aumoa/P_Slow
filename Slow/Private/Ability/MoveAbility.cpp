@@ -5,9 +5,6 @@
 #include "Common/SlowLogDefine.h"
 #include "Common/SlowCommonMacros.h"
 #include "Actor/SlowStatBasedCharacter.h"
-#include "GameFramework/Actor.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/MovementBehavior.h"
 
 FMoveAbility::FMoveAbility()
 {

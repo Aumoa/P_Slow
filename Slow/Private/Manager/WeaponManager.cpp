@@ -1,6 +1,5 @@
 // Copyright 2020. Team slow, All right reserved.
 
-
 #include "Manager/WeaponManager.h"
 #include "SlowConfig.h"
 #include "SlowGameInstance.h"
@@ -9,7 +8,6 @@
 #include "Ability/HatchetWeapon.h"
 #include "Ability/HammerWeapon.h"
 #include "Ability/SwordWeapon.h"
-#include "Animation/AnimMontage.h"
 
 /*void UWeaponManager::Initialize(USlowGameInstance* GInstance)
 {

@@ -2,10 +2,6 @@
 
 #include "UI/Widget/DemoWidget.h"
 
-#include "Components/Image.h"
-#include "Animation/WidgetAnimation.h"
-#include "Animation/UMGSequencePlayer.h"
-
 void UDemoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

@@ -2,10 +2,6 @@
 
 #include "Statics/SlowNavigationSystem.h"
 
-#include "NavigationSystem.h"
-#include "GameFramework/Character.h"
-#include "Components/CapsuleComponent.h"
-
 namespace
 {
 	inline bool IsValidNavigationSystem(UNavigationSystemV1* InNavSys)

@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Animation/AnimInstance.h"
+
 
 #include "Misc/SlowVariant.h"
 #include "Misc/TriggerBool.h"

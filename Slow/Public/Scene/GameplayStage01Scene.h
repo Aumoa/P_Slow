@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "GameplayScene.h"
 
 #include "GameplayStage01Scene.generated.h"

@@ -6,8 +6,6 @@
 #include "SlowConfig.h"
 #include "Common/SlowLogDefine.h"
 
-#include "Kismet/GameplayStatics.h"
-
 void USceneManager::Initialize(USlowGameInstance* GInstance)
 {
 	Super::Initialize(GInstance);

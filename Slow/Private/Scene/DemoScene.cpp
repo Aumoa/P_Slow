@@ -7,7 +7,6 @@
 #include "SlowConfig.h"
 #include "Manager/SceneManager.h"
 #include "Manager/WidgetManager.h"
-#include "Kismet/GameplayStatics.h"
 #include "UI/Widget/DemoWidget.h"
 
 void UDemoScene::BeginPlay(UObject* Args)

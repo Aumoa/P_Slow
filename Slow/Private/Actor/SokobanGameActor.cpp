@@ -135,6 +135,12 @@ void ASokobanGameActor::OnPropertyChanged_ItemCount()
 {
 	CHECK_ITEM_COUNT(ItemCountX, 1, 20);
 	CHECK_ITEM_COUNT(ItemCountY, 1, 20);
+
+	SlotComponents.SetNum(ItemCountX * ItemCountY);
+	for (int32 i = 0; i < SlotComponents.Num(); ++i)
+	{
+		
+	}
 }
 
 #endif

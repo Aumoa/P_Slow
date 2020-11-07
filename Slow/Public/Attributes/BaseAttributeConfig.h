@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "BaseAttributeConfig.generated.h"
 
 USTRUCT(BlueprintType)

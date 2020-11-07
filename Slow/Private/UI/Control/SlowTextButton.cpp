@@ -3,7 +3,6 @@
 #include "UI/Control/SlowTextButton.h"
 
 #include "UI/Control/SlowText.h"
-#include "Components/Button.h"
 #include "Manager/WidgetManager.h"
 
 void USlowTextButton::NativeConstruct()

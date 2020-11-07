@@ -1,11 +1,9 @@
 // Copyright 2020. Team slow, All right reserved.
 
-
 #include "Ability/HatchetWeapon.h"
 #include "Manager/WeaponManager.h"
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
-#include "Components/CapsuleComponent.h"
 
 UHatchetWeapon::UHatchetWeapon()
 {

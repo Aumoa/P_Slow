@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Misc/ScopeLock.h"
+
 #include "SlowLogDefine.h"
 
 template<class T>

@@ -1,6 +1,8 @@
 // Copyright 2020 Team slow. All right reserved.
 
-#include "CoreMinimal.h"
+#pragma once
+
+
 #include "ActorTargetRequirement.h"
 
 class ASlowCharacter;

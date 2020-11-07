@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "UI/SlowWidgetBase.h"
 
 #include "SlowOptionsWidget.generated.h"

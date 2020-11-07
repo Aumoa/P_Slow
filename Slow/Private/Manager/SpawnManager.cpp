@@ -7,10 +7,7 @@
 #include "SlowPlayableCharacterState.h"
 #include "Common/SlowLogDefine.h"
 #include "Actor/SlowPlayableCharacter.h"
-#include "Kismet/GameplayStatics.h"
 #include "Datatable/ActorReference.h"
-#include "GameFramework/Actor.h"
-#include "Components/CapsuleComponent.h"
 #include "Statics/SlowNavigationSystem.h"
 
 ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform)

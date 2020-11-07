@@ -2,8 +2,6 @@
 
 #include "UI/Control/SlowText.h"
 
-#include "Blueprint/WidgetTree.h"
-
 USlowText::FStateMachine::FStyleDeltas::FStyleDeltas()
 	: bBold(false)
 	, bItalic(false)

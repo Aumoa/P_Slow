@@ -3,8 +3,6 @@
 #include "Datatable/UIReference.h"
 
 #include "Common/SlowLogDefine.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Engine/DataTable.h"
 #include "TableRow/UIReferenceTableRow.h"
 
 TWeakObjectPtr<UDataTable> UUIReference::DataTable;

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "ManagerBase.h"
 
 #include "WeaponManager.generated.h"

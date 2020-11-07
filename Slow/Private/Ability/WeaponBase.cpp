@@ -1,6 +1,5 @@
 // Copyright 2020. Team slow, All right reserved.
 
-
 #include "Ability/WeaponBase.h"
 
 TArray<TSharedPtr<FRequirementBase>> UWeaponBase::GetAllRequirements() const

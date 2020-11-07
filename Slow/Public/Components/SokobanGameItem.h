@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
+
 
 #include "SokobanGameItem.generated.h"
 

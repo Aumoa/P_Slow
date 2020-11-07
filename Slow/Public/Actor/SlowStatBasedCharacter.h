@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Actor/SlowCharacter.h"
 
 #include "Attributes/BaseAttributeConfig.h"

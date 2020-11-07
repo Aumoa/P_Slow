@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "Behavior.h"
 
 #include "MovementBehavior.generated.h"
