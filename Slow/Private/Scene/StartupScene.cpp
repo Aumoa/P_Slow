@@ -5,6 +5,7 @@
 
 #include "SlowGameInstance.h"
 #include "Common/SlowLogDefine.h"
+#include "Common/SlowConsoleVar.h"
 #include "Manager/SceneManager.h"
 
 void UStartupScene::BeginPlay( UObject* Args )
@@ -21,5 +22,14 @@ void UStartupScene::EndPlay()
 
 void UStartupScene::OpenDemoScene()
 {
-	USceneManager::LoadScene( TEXT( "Demo" ) );
+	bool bSkipDemo = ConsoleVariable::Slow::SkipDemo.GetValueOnGameThread();
+
+	FString NextSceneName = TEXT("Demo");
+
+	if (bSkipDemo)
+	{
+		NextSceneName = TEXT("Intro");
+	}
+
+	USceneManager::LoadScene(NextSceneName);
 }

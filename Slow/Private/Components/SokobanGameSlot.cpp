@@ -6,22 +6,12 @@
 
 USokobanGameSlot::USokobanGameSlot()
 {
-	SetMobility(EComponentMobility::Static);
+	SetMobility(EComponentMobility::Movable);
 }
 
 void USokobanGameSlot::SetItem(USokobanGameItem* InItem)
 {
-	if (MyItem != nullptr)
-	{
-		MyItem->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-	}
-
 	MyItem = InItem;
-
-	if (MyItem != nullptr)
-	{
-		MyItem->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
-	}
 }
 
 USokobanGameItem* USokobanGameSlot::GetItem() const

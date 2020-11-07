@@ -2,9 +2,6 @@
 
 #pragma once
 
-
-#include "GameFramework/Actor.h"
-
 #include "SokobanGameActor.generated.h"
 
 class USokobanGameSlot;
@@ -17,6 +14,8 @@ class SLOW_API ASokobanGameActor : public AActor
 	GENERATED_BODY()
 
 private:
+	uint8 bRefreshed : 1;
+
 	UPROPERTY(EditAnywhere, Category = "Game", meta = (AllowPrivateAccess = "true"))
 	int32 ItemCountX;
 	UPROPERTY(EditAnywhere, Category = "Game", meta = (AllowPrivateAccess = "true"))
@@ -49,16 +48,22 @@ public:
 #endif
 
 	void CheckSlotItem(USokobanGameItem* InItem) const;
+	FVector2D QuerySlotLocation(int32 X, int32 Y) const;
 
 private:
-#if WITH_EDITOR
 	void OnPropertyChanged_ItemCount();
+#if WITH_EDITOR
+	void OnPropertyChanged_SlotMesh();
+	void OnPropertyChanged_SlotMeshScale();
 #endif
+	void RefreshSlotItemProperty(USokobanGameSlot* Item) const;
 
 	bool SafeComponentDispose(USokobanGameSlot*& InComponent);
 	USokobanGameSlot* NewCellComponent(int32 InX, int32 InY);
 
 	USokobanGameSlot*& GetCell(int32 InX, int32 InY);
 	USokobanGameSlot* const& GetCell(int32 InX, int32 InY) const;
-	void Break(int32 Number, int32* OutX, int32* OutY) const;
+	TTuple<int32, int32> Break(int32 Number) const;
+
+	void SetItemIndex(USokobanGameItem* InItem, int32 X, int32 Y);
 };

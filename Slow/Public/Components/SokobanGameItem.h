@@ -2,37 +2,52 @@
 
 #pragma once
 
-
-
 #include "SokobanGameItem.generated.h"
 
+class ASokobanGameActor;
+enum ELevelTick;
+
 UCLASS(ClassGroup = (SokobanGame), meta = (BlueprintSpawnableComponent))
-class SLOW_API USokobanGameItem : public USceneComponent
+class SLOW_API USokobanGameItem : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintGetter = GetSlotIndexX, BlueprintSetter = SetSlotIndexY, meta = (AllowPrivateAccess = "true"))
+	TWeakObjectPtr<ASokobanGameActor> MyActor;
+
+	/** 슬롯 인덱스 X를 설정합니다. */
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	int32 SlotIndexX;
-	UPROPERTY(EditAnywhere, BlueprintGetter = GetSlotIndexY, BlueprintSetter = SetSlotIndexY, meta = (AllowPrivateAccess = "true"))
+	/** 슬롯 인덱스 Y를 설정합니다. */
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	int32 SlotIndexY;
+	/** 아이템이 초당 몇 cm을 이동하는지 설정합니다. */
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float InteropSpeed;
+
+	FVector2D CurDestLocation;
+	uint8 bMoving : 1;
 
 public:
 	USokobanGameItem();
+
+	void BeginPlay() override;
+	void TickComponent(float InDeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
 #if WITH_EDITOR
 	void PostEditChangeProperty(FPropertyChangedEvent& InEvent) override;
 #endif
 
-	UFUNCTION(BlueprintGetter)
 	int32 GetSlotIndexX() const;
-	UFUNCTION(BlueprintSetter)
 	void SetSlotIndexX(int32 InValue);
-	UFUNCTION(BlueprintGetter)
 	int32 GetSlotIndexY() const;
-	UFUNCTION(BlueprintSetter)
 	void SetSlotIndexY(int32 InValue);
+	
+	bool IsMoving() const;
 
 private:
 	void UpdateSlot();
+
+	template<class First, class Second>
+	static FVector Select(const First& InFirstItem, int32 X, int32 Y, int32 Z, const Second& InSecondItem);
 };
