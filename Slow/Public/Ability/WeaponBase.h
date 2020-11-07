@@ -10,6 +10,7 @@
 class FRequirementBase;
 class UBehavior;
 class UStaticMesh;
+class UCapsuleComponent;
 
 UCLASS(Blueprintable)
 class SLOW_API UWeaponBase : public UObject
@@ -36,4 +37,5 @@ public:
 	virtual int GetMaxComboCount();
 	virtual UAnimMontage* GetAttackMontage();
 	virtual TArray<FName> GetComboList();
+	virtual UCapsuleComponent * GetCapsuleComponent();
 };

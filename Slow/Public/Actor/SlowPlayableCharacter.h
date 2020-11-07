@@ -11,8 +11,10 @@
 class UWeaponManager;
 class FAbilitySlot;
 class FMoveAbility;
+class FAttackAbility;
 class USpringArmComponent;
 class UCameraComponent;
+class UCapsuleComponent;
 class UAnimMontage;
 
 
@@ -23,8 +25,12 @@ class SLOW_API ASlowPlayableCharacter : public ASlowStatBasedCharacter
 
 private:
 	TSharedPtr<FMoveAbility> MoveAbility;
+	TSharedPtr<FAttackAbility> AttackAbility;
 
 	FAbilitySlot MouseActionSlot;
+	FAbilitySlot MouseSelectionSlot;
+
+	FEquipments Equipment;
 
 	UPROPERTY(EditAnyWhere, Category = Camera)
 	USpringArmComponent *SpringArm;
@@ -34,6 +40,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	UStaticMeshComponent* Weapon;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UCapsuleComponent* Collision_Weapon;
 
 	UPROPERTY()
 	UWeaponManager *WeaponManager;
@@ -72,6 +81,7 @@ public:
 public:
 	void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual FEquipments GetCurrentEquipments() const override;
 	
 	void OnActionInput(const FName& ActionName, bool bPressed);
 	
@@ -105,6 +115,10 @@ private:
 	void OnPlayerAttackEnd();
 	UFUNCTION(BlueprintCallable)
 	void OnAttackInputChecking();
+	UFUNCTION(BlueprintCallable)
+	void OnColStartAttack();
+	UFUNCTION()
+	void OnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void OnMoveForward(float NewAxisValue);
 	void OnMoveRight(float NewAxisValue);

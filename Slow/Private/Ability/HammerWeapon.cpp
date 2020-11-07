@@ -17,6 +17,9 @@ UHammerWeapon::UHammerWeapon()
 	AttackMontage = Attack_MTG.Object;
 
 	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(FName("Collision_Weapon"));
+	Collision_Weapon->SetCapsuleHalfHeight(70);
+	Collision_Weapon->SetCapsuleRadius(35);
+	Collision_Weapon->SetRelativeRotation(FRotator(90.0f,0.0f,0.0f));
 }
 
 void UHammerWeapon::BeginWeapon()
@@ -69,4 +72,9 @@ UAnimMontage* UHammerWeapon::GetAttackMontage()
 TArray<FName> UHammerWeapon::GetComboList()
 {
 	return ComboList;
+}
+
+UCapsuleComponent* UHammerWeapon::GetCapsuleComponent()
+{
+	return Collision_Weapon;
 }

@@ -97,6 +97,16 @@ bool UWeaponManager::SwapCondition(UWeaponBase *Weapon)
 	return false;
 }
 
+UWeaponBase* UWeaponManager::GetCurrentWeapon()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon;
+	}
+
+	return nullptr;
+}
+
 int UWeaponManager::GetWeaponNum() const
 {
 	if (CurrentWeapon != nullptr)
@@ -182,4 +192,14 @@ TArray<FName> UWeaponManager::GetComboList()
 	}
 
 	return TArray<FName>();
+}
+
+UCapsuleComponent* UWeaponManager::GetCapsuleComponent()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetCapsuleComponent();
+	}
+
+	return nullptr;
 }

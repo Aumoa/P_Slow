@@ -16,6 +16,9 @@ USwordWeapon::USwordWeapon()
 	AttackMontage = Attack_MTG.Object;
 
 	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(FName("Collision_Weapon"));
+	Collision_Weapon->SetCapsuleHalfHeight(70);
+	Collision_Weapon->SetCapsuleRadius(6.6f);
+	Collision_Weapon->SetRelativeLocation(FVector(0, -2, -15));
 }
 
 void USwordWeapon::BeginWeapon()
@@ -69,4 +72,9 @@ UAnimMontage* USwordWeapon::GetAttackMontage()
 TArray<FName> USwordWeapon::GetComboList()
 {
 	return ComboList;
+}
+
+UCapsuleComponent* USwordWeapon::GetCapsuleComponent()
+{
+	return Collision_Weapon;
 }

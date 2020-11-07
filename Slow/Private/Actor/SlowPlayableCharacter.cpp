@@ -10,6 +10,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Ability/AbilityBase.h"
 #include "Ability/MoveAbility.h"
+#include "Ability/AttackAbility.h"
 #include "Ability/ILocationTargetAbility.h"
 #include "Manager/WeaponManager.h"
 #include "AnimInstance/SlowAnimInstance.h"
@@ -17,6 +18,8 @@
 #include "Engine/Classes/GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
+#include "Attributes/Equipments.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -24,8 +27,15 @@ ASlowPlayableCharacter::ASlowPlayableCharacter()
 	RollInput = false;
 
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
+	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collision_Weapon"));
+	Collision_Weapon->OnComponentBeginOverlap.AddDynamic(this, &ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap);
 
 	NewSpringArm();
+}
+
+ASlowPlayableCharacter::~ASlowPlayableCharacter()
+{
+
 }
 
 void ASlowPlayableCharacter::BeginPlay()
@@ -33,12 +43,14 @@ void ASlowPlayableCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	MoveAbility = MakeShared<FMoveAbility>();
-	
-	NewWeaponManager();
-
+	AttackAbility = MakeShared<FAttackAbility>();
 	//Weapon = NewObject<UStaticMeshComponent>(this);
 
 	MouseActionSlot.SetAbility(MoveAbility.Get());
+	MouseSelectionSlot.SetAbility(AttackAbility.Get());
+
+	
+	
 
 	IsAttack = false;
 	IsOverlapAttack = false;
@@ -46,14 +58,13 @@ void ASlowPlayableCharacter::BeginPlay()
 	
 	SetControlMode(0);
 
+	NewWeaponManager();
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("HammerSocket"));
+	Collision_Weapon->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	
+	
 
 	AnimInstance = GetMesh()->GetAnimInstance();
-}
-
-void ASlowPlayableCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -67,10 +78,14 @@ void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	}
 }
-ASlowPlayableCharacter::~ASlowPlayableCharacter()
+
+void ASlowPlayableCharacter::Tick(float DeltaTime)
 {
-	
+	Super::Tick(DeltaTime);
 }
+
+
+
 
 void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPressed)
 {
@@ -90,6 +105,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		if (WeaponManager != nullptr)
 		{
 			WeaponManager->NextWeapon();
+			Equipment.Weapon = WeaponManager->GetCurrentWeapon();
 			SetWeaponSocketName();
 			SetWeaponMesh();
 
@@ -97,7 +113,17 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 			ComboList = WeaponManager->GetComboList();
 			MaxComboCount = WeaponManager->GetMaxComboCount();
 
+			//UE_LOG(LogTemp, Warning, TEXT("CapsuleComponent name :: %s"), *Collision_Weapon->GetName());
+			UCapsuleComponent *Collision_WeaponData = WeaponManager->GetCapsuleComponent();
+			Collision_Weapon->SetRelativeLocationAndRotation(Collision_WeaponData->GetRelativeLocation(),
+															Collision_WeaponData->GetRelativeRotation());
+			Collision_Weapon->SetCapsuleHalfHeight(Collision_WeaponData->GetUnscaledCapsuleHalfHeight());
+			Collision_Weapon->SetCapsuleRadius(Collision_WeaponData->GetUnscaledCapsuleRadius());
+			Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			
 			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+			//Collision_Weapon->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			UE_LOG(LogTemp, Warning, TEXT("CapsuleComponent name :: %s"), *Collision_Weapon->GetName());
 		}
 	}
 
@@ -154,6 +180,7 @@ void ASlowPlayableCharacter::OnMouseSelection(bool bPressed)
 	{
 		if (IsAttack == false)
 		{
+			ComboCount = 0;
 			OnPlayerAttack();
 		}
 
@@ -212,6 +239,9 @@ void ASlowPlayableCharacter::OnPlayerAttackEnd()
 
 	if(ComboCount+1 == MaxComboCount)
 		ComboCount = 0;
+
+	if(Collision_Weapon != nullptr)
+		Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ASlowPlayableCharacter::OnAttackInputChecking()	
@@ -225,11 +255,34 @@ void ASlowPlayableCharacter::OnAttackInputChecking()
 	}
 }
 
+void ASlowPlayableCharacter::OnColStartAttack()
+{
+	if(Collision_Weapon != nullptr)
+		Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ASlowCharacter *OtherCharacter = Cast<ASlowCharacter>(OtherActor);
+
+	if(OtherCharacter == nullptr)
+		return;
+	
+	if(OtherActor == this)
+		return;
+	
+	AttackAbility->SetTarget(OtherCharacter);
+	AttackAbility->ExecuteIndirect(this);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
+}
+
 void ASlowPlayableCharacter::NewWeaponManager()
 {
 	WeaponManager = NewObject<UWeaponManager>(this);
 	WeaponManager->Init();
-	UE_LOG(LogTemp,Warning,TEXT("New WeaponManager()"));
+	
 }
 
 void ASlowPlayableCharacter::NewSpringArm()
@@ -258,6 +311,12 @@ void ASlowPlayableCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 
 	UE_LOG(LogTemp, Warning, TEXT("SetupPlayerInputComponent Called"));
 }
+
+FEquipments ASlowPlayableCharacter::GetCurrentEquipments() const
+{
+	return Equipment;
+}
+
 
 void ASlowPlayableCharacter::OnMoveForward(float NewAxisValue)
 {
@@ -406,7 +465,7 @@ void ASlowPlayableCharacter::SetWeaponSocketName()
 {
 	/*if (WeaponManager != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WeaponManager is Nullptr."));
+		UE_LOG(LogTemp, Warning, TEXT("WeaponManager is Sculptress."));
 		return;
 	}*/
 

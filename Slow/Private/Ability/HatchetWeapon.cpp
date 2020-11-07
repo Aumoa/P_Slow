@@ -16,6 +16,9 @@ UHatchetWeapon::UHatchetWeapon()
 	AttackMontage = Attack_MTG.Object;
 
 	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(FName("Collision_Weapon"));
+	Collision_Weapon->SetCapsuleHalfHeight(60);
+	Collision_Weapon->SetCapsuleRadius(20);
+	Collision_Weapon->SetRelativeLocationAndRotation(FVector(11, 0, -7),FRotator(0,-10,0));
 }
 
 void UHatchetWeapon::BeginWeapon()
@@ -68,4 +71,9 @@ UAnimMontage* UHatchetWeapon::GetAttackMontage()
 TArray<FName> UHatchetWeapon::GetComboList()
 {
 	return ComboList;
+}
+
+UCapsuleComponent* UHatchetWeapon::GetCapsuleComponent()
+{
+	return Collision_Weapon;
 }

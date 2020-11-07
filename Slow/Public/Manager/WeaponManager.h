@@ -12,6 +12,7 @@ class UWeaponBase;
 class UManagerBase;
 class UStaticMesh;
 class UAnimMontage;
+class UCapsuleComponent;
 
 UCLASS()
 class SLOW_API UWeaponManager : public UObject
@@ -54,6 +55,7 @@ public:
 
 	void ThrowingWeapon();
 
+	UWeaponBase* GetCurrentWeapon();
 	int GetWeaponNum() const;
 	void SetSwapAnimState(const bool Animstate);
 	bool GetSwapAnimState();
@@ -64,7 +66,7 @@ public:
 	int GetMaxComboCount();
 	UAnimMontage* GetAttackMontage();
 	TArray<FName> GetComboList();
-
+	UCapsuleComponent* GetCapsuleComponent();
 
 private:
 	bool SwapCondition(UWeaponBase* Weapon);

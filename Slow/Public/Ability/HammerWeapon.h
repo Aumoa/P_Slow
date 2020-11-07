@@ -52,4 +52,5 @@ public:
 
 	UAnimMontage* GetAttackMontage() override;
 	TArray<FName> GetComboList() override;
+	UCapsuleComponent* GetCapsuleComponent() override;
 };

@@ -53,6 +53,11 @@ TArray<FName> UWeaponBase::GetComboList()
 	return TArray<FName>();
 }
 
+UCapsuleComponent* UWeaponBase::GetCapsuleComponent()
+{
+	return nullptr;
+}
+
 
 
 
