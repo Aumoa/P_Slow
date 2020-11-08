@@ -7,4 +7,5 @@
 struct FAttrInstance
 {
 	int64 HealthPoint;
+	int64 AttackDamage;
 };

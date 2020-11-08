@@ -37,12 +37,18 @@ private:
 	UPROPERTY()
 	TArray<FName> ComboList;
 
+	TArray<TSharedPtr<FRequirementBase>> Requirements_Weapon;
+
 public:
 	void BeginWeapon() override;
 
 	void EndWeapon() override;
 
 	bool SwapConditionInternal() override;
+
+	TArray<TSharedPtr<FRequirementBase>> GetAllRequirements() const override;
+
+	TSubclassOf<UBehavior> GetEffect() const override;
 
 	UStaticMesh* GetWeaponMesh() override;
 

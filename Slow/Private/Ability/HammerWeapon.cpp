@@ -4,6 +4,9 @@
 #include "Manager/WeaponManager.h"
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
+#include "Requirement/CostRequirement.h"
+#include "Requirement/CooldownRequirement.h"
+#include "Components/Behavior.h"
 
 UHammerWeapon::UHammerWeapon()
 {
@@ -22,8 +25,20 @@ UHammerWeapon::UHammerWeapon()
 void UHammerWeapon::BeginWeapon()
 {
 	SocketName = TEXT("HammerSocket");
-
+	
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hammer"));
+
+	TSharedPtr<FCostRequirement> Cost_Weapon = MakeShared<FCostRequirement>();
+	Cost_Weapon->SetupUsageCount(WeaponReferenceTable->MaxUsageCount);
+	TSharedPtr<FCooldownRequirement> Cooldown_Weapon = MakeShared<FCooldownRequirement>();
+	Cooldown_Weapon->SetupCooldown(WeaponReferenceTable->SwapCoolDown);
+
+	Requirements_Weapon.Add(Cost_Weapon);
+	Requirements_Weapon.Add(Cooldown_Weapon);
+
+	//UBehavior *Behavior_Weapon = NewObject<UBehavior>(this); 에러 발생
+	//NewObject<UBehavior>(this,UBehavior::StaticClass());
+	//Behavior_Weapon->AddEffect();
 
 	ComboList.Empty();
 	ComboList.Emplace(TEXT("Hammer_Combo1"));
@@ -39,6 +54,20 @@ bool UHammerWeapon::SwapConditionInternal()
 {
 
 	return true;
+}
+
+TArray<TSharedPtr<FRequirementBase>> UHammerWeapon::GetAllRequirements() const
+{
+	return Requirements_Weapon;
+}
+
+TSubclassOf<UBehavior> UHammerWeapon::GetEffect() const
+{
+	
+
+
+
+	return TSubclassOf<UBehavior>();
 }
 
 UStaticMesh* UHammerWeapon::GetWeaponMesh()

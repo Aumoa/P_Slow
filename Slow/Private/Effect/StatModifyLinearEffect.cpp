@@ -29,6 +29,11 @@ void FStatModifyLinearEffect::Apply(AActor* InTarget)
 	StatBasedCharacter->ApplyEffect(*this);
 }
 
+void FStatModifyLinearEffect::SetModifyValue(const FAttrInstance& InModifyValue)
+{
+	ModifyValue = InModifyValue;
+}
+
 FAttrInstance FStatModifyLinearEffect::GetModifyValue() const
 {
 	return ModifyValue;

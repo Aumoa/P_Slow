@@ -6,6 +6,9 @@
 
 #include "Behavior.generated.h"
 
+class FStatModifyLinearEffect;
+class FActorEffect;
+
 UCLASS()
 class SLOW_API UBehavior : public UActorComponent
 {
@@ -13,6 +16,7 @@ class SLOW_API UBehavior : public UActorComponent
 
 private:
 	TArray<bool> ActivateStateStack;
+	TArray<FActorEffect *> EffectList;
 
 public:
 	UBehavior();
@@ -24,4 +28,5 @@ public:
 	void PopActivate();
 
 	void RemoveFromParent();
+	void AddEffect(FActorEffect* InEffect);
 };

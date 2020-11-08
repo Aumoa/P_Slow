@@ -4,6 +4,8 @@
 #include "Manager/WeaponManager.h"
 #include "Datatable/WeaponReference.h"
 #include "TableRow/WeaponReferenceTableRow.h"
+#include "Requirement/CostRequirement.h"
+#include "Requirement/CooldownRequirement.h"
 
 USwordWeapon::USwordWeapon()
 {
@@ -24,6 +26,15 @@ void USwordWeapon::BeginWeapon()
 	SocketName = TEXT("SwordSocket");
 
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Sword"));
+	
+	TSharedPtr<FCostRequirement> Cost_Weapon = MakeShared<FCostRequirement>();
+	Cost_Weapon->SetupUsageCount(WeaponReferenceTable->MaxUsageCount);
+	TSharedPtr<FCooldownRequirement> Cooldown_Weapon = MakeShared<FCooldownRequirement>();
+	Cooldown_Weapon->SetupCooldown(WeaponReferenceTable->SwapCoolDown);
+
+	Requirements_Weapon.Add(Cost_Weapon);
+	Requirements_Weapon.Add(Cooldown_Weapon);
+
 	ComboList.Empty();
 
 	ComboList.Emplace(TEXT("Sword_Combo1"));
@@ -40,6 +51,16 @@ bool USwordWeapon::SwapConditionInternal()
 {
 
 	return true;
+}
+
+TArray<TSharedPtr<FRequirementBase>> USwordWeapon::GetAllRequirements() const
+{
+	return Requirements_Weapon;
+}
+
+TSubclassOf<UBehavior> USwordWeapon::GetEffect() const
+{
+	return TSubclassOf<UBehavior>();
 }
 
 UStaticMesh* USwordWeapon::GetWeaponMesh()

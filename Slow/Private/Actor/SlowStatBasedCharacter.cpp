@@ -40,6 +40,7 @@ void ASlowStatBasedCharacter::ApplyEffect(const FStatModifyLinearEffect& InEffec
 	FAttrInstance InModifyValue = InEffect.GetModifyValue();
 
 	AttrInstance.HealthPoint += InModifyValue.HealthPoint;
+	AttrInstance.AttackDamage += InModifyValue.AttackDamage;
 	StatValidCheck();
 }
 

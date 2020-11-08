@@ -34,7 +34,6 @@ bool FAttackAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 	UWeaponBase* const CurrentWeaponResolve = Equips.Weapon.Get();
 	TArray<TSharedPtr<FRequirementBase>> Requirements = CurrentWeaponResolve->GetAllRequirements();
 
-	//
 	// 무기 사용 요구 사항을 검사합니다.
 	// 예: 재사용 대기시간 등
 	bool bSelfCheck = true;
@@ -99,7 +98,7 @@ void FAttackAbility::SetTarget(ASlowCharacter* InActor)
 	MyTarget = InActor;
 }
 
-template<class T, typename TEnableIf<TIsDerivedFrom<T, FRequirementBase>::Value>::Type* _TypeChecker>
+template<class T, typename TEnableIf<TIsDerivedFrom<T, FRequirementBase>::Value>::Type* _TypeChecker> //FRequirementBase를 상속 받았는지 체크
 TArray<T*> FAttackAbility::ExportSpecialClasses(const TArray<TSharedPtr<FRequirementBase>>& InRequirementBaseArray)
 {
 	if (InRequirementBaseArray.Num() == 0)

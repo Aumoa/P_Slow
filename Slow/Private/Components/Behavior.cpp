@@ -1,6 +1,9 @@
 // Copyright 2020 Team slow. All right reserved.
 
 #include "Components/Behavior.h"
+#include "Effect/StatModifyLinearEffect.h"
+#include "Effect/ActorEffect.h"
+
 
 UBehavior::UBehavior()
 {
@@ -41,5 +44,10 @@ void UBehavior::RemoveFromParent()
 
 	DestroyComponent(false);
 
-	UE_LOG(LogSlow, Log, TEXT("UBehavior::RemoveFromParent(): Component %s is removed."), *componentName);
+	//UE_LOG(LogSlow, Log, TEXT("UBehavior::RemoveFromParent(): Component %s is removed."), *componentName);
+}
+
+void UBehavior::AddEffect(FActorEffect* InEffect)
+{
+	EffectList.Add(InEffect);
 }
