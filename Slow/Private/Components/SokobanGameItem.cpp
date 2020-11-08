@@ -4,19 +4,30 @@
 
 #include "Common/SlowCommonMacros.h"
 #include "Actor/SokobanGameActor.h"
+#include "Common/SlowCollisionProfile.h"
 
 USokobanGameItem::USokobanGameItem()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultCubeMesh(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+
+	PrimaryComponentTick.bCanEverTick = false;
 
 	SetMobility(EComponentMobility::Movable);
 
 	SlotIndexX = 0;
 	SlotIndexY = 0;
-	InteropSpeed = 100.0f;
+	ConstSlotIndexX = 0;
+	ConstSlotIndexY = 0;
 
-	CurDestLocation = FVector2D::ZeroVector;
-	bMoving = false;
+	TwoDirection[0] = FVector::ZeroVector;
+	TwoDirection[1] = FVector::ZeroVector;
+
+	if (DefaultCubeMesh.Succeeded())
+	{
+		SetStaticMesh(DefaultCubeMesh.Object);
+	}
+
+	SetCollisionProfileName(CollisionProfile::InteractionOnly);
 }
 
 void USokobanGameItem::BeginPlay()
@@ -32,43 +43,62 @@ void USokobanGameItem::BeginPlay()
 	}
 
 	// 컴포넌트의 시작 위치를 설정합니다.
-	FVector2D StartLocation = MyActor->QuerySlotLocation(SlotIndexX, SlotIndexY);
+	FVector2D StartLocation = GetActor()->QuerySlotLocation(SlotIndexX, SlotIndexY);
 	FVector MyLocation = GetRelativeLocation();
-	//SetRelativeLocation(Select(StartLocation, 0, 0, 1, MyLocation));
-	bMoving = true;
+	SetRelativeLocation(Select(StartLocation, 0, 0, 1, MyLocation));
 
-	CurDestLocation = StartLocation;
+	FRotator MyRotator = GetComponentRotation();
+	TwoDirection[Dir_Forward] = MyRotator.RotateVector(FVector::ForwardVector);
+	TwoDirection[Dir_Right] = MyRotator.RotateVector(FVector::RightVector);
+
+	ConstSlotIndexX = SlotIndexX;
+	ConstSlotIndexY = SlotIndexY;
 }
 
-void USokobanGameItem::TickComponent(float InDeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* TickFunction)
+bool USokobanGameItem::OnHitInteractionRay(AActor* InEventSender, FHitResult& InRemoteHitResult)
 {
-	Super::TickComponent(InDeltaSeconds, TickType, TickFunction);
-
-	if (bMoving)
+	FVector FourDirection[4] =
 	{
-		FVector MyLocation3D = GetRelativeLocation();
-		FVector2D MyLocation = { MyLocation3D.X, MyLocation3D.Y };
+		TwoDirection[Dir_Forward],
+		TwoDirection[Dir_Right],
+		-TwoDirection[Dir_Right],
+		-TwoDirection[Dir_Forward]
+	};
 
-		FVector2D MovingDirection = CurDestLocation - MyLocation;
-		float MovingLength = MovingDirection.Size();
-		MovingDirection.Normalize();
-		float DeltaInteropSpeed = InDeltaSeconds * InteropSpeed;
-
-		// 남은 거리가 이동할 거리보다 작을 경우
-		if (MovingLength < DeltaInteropSpeed)
+	// 히트 임팩트 방향과 가장 가까운 방향을 찾습니다.
+	float MinimumCosAngle = -1.0f;
+	int32 ChoosedIndex = -1;
+	for (int32 i = 0; i < UE_ARRAY_COUNT(FourDirection); ++i)
+	{
+		float CosAngle = FourDirection[i] | InRemoteHitResult.ImpactNormal;
+		if (CosAngle > MinimumCosAngle)
 		{
-			SetRelativeLocation(Select(CurDestLocation, 0, 0, 1, MyLocation3D));
-			bMoving = false;
-
-			SetSlotIndexX(SlotIndexX == 0 ? 9 : 0);
-			SetSlotIndexY(SlotIndexY == 0 ? 9 : 0);
-		}
-		else
-		{
-			const FVector2D Delta = MovingDirection * DeltaInteropSpeed;
-			SetRelativeLocation(Select(MyLocation + Delta, 0, 0, 1, MyLocation3D));
+			MinimumCosAngle = CosAngle;
+			ChoosedIndex = i;
 		}
 	}
+
+	static TTuple<int32, int32> FourOffset[4] =
+	{
+		TTuple<int32, int32>(-1,  0),
+		TTuple<int32, int32>( 0, -1),
+		TTuple<int32, int32>( 0,  0),
+		TTuple<int32, int32>( 1,  0)
+	};
+	
+	auto [SelectX, SelectY] = FourOffset[ChoosedIndex];
+	int32 MoveX = GetSlotIndexX() + SelectX;
+	int32 MoveY = GetSlotIndexY() + SelectY;
+
+	bool bMovable = MyActor->CheckIndexMovable(MoveX, MoveY);
+	if (bMovable)
+	{
+		SetSlotIndexX(MoveX);
+		SetSlotIndexY(MoveY);
+	}
+
+	// 이동이 가능하든 불가능하든, 상호 작용 히트 자체는 성공했습니다.
+	return true;
 }
 
 void USokobanGameItem::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
@@ -95,11 +125,12 @@ int32 USokobanGameItem::GetSlotIndexX() const
 
 void USokobanGameItem::SetSlotIndexX(int32 InValue)
 {
-	SlotIndexX = InValue;
-	UpdateSlot();
-
-	bMoving = true;
-	CurDestLocation = MyActor->QuerySlotLocation(SlotIndexX, SlotIndexY);
+	if (SlotIndexX != InValue || !HasBegunPlay())
+	{
+		SlotIndexX = InValue;
+		UpdateSlot();
+		UpdateLocation();
+	}
 }
 
 int32 USokobanGameItem::GetSlotIndexY() const
@@ -109,16 +140,36 @@ int32 USokobanGameItem::GetSlotIndexY() const
 
 void USokobanGameItem::SetSlotIndexY(int32 InValue)
 {
-	SlotIndexY = InValue;
-	UpdateSlot();
-
-	bMoving = true;
-	CurDestLocation = MyActor->QuerySlotLocation(SlotIndexX, SlotIndexY);
+	if (SlotIndexY != InValue || !HasBegunPlay())
+	{
+		SlotIndexY = InValue;
+		UpdateSlot();
+		UpdateLocation();
+	}
 }
 
-bool USokobanGameItem::IsMoving() const
+void USokobanGameItem::Retry()
 {
-	return bMoving;
+	SlotIndexX = ConstSlotIndexX;
+	SlotIndexY = ConstSlotIndexY;
+
+	UpdateLocation();
+}
+
+void USokobanGameItem::UpdateLocation()
+{
+	FVector2D DestLocation = GetActor()->QuerySlotLocation(SlotIndexX, SlotIndexY);
+	FVector MyRelativeLocation = GetRelativeLocation();
+	SetRelativeLocation(Select(MyRelativeLocation, 1, 1, 0, DestLocation));
+}
+
+ASokobanGameActor* USokobanGameItem::GetActor() const
+{
+	if (!MyActor.IsValid())
+	{
+		MyActor = Cast<ASokobanGameActor>(GetOwner());
+	}
+	return MyActor.Get();
 }
 
 void USokobanGameItem::UpdateSlot()
@@ -130,6 +181,7 @@ void USokobanGameItem::UpdateSlot()
 	}
 
 	MyOwner->CheckSlotItem(this);
+	MyOwner->ConsumeMove();
 }
 
 template<class First, class Second>

@@ -101,6 +101,8 @@ public:
 	void SetWeaponMesh();
 	void SetWeaponSocketName();
 
+	bool FireInteractionRay(float RayLength = 300.0f);
+
 private:
 	void NewWeaponManager();
 	void NewSpringArm();
