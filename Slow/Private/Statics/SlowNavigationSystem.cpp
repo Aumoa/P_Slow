@@ -33,7 +33,7 @@ namespace
 	}
 
 	template<class T>
-	inline bool AssignIfValid(T* OutValue, const T& InValue)
+	inline bool AssignIfValidPtr(T* OutValue, const T& InValue)
 	{
 		if (OutValue != nullptr) {
 			*OutValue = InValue;
@@ -74,7 +74,7 @@ bool FSlowNavigationSystem::FindActorStandableLocation(UObject* InWorldContext, 
 	UWorld* world = InWorldContext->GetWorld();
 	UNavigationSystemV1* navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(world);
 
-	AssignIfValid(OutStandableLocation, InLocation);
+	AssignIfValidPtr(OutStandableLocation, InLocation);
 
 	bool bProjected = false;
 	if (IsValidNavigationSystem(navSys)) {
@@ -85,7 +85,7 @@ bool FSlowNavigationSystem::FindActorStandableLocation(UObject* InWorldContext, 
 		if (bProjected) {
 			float capsuleHalfHeight = GetCapsuleHalfHeightIfCharacter(InActor);
 
-			AssignIfValid(OutStandableLocation, projected.Location + FVector(0, 0, capsuleHalfHeight));
+			AssignIfValidPtr(OutStandableLocation, projected.Location + FVector(0, 0, capsuleHalfHeight));
 		}
 	}
 

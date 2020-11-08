@@ -5,17 +5,14 @@
 #include "Common/SlowLogDefine.h"
 #include "Common/SlowInputDefine.h"
 #include "Common/SlowTraceChannels.h"
+#include "Common/SlowCommonMacros.h"
 #include "Ability/AbilityBase.h"
 #include "Ability/MoveAbility.h"
 #include "Ability/AttackAbility.h"
 #include "Ability/ILocationTargetAbility.h"
 #include "Manager/WeaponManager.h"
 #include "AnimInstance/SlowAnimInstance.h"
-#include "GameFramework/Actor.h"
-#include "Engine/Classes/GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
-#include "GameFramework/Character.h"
-#include "Components/CapsuleComponent.h"
+#include "Components/IInteractionComponent.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -127,6 +124,8 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	{
 		//Ʈ���̽��� ��ȣ�ۿ� ��ü üũ
 		IsFindInteractionObject = true;
+
+		FireInteractionRay();
 	}
 
 	else if (ActionName == IA_Roll)
@@ -472,3 +471,40 @@ void ASlowPlayableCharacter::SetWeaponSocketName()
 
 #pragma endregion
 
+bool ASlowPlayableCharacter::FireInteractionRay(float RayLength)
+{
+	const FVector MyLocation = GetActorLocation();
+	const FVector ForwardDir = GetActorRotation().RotateVector(FVector::ForwardVector);
+
+	const FVector RayStart = MyLocation;
+	const FVector RayEnd = MyLocation + ForwardDir * RayLength;
+
+	UWorld* const World = GetWorld();
+	if (World == nullptr)
+	{
+		SLOW_LOG(Error, TEXT("게임이 시작되지 않았거나 액터가 올바른 World 컨텍스트가 아닙니다."));
+		return false;
+	}
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams(TEXT("Interaction"), false, this);
+	bool bHit = World->LineTraceSingleByChannel(HitResult, RayStart, RayEnd, ECC_Interaction, QueryParams);
+	if (!bHit)
+	{
+		return false;
+	}
+
+	UPrimitiveComponent* HitComponent = HitResult.Component.Get();
+	if (HitComponent == nullptr)
+	{
+		return false;
+	}
+
+	IInteractionComponent* InteractionComponent = Cast<IInteractionComponent>(HitComponent);
+	if (InteractionComponent == nullptr)
+	{
+		return false;
+	}
+
+	return InteractionComponent->OnHitInteractionRay(this, HitResult);
+}

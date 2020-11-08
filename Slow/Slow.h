@@ -9,6 +9,7 @@
 
 #include "UObject/NoExportTypes.h"
 #include "UObject/ConstructorHelpers.h"
+#include "UObject/Interface.h"
 
 #include "Engine/DataTable.h"
 #include "Engine/LevelStreaming.h"
@@ -30,6 +31,7 @@
 #include "Components/ActorComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 
 #include "GameFramework/Actor.h"
 #include "GameFramework/CharacterMovementComponent.h"

@@ -32,3 +32,6 @@ if ((x) == nullptr)\
 	SLOW_LOG(Error, TEXT("%s의 값이 nullptr입니다."), nameof(x));\
 	return ##__VA_ARGS__;\
 }
+
+#define AssignIfValid(X, Y) if (X != nullptr) { *(X) = (Y); }
+#define SafeInvoke(X) if (X != nullptr) (*X)
