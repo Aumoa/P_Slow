@@ -12,6 +12,7 @@
 UGameplayLobbyScene::UGameplayLobbyScene()
 {
 	bStreamLoaded_Base = false;
+	bStreamLoaded_Boss1 = false;
 }
 
 void UGameplayLobbyScene::BeginPlay(UObject* Args)
@@ -40,6 +41,9 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 	LatentInfo.UUID = 1;
 	LatentInfo.Linkage = 0;
 	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Base"), true, false, LatentInfo);
+
+	LatentInfo.ExecutionFunction = TEXT("OnStreamLoaded_Boss1");
+	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Boss-1"), true, false, LatentInfo);
 }
 
 void UGameplayLobbyScene::EndPlay()
@@ -81,10 +85,20 @@ void UGameplayLobbyScene::OnStreamLoaded_Base()
 	OnStreamLoaded_CheckAndInvoke();
 }
 
+void UGameplayLobbyScene::OnStreamLoaded_Boss1()
+{
+	ScopedLock(StreamLoadCS);
+
+	bStreamLoaded_Boss1 = true;
+
+	OnStreamLoaded_CheckAndInvoke();
+}
+
 void UGameplayLobbyScene::OnStreamLoaded_CheckAndInvoke()
 {
 	bool bSucceeded =
-		bStreamLoaded_Base;
+		bStreamLoaded_Base &&
+		bStreamLoaded_Boss1;
 
 	if (bSucceeded)
 	{

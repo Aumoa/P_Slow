@@ -17,6 +17,7 @@ class SLOW_API UGameplayLobbyScene : public UGameplayScene
 
 private:
 	uint8 bStreamLoaded_Base : 1;
+	uint8 bStreamLoaded_Boss1 : 1;
 
 	UPROPERTY()
 	APawn* TempSpawn;
@@ -35,6 +36,8 @@ public:
 private:
 	UFUNCTION()
 	void OnStreamLoaded_Base();
+	UFUNCTION()
+	void OnStreamLoaded_Boss1();
 
 	void OnStreamLoaded_CheckAndInvoke();
 };
