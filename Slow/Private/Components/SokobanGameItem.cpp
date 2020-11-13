@@ -8,6 +8,8 @@
 
 USokobanGameItem::USokobanGameItem()
 {
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultCubeMesh(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+
 	PrimaryComponentTick.bCanEverTick = false;
 
 	SetMobility(EComponentMobility::Movable);
@@ -19,6 +21,11 @@ USokobanGameItem::USokobanGameItem()
 
 	TwoDirection[0] = FVector::ZeroVector;
 	TwoDirection[1] = FVector::ZeroVector;
+
+	if (DefaultCubeMesh.Succeeded())
+	{
+		SetStaticMesh(DefaultCubeMesh.Object);
+	}
 
 	SetCollisionProfileName(CollisionProfile::InteractionOnly);
 }
@@ -75,7 +82,7 @@ bool USokobanGameItem::OnHitInteractionRay(AActor* InEventSender, FHitResult& In
 	{
 		TTuple<int32, int32>(-1,  0),
 		TTuple<int32, int32>( 0, -1),
-		TTuple<int32, int32>( 0,  1),
+		TTuple<int32, int32>( 0,  0),
 		TTuple<int32, int32>( 1,  0)
 	};
 	
@@ -146,13 +153,11 @@ void USokobanGameItem::Retry()
 	SlotIndexX = ConstSlotIndexX;
 	SlotIndexY = ConstSlotIndexY;
 
-	UpdateLocation(true);
+	UpdateLocation();
 }
 
-void USokobanGameItem::UpdateLocation(bool bForceMove)
+void USokobanGameItem::UpdateLocation()
 {
-	UNREFERENCED_PARAMETER(bForceMove);
-
 	FVector2D DestLocation = GetActor()->QuerySlotLocation(SlotIndexX, SlotIndexY);
 	FVector MyRelativeLocation = GetRelativeLocation();
 	SetRelativeLocation(Select(MyRelativeLocation, 1, 1, 0, DestLocation));

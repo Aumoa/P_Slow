@@ -35,4 +35,3 @@ if ((x) == nullptr)\
 
 #define AssignIfValid(X, Y) if (X != nullptr) { *(X) = (Y); }
 #define SafeInvoke(X) if (X != nullptr) (*X)
-#define UNREFERENCED_PARAMETER(X) (X)

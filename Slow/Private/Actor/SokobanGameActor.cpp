@@ -224,18 +224,6 @@ void ASokobanGameActor::Refresh()
 
 void ASokobanGameActor::CreateAuto()
 {
-	auto SafeGet = [&](int32 Index) -> UClass*
-	{
-		if (ItemClass.Num() > Index)
-		{
-			return ItemClass[Index];
-		}
-		else
-		{
-			return nullptr;
-		}
-	};
-
 	TArray<int32> SlotArray;
 	SlotArray.SetNum(ItemCountX * ItemCountY);
 
@@ -250,7 +238,7 @@ void ASokobanGameActor::CreateAuto()
 
 	for (int32 i = 0; i < SlotArray.Num(); ++i)
 	{
-		UClass* CurClass = SafeGet(SlotArray[i]);
+		UClass* CurClass = ItemClass[SlotArray[i]];
 		if (CurClass != nullptr)
 		{
 			auto [X, Y] = Break(i);

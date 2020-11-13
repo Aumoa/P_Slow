@@ -10,7 +10,7 @@ class ASokobanGameActor;
 enum ELevelTick;
 
 UCLASS(ClassGroup = (SokobanGame), meta = (BlueprintSpawnableComponent))
-class SLOW_API USokobanGameItem : public UDestructibleComponent, public IInteractionComponent
+class SLOW_API USokobanGameItem : public UStaticMeshComponent, public IInteractionComponent
 {
 	GENERATED_BODY()
 
@@ -53,10 +53,10 @@ public:
 	void SetSlotIndexX(int32 InValue);
 	int32 GetSlotIndexY() const;
 	void SetSlotIndexY(int32 InValue);
-	virtual void Retry();
+	void Retry();
 
 protected:
-	virtual void UpdateLocation(bool bForceMove = false);
+	virtual void UpdateLocation();
 	ASokobanGameActor* GetActor() const;
 
 private:

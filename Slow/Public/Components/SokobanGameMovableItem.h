@@ -25,12 +25,10 @@ public:
 	void BeginPlay() override;
 	void TickComponent(float InDeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
-	void Retry() override;
-
 	bool IsMoving() const;
 
 protected:
-	void UpdateLocation(bool bForceMove) override;
+	void UpdateLocation() override;
 
 private:
 	template<class First, class Second>
