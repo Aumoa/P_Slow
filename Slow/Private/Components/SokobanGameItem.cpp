@@ -8,8 +8,6 @@
 
 USokobanGameItem::USokobanGameItem()
 {
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultCubeMesh(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
-
 	PrimaryComponentTick.bCanEverTick = false;
 
 	SetMobility(EComponentMobility::Movable);
@@ -21,11 +19,6 @@ USokobanGameItem::USokobanGameItem()
 
 	TwoDirection[0] = FVector::ZeroVector;
 	TwoDirection[1] = FVector::ZeroVector;
-
-	if (DefaultCubeMesh.Succeeded())
-	{
-		SetStaticMesh(DefaultCubeMesh.Object);
-	}
 
 	SetCollisionProfileName(CollisionProfile::InteractionOnly);
 }
@@ -82,7 +75,7 @@ bool USokobanGameItem::OnHitInteractionRay(AActor* InEventSender, FHitResult& In
 	{
 		TTuple<int32, int32>(-1,  0),
 		TTuple<int32, int32>( 0, -1),
-		TTuple<int32, int32>( 0,  0),
+		TTuple<int32, int32>( 0,  1),
 		TTuple<int32, int32>( 1,  0)
 	};
 	
@@ -118,6 +111,19 @@ void USokobanGameItem::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 	}
 }
 
+void USokobanGameItem::Retry()
+{
+	SlotIndexX = ConstSlotIndexX;
+	SlotIndexY = ConstSlotIndexY;
+
+	UpdateLocation(true);
+}
+
+void USokobanGameItem::DestructItem()
+{
+	ApplyRadiusDamage(1000.0f, GetComponentLocation(), 1.0f, 1.0f, true);
+}
+
 int32 USokobanGameItem::GetSlotIndexX() const
 {
 	return SlotIndexX;
@@ -148,16 +154,61 @@ void USokobanGameItem::SetSlotIndexY(int32 InValue)
 	}
 }
 
-void USokobanGameItem::Retry()
+bool USokobanGameItem::CanMoveAround() const
 {
-	SlotIndexX = ConstSlotIndexX;
-	SlotIndexY = ConstSlotIndexY;
+	static TTuple<int32, int32> FourOffset[4] =
+	{
+		TTuple<int32, int32>(-1,  0),
+		TTuple<int32, int32>(0, -1),
+		TTuple<int32, int32>(0,  1),
+		TTuple<int32, int32>(1,  0)
+	};
 
-	UpdateLocation();
+	auto CheckAsTuple = [&](int32 InDirectionEnum) -> bool
+	{
+		auto& [X, Y] = FourOffset[InDirectionEnum];
+		return MyActor->CheckIndexMovable(SlotIndexX + X, SlotIndexY + Y);
+	};
+
+	int32 Stack = 0;
+	for (int32 i = 0; i < 4; ++i)
+	{
+		if (!CheckAsTuple(i))
+		{
+			Stack += 1;
+			if (Stack == 2)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			Stack = 0;
+		}
+	}
+
+	return true;
 }
 
-void USokobanGameItem::UpdateLocation()
+void USokobanGameItem::SetCurrentSlot(USokobanGameSlot* InSlot)
 {
+	if (CurrentSlot != nullptr)
+	{
+		CurrentSlot->SetItem(nullptr);
+	}
+
+	CurrentSlot = InSlot;
+}
+
+USokobanGameSlot* USokobanGameItem::GetCurrentSlot() const
+{
+	return CurrentSlot;
+}
+
+void USokobanGameItem::UpdateLocation(bool bForceMove)
+{
+	UNREFERENCED_PARAMETER(bForceMove);
+
 	FVector2D DestLocation = GetActor()->QuerySlotLocation(SlotIndexX, SlotIndexY);
 	FVector MyRelativeLocation = GetRelativeLocation();
 	SetRelativeLocation(Select(MyRelativeLocation, 1, 1, 0, DestLocation));
@@ -180,7 +231,7 @@ void USokobanGameItem::UpdateSlot()
 		SLOW_LOG(Error, TEXT("%s 컴포넌트는 반드시 %s 액터에 배치되어야 합니다."), nameof_c(USokobanGameItem), nameof_c(ASokobanGameActor));
 	}
 
-	MyOwner->CheckSlotItem(this);
+	MyOwner->UpdateSlotItem(this);
 	MyOwner->ConsumeMove();
 }
 

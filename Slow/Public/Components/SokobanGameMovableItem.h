@@ -18,6 +18,7 @@ private:
 
 	FVector2D CurDestLocation;
 	uint8 bMoving : 1;
+	uint8 bRetryRequest : 1;
 
 public:
 	USokobanGameMovableItem();
@@ -25,10 +26,12 @@ public:
 	void BeginPlay() override;
 	void TickComponent(float InDeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
+	void Retry() override;
+
 	bool IsMoving() const;
 
 protected:
-	void UpdateLocation() override;
+	void UpdateLocation(bool bForceMove) override;
 
 private:
 	template<class First, class Second>

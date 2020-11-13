@@ -15,14 +15,15 @@ class SLOW_API ASlowPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-private:
+public:
 	struct FGameThreadActionDelegateArgs
 	{
 		// 개체는 반드시 게임 스레드에서 레퍼런스 카운팅이 이루어져야 합니다.
 		TWeakObjectPtr<UObject> Sender;
 		TWeakObjectPtr<UObject> Args;
+		float DelayedInvoke;
 
-		FGameThreadActionDelegateArgs(UObject* InSender = nullptr, UObject* InArgs = nullptr);
+		FGameThreadActionDelegateArgs(UObject* InSender = nullptr, UObject* InArgs = nullptr, float InDelay = 0);
 
 		void ResolveInGameThread();
 	};

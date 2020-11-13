@@ -2,7 +2,6 @@
 
 #pragma once
 
-
 #include "SlowLogDefine.h"
 
 template<class T>
@@ -23,6 +22,7 @@ inline const char* __nameof__(const char* xx)
 
 #define nameof(x) *FString(__nameof__(x, #x))
 #define nameof_c(x) *FString(__nameof__<x>(#x))
+#define nameof_f(x) *FString(__nameof__(&TRemoveReference<decltype(*this)>::Type::x, #x))
 
 #define SLOW_LOG(Verbosity, Format, ...) UE_LOG(LogSlow, Verbosity, TEXT("%s: ") Format, __FUNCTIONT__, ##__VA_ARGS__)
 
@@ -35,3 +35,4 @@ if ((x) == nullptr)\
 
 #define AssignIfValid(X, Y) if (X != nullptr) { *(X) = (Y); }
 #define SafeInvoke(X) if (X != nullptr) (*X)
+#define UNREFERENCED_PARAMETER(X) (X)

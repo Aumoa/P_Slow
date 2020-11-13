@@ -6,6 +6,7 @@
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 #include "DrawDebugHelpers.h"
+#include "DestructibleComponent.h"
 
 #include "UObject/NoExportTypes.h"
 #include "UObject/ConstructorHelpers.h"

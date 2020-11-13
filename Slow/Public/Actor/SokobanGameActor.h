@@ -10,6 +10,7 @@ class USokobanGameSlot;
 class UStaticMesh;
 class USokobanGameItem;
 class UBoxComponent;
+class UGoalIndicatorComponent;
 
 UCLASS()
 class SLOW_API ASokobanGameActor : public AActor
@@ -18,6 +19,7 @@ class SLOW_API ASokobanGameActor : public AActor
 
 private:
 	uint8 bRefreshed : 1;
+	uint8 bSucceeded : 1;
 
 	/** 전체 슬롯 X축 개수를 나타냅니다. */
 	UPROPERTY(EditAnywhere, Category = "Game", meta = (AllowPrivateAccess = "true"))
@@ -49,6 +51,9 @@ private:
 	FVector SlotMeshScale;
 	UPROPERTY(VisibleAnywhere, Category = "Appearance", meta = (AllowPrivateAccess = "true"))
 	TArray<USceneComponent*> GoalIndicators;
+	/** 목적지 표시 클래스를 설정합니다. */
+	UPROPERTY(EditAnywhere, Category = "Appearance", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGoalIndicatorComponent> GoalIndicatorClass;
 
 #if WITH_EDITOR
 	/** 자동 생성에 사용할 아이템 클래스를 설정합니다. */
@@ -69,12 +74,13 @@ public:
 
 	void BeginPlay() override;
 	void EndPlay(const EEndPlayReason::Type InEndPlayReason) override;
+	void Tick(float InDeltaSeconds) override;
 
 #if WITH_EDITOR
 	void PostEditChangeProperty(FPropertyChangedEvent& InEvent) override;
 #endif
 
-	void CheckSlotItem(USokobanGameItem* InItem) const;
+	void UpdateSlotItem(USokobanGameItem* InItem);
 	FVector2D QuerySlotLocation(int32 X, int32 Y) const;
 	bool CheckIndexMovable(int32 X, int32 Y) const;
 	void ConsumeMove();

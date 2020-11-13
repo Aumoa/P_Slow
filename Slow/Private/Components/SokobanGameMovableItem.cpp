@@ -3,16 +3,19 @@
 #include "Components/SokobanGameMovableItem.h"
 
 #include "Actor/SokobanGameActor.h"
+#include "Controller/SlowPlayerController.h"
+#include "Common/SlowLogDefine.h"
+#include "Common/SlowCommonMacros.h"
 
 USokobanGameMovableItem::USokobanGameMovableItem()
 {
-
 	PrimaryComponentTick.bCanEverTick = true;
 
 	InteropSpeed = 100.0f;
 
 	CurDestLocation = FVector2D::ZeroVector;
 	bMoving = false;
+	bRetryRequest = false;
 }
 
 void USokobanGameMovableItem::BeginPlay()
@@ -42,6 +45,11 @@ void USokobanGameMovableItem::TickComponent(float InDeltaSeconds, ELevelTick Tic
 		{
 			SetRelativeLocation(Select(CurDestLocation, 0, 0, 1, MyLocation3D));
 			bMoving = false;
+
+			if (bRetryRequest)
+			{
+				DestructItem();
+			}
 		}
 		else
 		{
@@ -51,15 +59,45 @@ void USokobanGameMovableItem::TickComponent(float InDeltaSeconds, ELevelTick Tic
 	}
 }
 
+void USokobanGameMovableItem::Retry()
+{
+	bRetryRequest = true;
+
+	ASlowPlayerController::FGameThreadActionDelegateArgs Args;
+	Args.Sender = this;
+	Args.DelayedInvoke = 4.0f;
+
+	auto Action = [&](UObject* InSender, UObject* InEventArgs)
+	{
+		// Refresh and reapply mesh object.
+		UDestructibleMesh* MeshObject = GetDestructibleMesh();
+		SetDestructibleMesh(nullptr);
+		SetDestructibleMesh(MeshObject);
+
+		Super::Retry();
+		bRetryRequest = false;
+	};
+
+	ASlowPlayerController* PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	if (PlayerController == nullptr)
+	{
+		SLOW_LOG(Warning, TEXT("%s[0] is nullptr or not class which derived from %s."), nameof(PlayerController), nameof_c(ASlowPlayerController));
+		Super::Retry();
+		return;
+	}
+
+	PlayerController->EnqueueGameThreadAction(Action, Args);
+}
+
 bool USokobanGameMovableItem::IsMoving() const
 {
 	return bMoving;
 }
 
-void USokobanGameMovableItem::UpdateLocation()
+void USokobanGameMovableItem::UpdateLocation(bool bForceMove)
 {
 	CurDestLocation = GetActor()->QuerySlotLocation(GetSlotIndexX(), GetSlotIndexY());
-	if (HasBegunPlay())
+	if (!bForceMove && HasBegunPlay())
 	{
 		bMoving = true;
 	}

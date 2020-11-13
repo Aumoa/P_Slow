@@ -7,10 +7,11 @@
 #include "SokobanGameItem.generated.h"
 
 class ASokobanGameActor;
+class USokobanGameSlot;
 enum ELevelTick;
 
 UCLASS(ClassGroup = (SokobanGame), meta = (BlueprintSpawnableComponent))
-class SLOW_API USokobanGameItem : public UStaticMeshComponent, public IInteractionComponent
+class SLOW_API USokobanGameItem : public UDestructibleComponent, public IInteractionComponent
 {
 	GENERATED_BODY()
 
@@ -38,6 +39,8 @@ private:
 	int32 ConstSlotIndexX;
 	int32 ConstSlotIndexY;
 
+	USokobanGameSlot* CurrentSlot = nullptr;
+
 public:
 	USokobanGameItem();
 
@@ -49,14 +52,19 @@ public:
 	void PostEditChangeProperty(FPropertyChangedEvent& InEvent) override;
 #endif
 
+	virtual void Retry();
+	virtual void DestructItem();
+
 	int32 GetSlotIndexX() const;
 	void SetSlotIndexX(int32 InValue);
 	int32 GetSlotIndexY() const;
 	void SetSlotIndexY(int32 InValue);
-	void Retry();
+	bool CanMoveAround() const;
+	void SetCurrentSlot(USokobanGameSlot* InSlot);
+	USokobanGameSlot* GetCurrentSlot() const;
 
 protected:
-	virtual void UpdateLocation();
+	virtual void UpdateLocation(bool bForceMove = false);
 	ASokobanGameActor* GetActor() const;
 
 private:
