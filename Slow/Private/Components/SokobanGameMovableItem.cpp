@@ -3,10 +3,12 @@
 #include "Components/SokobanGameMovableItem.h"
 
 #include "Actor/SokobanGameActor.h"
+#include "Controller/SlowPlayerController.h"
+#include "Common/SlowLogDefine.h"
+#include "Common/SlowCommonMacros.h"
 
 USokobanGameMovableItem::USokobanGameMovableItem()
 {
-
 	PrimaryComponentTick.bCanEverTick = true;
 
 	InteropSpeed = 100.0f;
@@ -51,15 +53,39 @@ void USokobanGameMovableItem::TickComponent(float InDeltaSeconds, ELevelTick Tic
 	}
 }
 
+void USokobanGameMovableItem::Retry()
+{
+	ApplyRadiusDamage(10000.0f, FVector::ZeroVector, 10.0f, 1.0f, true);
+
+	ASlowPlayerController::FGameThreadActionDelegateArgs Args;
+	Args.Sender = this;
+	Args.DelayedInvoke = 2.0f;
+
+	auto Action = [&](UObject* InSender, UObject* InEventArgs)
+	{
+		Super::Retry();
+	};
+
+	ASlowPlayerController* PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	if (PlayerController == nullptr)
+	{
+		SLOW_LOG(Warning, TEXT("%s[0] is nullptr or not class which derived from %s."), nameof(PlayerController), nameof_c(ASlowPlayerController));
+		Super::Retry();
+		return;
+	}
+
+	PlayerController->EnqueueGameThreadAction(Action, Args);
+}
+
 bool USokobanGameMovableItem::IsMoving() const
 {
 	return bMoving;
 }
 
-void USokobanGameMovableItem::UpdateLocation()
+void USokobanGameMovableItem::UpdateLocation(bool bForceMove)
 {
 	CurDestLocation = GetActor()->QuerySlotLocation(GetSlotIndexX(), GetSlotIndexY());
-	if (HasBegunPlay())
+	if (!bForceMove && HasBegunPlay())
 	{
 		bMoving = true;
 	}
