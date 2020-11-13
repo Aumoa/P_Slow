@@ -322,7 +322,9 @@ void ASlowPlayableCharacter::OnMoveForward(float NewAxisValue)
 
 	
 
-	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
+	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X);
+	Direction.Z = 0.0f;
+	Direction.Normalize();
 	AddMovementInput(Direction, NewAxisValue);
 
 	/*
@@ -341,7 +343,9 @@ void ASlowPlayableCharacter::OnMoveRight(float NewAxisValue)
 		return;
 	}
 
-	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::Y);
+	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::Y);
+	Direction.Z = 0.0f;
+	Direction.Normalize();
 	AddMovementInput(Direction, NewAxisValue);
 
 	/*
