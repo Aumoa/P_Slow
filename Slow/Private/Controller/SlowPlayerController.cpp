@@ -10,10 +10,11 @@
 #include "Actor/SlowPlayableCharacter.h"
 #include "Common/SlowCommonMacros.h"
 
-ASlowPlayerController::FGameThreadActionDelegateArgs::FGameThreadActionDelegateArgs(UObject* InSender, UObject* InArgs)
+ASlowPlayerController::FGameThreadActionDelegateArgs::FGameThreadActionDelegateArgs(UObject* InSender, UObject* InArgs, float InDelay)
 {
 	this->Sender = InSender;
 	this->Args = InArgs;
+	this->DelayedInvoke = InDelay;
 }
 
 void ASlowPlayerController::FGameThreadActionDelegateArgs::ResolveInGameThread()
@@ -77,13 +78,29 @@ void ASlowPlayerController::OnUnPossess()
 
 void ASlowPlayerController::Tick(float InDeltaSeconds)
 {
-	TArray<FGameThreadActionPair> SwapQueue;
+	TArray<FGameThreadActionPair> ExecuteQueue;
 	{
 		ScopedLock(GameThreadCS);
-		Swap(SwapQueue, GameThreadActionQueue);
+		
+		for (int32 i = 0; i < GameThreadActionQueue.Num(); ++i)
+		{
+			auto& Item = GameThreadActionQueue[i];
+			auto& [Func, Args] = GameThreadActionQueue[i];
+
+			Args.DelayedInvoke -= InDeltaSeconds;
+			
+			if (Args.DelayedInvoke <= 0.0f)
+			{
+				Args.DelayedInvoke = 0;
+				ExecuteQueue.Add(Item);
+
+				GameThreadActionQueue.RemoveAtSwap(i);
+				i -= 1;
+			}
+		}
 	}
 
-	for (auto& Item : SwapQueue)
+	for (auto& Item : ExecuteQueue)
 	{
 		auto&& Func = MoveTemp(Item.Key);
 		auto&& Args = MoveTemp(Item.Value);

@@ -37,12 +37,12 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 
 	// 비동기 로딩 작업을 진행합니다.
 	LatentInfo.CallbackTarget = this;
-	LatentInfo.ExecutionFunction = TEXT("OnStreamLoaded_Base");
+	LatentInfo.ExecutionFunction = nameof_f(OnStreamLoaded_Base);
 	LatentInfo.UUID = 1;
 	LatentInfo.Linkage = 0;
 	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Base"), true, false, LatentInfo);
 
-	LatentInfo.ExecutionFunction = TEXT("OnStreamLoaded_Boss1");
+	LatentInfo.ExecutionFunction = nameof_f(OnStreamLoaded_Boss1);
 	LatentInfo.UUID = 2;
 	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Boss-1"), true, false, LatentInfo);
 }

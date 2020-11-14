@@ -12,6 +12,11 @@ USokobanGameSlot::USokobanGameSlot()
 void USokobanGameSlot::SetItem(USokobanGameItem* InItem)
 {
 	MyItem = InItem;
+
+	if (MyItem != nullptr)
+	{
+		MyItem->SetCurrentSlot(this);
+	}
 }
 
 USokobanGameItem* USokobanGameSlot::GetItem() const

@@ -7,6 +7,9 @@
 #include "Common/SlowCollisionProfile.h"
 #include "Components/SokobanGameSlot.h"
 #include "Components/SokobanGameItem.h"
+#include "Components/SokobanGameMovableItem.h"
+#include "Components/GoalIndicatorComponent.h"
+#include "Controller/SlowPlayerController.h"
 
 #define CHECK_ITEM_COUNT(XY, Min, Max, ...) \
 if (XY < Min)\
@@ -29,7 +32,10 @@ if (PropertyName == nameof(VarName))\
 
 ASokobanGameActor::ASokobanGameActor()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	bRefreshed = false;
+	bSucceeded = false;
 
 	ItemCountX = 10;
 	ItemCountY = 10;
@@ -53,6 +59,7 @@ void ASokobanGameActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetActorTickEnabled(false);
 	Refresh();
 
 	// 모든 하위 컴포넌트 중에서 USokobanGameItem 컴포넌트를 검색합니다.
@@ -91,12 +98,81 @@ void ASokobanGameActor::BeginPlay()
 		SetItemIndex(Item, X, Y);
 	}
 
+	// 목적지 표시 컴포넌트를 생성합니다.
+	if (GoalIndicatorClass != nullptr)
+	{
+		GoalIndicators.Reserve(GoalIndexes.Num());
+
+		for (auto& Index : GoalIndexes)
+		{
+			auto [X, Y] = Index;
+
+			UGoalIndicatorComponent* Component = NewObject<UGoalIndicatorComponent>(this, GoalIndicatorClass);
+			Component->AttachToComponent(Root, FAttachmentTransformRules::KeepRelativeTransform);
+			Component->SetRelativeLocation(FVector(QuerySlotLocation(X, Y), 0.0f));
+			Component->RegisterComponent();
+
+			GoalIndicators.Add(Component);
+		}
+	}
+
 	RemainActionCount = MaxActionCount;
 }
 
 void ASokobanGameActor::EndPlay(const EEndPlayReason::Type InEndPlayReason)
 {
 	Super::EndPlay(InEndPlayReason);
+}
+
+void ASokobanGameActor::Tick(float InDeltaSeconds)
+{
+	Super::Tick(InDeltaSeconds);
+
+	if (bSucceeded)
+	{
+		bool bMoving = false;
+		for (auto& Item : ItemComponents)
+		{
+			auto MovableItem = Cast<USokobanGameMovableItem>(Item);
+			if (MovableItem != nullptr && MovableItem->IsMoving())
+			{
+				bMoving = true;
+				break;
+			}
+		}
+
+		if (!bMoving)
+		{
+			for (auto& Item : ItemComponents)
+			{
+				Item->DestructItem();
+				Item->SetCollisionProfileName(CollisionProfile::NoCollision);
+			}
+
+			SetActorTickEnabled(false);
+
+			auto HideAllComponents = [&, WeakThis = TWeakObjectPtr(this)](UObject* InSender, UObject* InEventArgs)
+			{
+				if (WeakThis.IsValid())
+				{
+					for (auto& Item : ItemComponents)
+					{
+						Item->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+						Item->DestroyComponent();
+						Item = nullptr;
+					}
+				}
+			};
+
+			ASlowPlayerController::FGameThreadActionDelegateArgs ActionDelArgs;
+			ActionDelArgs.Sender = this;
+			ActionDelArgs.Args = nullptr;
+			ActionDelArgs.DelayedInvoke = 3.0f;
+
+			auto PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+			PlayerController->EnqueueGameThreadAction(HideAllComponents, ActionDelArgs);
+		}
+	}
 }
 
 #if WITH_EDITOR
@@ -128,7 +204,7 @@ void ASokobanGameActor::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 
 #endif
 
-void ASokobanGameActor::CheckSlotItem(USokobanGameItem* InItem) const
+void ASokobanGameActor::UpdateSlotItem(USokobanGameItem* InItem)
 {
 	CheckNull(InItem);
 
@@ -137,6 +213,9 @@ void ASokobanGameActor::CheckSlotItem(USokobanGameItem* InItem) const
 
 	CHECK_ITEM_COUNT(X, 0, ItemCountX - 1);
 	CHECK_ITEM_COUNT(Y, 0, ItemCountY - 1);
+
+	USokobanGameSlot* Slot = GetCell(X, Y);
+	Slot->SetItem(InItem);
 }
 
 FVector2D ASokobanGameActor::QuerySlotLocation(int32 X, int32 Y) const
@@ -186,7 +265,27 @@ void ASokobanGameActor::ConsumeMove()
 	}
 	else
 	{
-		if (RemainActionCount <= 0)
+		bool bNeedRetry = true;
+
+		auto IsGoal = [&](USokobanGameItem* ItemObject) -> bool
+		{
+			int32 X = ItemObject->GetSlotIndexX();
+			int32 Y = ItemObject->GetSlotIndexY();
+
+			for (auto& Index : GoalIndexes)
+			{
+				if (Index.X == X && Index.Y == Y)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		bNeedRetry = RemainActionCount <= 0;
+
+		if (bNeedRetry)
 		{
 			Retry();
 		}
@@ -202,12 +301,14 @@ void ASokobanGameActor::Retry()
 
 	RemainActionCount = MaxActionCount;
 
-	SLOW_LOG(Log, TEXT("실패. 재시작."));
+	SLOW_LOG(Verbose, TEXT("실패. 재시작."));
 }
 
 void ASokobanGameActor::Succeeded()
 {
-	SLOW_LOG(Log, TEXT("성공!"));
+	bSucceeded = true;
+	SetActorTickEnabled(true);
+	SLOW_LOG(Verbose, TEXT("성공!"));
 }
 
 void ASokobanGameActor::Refresh()
@@ -224,6 +325,18 @@ void ASokobanGameActor::Refresh()
 
 void ASokobanGameActor::CreateAuto()
 {
+	auto SafeGet = [&](int32 Index) -> UClass*
+	{
+		if (ItemClass.Num() > Index)
+		{
+			return ItemClass[Index];
+		}
+		else
+		{
+			return nullptr;
+		}
+	};
+
 	TArray<int32> SlotArray;
 	SlotArray.SetNum(ItemCountX * ItemCountY);
 
@@ -238,7 +351,7 @@ void ASokobanGameActor::CreateAuto()
 
 	for (int32 i = 0; i < SlotArray.Num(); ++i)
 	{
-		UClass* CurClass = ItemClass[SlotArray[i]];
+		UClass* CurClass = SafeGet(SlotArray[i]);
 		if (CurClass != nullptr)
 		{
 			auto [X, Y] = Break(i);
@@ -253,8 +366,6 @@ void ASokobanGameActor::CreateAuto()
 			AutoGeneratedComponents.Add(ItemObject);
 		}
 	}
-
-	AutoGenerationText = TEXT("");
 }
 
 void ASokobanGameActor::RemoveAllAutoGenerationComponents()
@@ -365,7 +476,7 @@ void ASokobanGameActor::RefreshSlotItemProperty(int32 X, int32 Y) const
 
 auto ASokobanGameActor::NewCellComponent(int32 InX, int32 InY) -> USokobanGameSlot*
 {
-	FUObjectThreadContext& MyThreadContext = FUObjectThreadContext::Get();
+	UWorld* IsInWorldContext = GetWorld();
 
 	USokobanGameSlot* Component = nullptr;
 
@@ -373,7 +484,12 @@ auto ASokobanGameActor::NewCellComponent(int32 InX, int32 InY) -> USokobanGameSl
 	Component->SetStaticMesh(SlotMesh);
 	Component->SetRelativeScale3D(SlotMeshScale);
 	Component->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	Component->RegisterComponent();
+
+	if (IsInWorldContext != nullptr)
+	{
+		Component->RegisterComponent();
+	}
+
 	GetCell(InX, InY) = Component;
 
 	return Component;
@@ -419,11 +535,11 @@ bool ASokobanGameActor::CheckGoals() const
 		USokobanGameSlot* const& Slot = GetCell(X, Y);
 		if (Slot->GetItem() == nullptr)
 		{
-			return true;
+			return false;
 		}
 	}
 
-	return false;
+	return true;
 }
 
 #undef CHECK_ITEM_COUNT
