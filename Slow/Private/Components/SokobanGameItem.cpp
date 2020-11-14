@@ -113,9 +113,16 @@ void USokobanGameItem::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 
 void USokobanGameItem::Retry()
 {
+	auto MyOwner = Cast<ASokobanGameActor>(GetOwner());
+	if (MyOwner == nullptr)
+	{
+		SLOW_LOG(Error, TEXT("%s 컴포넌트는 반드시 %s 액터에 배치되어야 합니다."), nameof_c(USokobanGameItem), nameof_c(ASokobanGameActor));
+	}
+
 	SlotIndexX = ConstSlotIndexX;
 	SlotIndexY = ConstSlotIndexY;
 
+	MyOwner->UpdateSlotItem(this);
 	UpdateLocation(true);
 }
 

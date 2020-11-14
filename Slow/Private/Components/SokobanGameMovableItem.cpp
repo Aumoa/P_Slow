@@ -45,16 +45,19 @@ void USokobanGameMovableItem::TickComponent(float InDeltaSeconds, ELevelTick Tic
 		{
 			SetRelativeLocation(Select(CurDestLocation, 0, 0, 1, MyLocation3D));
 			bMoving = false;
-
-			if (bRetryRequest)
-			{
-				DestructItem();
-			}
 		}
 		else
 		{
 			const FVector2D Delta = MovingDirection * DeltaInteropSpeed;
 			SetRelativeLocation(Select(MyLocation + Delta, 0, 0, 1, MyLocation3D));
+		}
+	}
+
+	if (!bMoving)
+	{
+		if (bRetryRequest)
+		{
+			DestructItem();
 		}
 	}
 }
