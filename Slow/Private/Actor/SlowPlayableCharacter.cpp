@@ -255,7 +255,8 @@ void ASlowPlayableCharacter::OnAttackInputChecking()
 		ComboCount = (ComboCount+1) % MaxComboCount;
 
 		IsOverlapAttack = false;
-		OnPlayerAttackEnd();
+		//OnPlayerAttackEnd();
+		OnColStartAttack();
 		OnPlayerAttack();
 	}
 }
@@ -286,7 +287,7 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 
 	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	//UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
 }
 
 void ASlowPlayableCharacter::NewWeaponManager()
