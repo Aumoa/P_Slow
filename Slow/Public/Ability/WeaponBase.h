@@ -11,6 +11,7 @@ class UBehavior;
 class UStaticMesh;
 class UAnimMontage;
 class UCapsuleComponent;
+struct FWeaponReferenceTableRow;
 
 UCLASS(Blueprintable)
 class SLOW_API UWeaponBase : public UObject
@@ -37,5 +38,6 @@ public:
 	virtual int GetMaxComboCount();
 	virtual UAnimMontage* GetAttackMontage();
 	virtual TArray<FName> GetComboList();
-	virtual UCapsuleComponent * GetCapsuleComponent();
+	virtual UCapsuleComponent* GetCapsuleComponent();
+	virtual FWeaponReferenceTableRow* GetWeaponDataTableRow();
 };

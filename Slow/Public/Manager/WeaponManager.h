@@ -13,6 +13,7 @@ class UManagerBase;
 class UStaticMesh;
 class UAnimMontage;
 class UCapsuleComponent;
+struct FWeaponReferenceTableRow;
 
 UCLASS()
 class SLOW_API UWeaponManager : public UObject
@@ -67,6 +68,7 @@ public:
 	UAnimMontage* GetAttackMontage();
 	TArray<FName> GetComboList();
 	UCapsuleComponent* GetCapsuleComponent();
+	FWeaponReferenceTableRow* GetWeaponDataTable();
 
 private:
 	bool SwapCondition(UWeaponBase* Weapon);

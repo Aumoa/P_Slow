@@ -96,3 +96,8 @@ UCapsuleComponent* UHatchetWeapon::GetCapsuleComponent()
 {
 	return Collision_Weapon;
 }
+
+FWeaponReferenceTableRow* UHatchetWeapon::GetWeaponDataTableRow()
+{
+	return WeaponReferenceTable;
+}

@@ -68,6 +68,8 @@ private:
 	bool IsAttack;
 	//중복 공격 체크
 	bool IsOverlapAttack;
+	//이미 데미지를 주었는지?
+	bool IsValidAttack;
 	
 
 protected:

@@ -20,8 +20,6 @@ private:
 	USwordWeapon();
 
 private:
-	FWeaponReferenceTableRow *WeaponReferenceTable;
-
 	UPROPERTY()
 	UStaticMesh* StaticMesh_Weapon;
 	
@@ -38,6 +36,9 @@ private:
 	TArray<FName> ComboList;
 
 	TArray<TSharedPtr<FRequirementBase>> Requirements_Weapon;
+
+public:
+	FWeaponReferenceTableRow* WeaponReferenceTable;
 
 public:
 	void BeginWeapon() override;
@@ -58,4 +59,5 @@ public:
 	UAnimMontage* GetAttackMontage() override;
 	TArray<FName> GetComboList() override;
 	UCapsuleComponent* GetCapsuleComponent() override;
+	FWeaponReferenceTableRow* GetWeaponDataTableRow() override;
 };

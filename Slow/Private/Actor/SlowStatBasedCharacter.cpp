@@ -12,7 +12,8 @@ void ASlowStatBasedCharacter::BeginPlay()
 
 ASlowStatBasedCharacter::ASlowStatBasedCharacter()
 {
-
+	StatValidCheck();
+	AttrInstance.HealthPoint = InitialAttribute.StartHealth;
 }
 
 void ASlowStatBasedCharacter::Tick(float DeltaTime)
@@ -40,7 +41,8 @@ void ASlowStatBasedCharacter::ApplyEffect(const FStatModifyLinearEffect& InEffec
 	FAttrInstance InModifyValue = InEffect.GetModifyValue();
 
 	AttrInstance.HealthPoint += InModifyValue.HealthPoint;
-	AttrInstance.AttackDamage += InModifyValue.AttackDamage;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Boss HP : %d / %d"), AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
 	StatValidCheck();
 }
 

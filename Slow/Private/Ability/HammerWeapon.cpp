@@ -96,3 +96,8 @@ UCapsuleComponent* UHammerWeapon::GetCapsuleComponent()
 {
 	return Collision_Weapon;
 }
+
+FWeaponReferenceTableRow* UHammerWeapon::GetWeaponDataTableRow()
+{
+	return WeaponReferenceTable;
+}

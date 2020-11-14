@@ -57,6 +57,11 @@ UCapsuleComponent* UWeaponBase::GetCapsuleComponent()
 	return nullptr;
 }
 
+FWeaponReferenceTableRow* UWeaponBase::GetWeaponDataTableRow()
+{
+	return nullptr;
+}
+
 
 
 

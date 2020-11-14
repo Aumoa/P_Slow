@@ -201,3 +201,13 @@ UCapsuleComponent* UWeaponManager::GetCapsuleComponent()
 
 	return nullptr;
 }
+
+FWeaponReferenceTableRow* UWeaponManager::GetWeaponDataTable()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetWeaponDataTableRow();
+	}
+
+	return nullptr;
+}

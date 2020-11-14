@@ -15,6 +15,8 @@
 #include "Components/IInteractionComponent.h"
 #include "Effect/ActorEffect.h"
 #include "Effect/StatModifyLinearEffect.h"
+#include "Attributes/AttrInstance.h"
+#include "TableRow/WeaponReferenceTableRow.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -56,10 +58,7 @@ void ASlowPlayableCharacter::BeginPlay()
 	
 	AnimInstance = GetMesh()->GetAnimInstance();
 
-	FAttrInstance ModifyValue;
-	ModifyValue.HealthPoint = -50;
-
-	DamageEffect = new FStatModifyLinearEffect(this,ModifyValue);
+	DamageEffect = new FStatModifyLinearEffect(this);
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -107,8 +106,14 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 			AttackMontage = WeaponManager->GetAttackMontage();
 			ComboList = WeaponManager->GetComboList();
 			MaxComboCount = WeaponManager->GetMaxComboCount();
+			
+			
 
-			//UE_LOG(LogTemp, Warning, TEXT("CapsuleComponent name :: %s"), *Collision_Weapon->GetName());
+			FAttrInstance AttrData_Weapon;
+			AttrData_Weapon.HealthPoint = -WeaponManager->GetWeaponDataTable()->Damage;
+			DamageEffect->SetModifyValue(AttrData_Weapon);
+
+			//무기 콜리전 세팅
 			UCapsuleComponent *Collision_WeaponData = WeaponManager->GetCapsuleComponent();
 			Collision_Weapon->SetRelativeLocationAndRotation(Collision_WeaponData->GetRelativeLocation(),
 															Collision_WeaponData->GetRelativeRotation());
@@ -239,6 +244,8 @@ void ASlowPlayableCharacter::OnPlayerAttackEnd()
 
 	if(Collision_Weapon != nullptr)
 		Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	
 }
 
 void ASlowPlayableCharacter::OnAttackInputChecking()	
@@ -246,8 +253,9 @@ void ASlowPlayableCharacter::OnAttackInputChecking()
 	if (IsOverlapAttack)
 	{
 		ComboCount = (ComboCount+1) % MaxComboCount;
-		
+
 		IsOverlapAttack = false;
+		OnPlayerAttackEnd();
 		OnPlayerAttack();
 	}
 }
@@ -268,12 +276,17 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 	if(OtherActor == this)
 		return;
 	
+	if(IsValidAttack)
+		return;
+
 	AttackAbility->SetTarget(OtherCharacter);
 	AttackAbility->ExecuteIndirect(this);
 
-	DamageEffect->Apply(OtherActor);
+	DamageEffect->Apply(OtherCharacter);
 
-	UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
+	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	//UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
 }
 
 void ASlowPlayableCharacter::NewWeaponManager()
