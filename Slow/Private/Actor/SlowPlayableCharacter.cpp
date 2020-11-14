@@ -13,6 +13,8 @@
 #include "Manager/WeaponManager.h"
 #include "AnimInstance/SlowAnimInstance.h"
 #include "Components/IInteractionComponent.h"
+#include "Effect/ActorEffect.h"
+#include "Effect/StatModifyLinearEffect.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -42,9 +44,6 @@ void ASlowPlayableCharacter::BeginPlay()
 	MouseActionSlot.SetAbility(MoveAbility.Get());
 	MouseSelectionSlot.SetAbility(AttackAbility.Get());
 
-	
-	
-
 	IsAttack = false;
 	IsOverlapAttack = false;
 	ComboCount = 0;
@@ -55,9 +54,12 @@ void ASlowPlayableCharacter::BeginPlay()
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("HammerSocket"));
 	Collision_Weapon->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	
-	
-
 	AnimInstance = GetMesh()->GetAnimInstance();
+
+	FAttrInstance ModifyValue;
+	ModifyValue.HealthPoint = -50;
+
+	DamageEffect = new FStatModifyLinearEffect(this,ModifyValue);
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -122,7 +124,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	else if (ActionName == IA_Interaction)
 	{
-		//Ʈ���̽��� ��ȣ�ۿ� ��ü üũ
+		
 		IsFindInteractionObject = true;
 
 		FireInteractionRay();
@@ -269,6 +271,7 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 	AttackAbility->SetTarget(OtherCharacter);
 	AttackAbility->ExecuteIndirect(this);
 
+	DamageEffect->Apply(OtherActor);
 
 	UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
 }

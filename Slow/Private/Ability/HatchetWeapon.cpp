@@ -6,6 +6,7 @@
 #include "TableRow/WeaponReferenceTableRow.h"
 #include "Requirement/CostRequirement.h"
 #include "Requirement/CooldownRequirement.h"
+#include "Components/Behavior.h"
 
 UHatchetWeapon::UHatchetWeapon()
 {
@@ -58,7 +59,7 @@ TArray<TSharedPtr<FRequirementBase>> UHatchetWeapon::GetAllRequirements() const
 
 TSubclassOf<UBehavior> UHatchetWeapon::GetEffect() const
 {
-	return TSubclassOf<UBehavior>();
+	return UBehavior::StaticClass();
 }
 
 UStaticMesh* UHatchetWeapon::GetWeaponMesh()

@@ -36,10 +36,6 @@ void UHammerWeapon::BeginWeapon()
 	Requirements_Weapon.Add(Cost_Weapon);
 	Requirements_Weapon.Add(Cooldown_Weapon);
 
-	//UBehavior *Behavior_Weapon = NewObject<UBehavior>(this); 에러 발생
-	//NewObject<UBehavior>(this,UBehavior::StaticClass());
-	//Behavior_Weapon->AddEffect();
-
 	ComboList.Empty();
 	ComboList.Emplace(TEXT("Hammer_Combo1"));
 	ComboList.Emplace(TEXT("Hammer_Combo2"));
@@ -63,11 +59,7 @@ TArray<TSharedPtr<FRequirementBase>> UHammerWeapon::GetAllRequirements() const
 
 TSubclassOf<UBehavior> UHammerWeapon::GetEffect() const
 {
-	
-
-
-
-	return TSubclassOf<UBehavior>();
+	return UBehavior::StaticClass();
 }
 
 UStaticMesh* UHammerWeapon::GetWeaponMesh()

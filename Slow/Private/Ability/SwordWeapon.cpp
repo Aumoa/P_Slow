@@ -60,7 +60,7 @@ TArray<TSharedPtr<FRequirementBase>> USwordWeapon::GetAllRequirements() const
 
 TSubclassOf<UBehavior> USwordWeapon::GetEffect() const
 {
-	return TSubclassOf<UBehavior>();
+	return UBehavior::StaticClass();
 }
 
 UStaticMesh* USwordWeapon::GetWeaponMesh()

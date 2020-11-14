@@ -11,6 +11,7 @@
 
 class ASlowCharacter;
 class ASlowStatBasedCharacter;
+class FActorEffect;
 
 /// <summary>
 /// 기본 공격 어빌리티를 표현합니다.

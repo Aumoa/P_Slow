@@ -21,6 +21,8 @@ private:
 public:
 	UBehavior();
 
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	void SetActivate(bool bInActivate);
 	bool IsActivated() const;
 

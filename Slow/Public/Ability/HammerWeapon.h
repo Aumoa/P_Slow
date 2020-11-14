@@ -39,9 +39,6 @@ private:
 
 	TArray<TSharedPtr<FRequirementBase>> Requirements_Weapon;
 
-	UPROPERTY()
-	UBehavior* Behavior_Weapon;
-
 public:
 	void BeginWeapon() override;
 

@@ -8,6 +8,7 @@
 #include "Ability/WeaponBase.h"
 #include "Requirement/ActorTargetRequirement.h"
 #include "Components/Behavior.h"
+#include "Effect/ActorEffect.h"
 
 FAttackAbility::FAttackAbility()
 {

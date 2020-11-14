@@ -10,6 +10,27 @@ UBehavior::UBehavior()
 	ActivateStateStack.Push(true);
 }
 
+void UBehavior::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	if (IsActivated() == false)
+	{
+		RemoveFromParent();
+		return;
+	}
+
+	if (GetOwner() == nullptr)
+	{
+		return;
+	}
+
+	for (FActorEffect* Effect : EffectList)
+	{
+		Effect->Apply(this->GetOwner());
+	}
+
+	PopActivate();
+}
+
 void UBehavior::SetActivate(bool bInActivate)
 {
 	ActivateStateStack.SetNum(1, false);

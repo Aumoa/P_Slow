@@ -52,6 +52,8 @@ private:
 	UPROPERTY()
 	UAnimInstance *AnimInstance;
 
+	FStatModifyLinearEffect *DamageEffect;
+
 	TArray<FName> ComboList;
 	int MaxComboCount;
 	int ComboCount;
