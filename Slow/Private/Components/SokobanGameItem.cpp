@@ -5,10 +5,13 @@
 #include "Common/SlowCommonMacros.h"
 #include "Actor/SokobanGameActor.h"
 #include "Common/SlowCollisionProfile.h"
+#include "Components/SokobanGameSlot.h"
 
 USokobanGameItem::USokobanGameItem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	bHasUpdating = false;
 
 	SetMobility(EComponentMobility::Movable);
 
@@ -16,6 +19,8 @@ USokobanGameItem::USokobanGameItem()
 	SlotIndexY = 0;
 	ConstSlotIndexX = 0;
 	ConstSlotIndexY = 0;
+
+	CurrentSlot = nullptr;
 
 	TwoDirection[0] = FVector::ZeroVector;
 	TwoDirection[1] = FVector::ZeroVector;
@@ -56,33 +61,61 @@ void USokobanGameItem::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 
 	if (PropertyName == nameof(SlotIndexX))
 	{
-		SetSlotIndexX(SlotIndexX);
+		MyActor->MoveSlotItem(this, SlotIndexX, SlotIndexY);
 	}
 
 	else if (PropertyName == nameof(SlotIndexY))
 	{
-		SetSlotIndexY(SlotIndexY);
+		MyActor->MoveSlotItem(this, SlotIndexX, SlotIndexY);
+	}
+}
+
+void USokobanGameItem::CustomTick(float InDeltaSeconds)
+{
+	if (DestructLimitTime.IsReached())
+	{
+		bHasUpdating = false;
+	}
+	else
+	{
+		DestructLimitTime.Tick(InDeltaSeconds);
 	}
 }
 
 void USokobanGameItem::Retry()
 {
-	auto MyOwner = Cast<ASokobanGameActor>(GetOwner());
-	if (MyOwner == nullptr)
-	{
-		SLOW_LOG(Error, TEXT("%s 컴포넌트는 반드시 %s 액터에 배치되어야 합니다."), nameof_c(USokobanGameItem), nameof_c(ASokobanGameActor));
-	}
+	UDestructibleMesh* MyMesh = GetDestructibleMesh();
+	SetDestructibleMesh(nullptr);
+	SetDestructibleMesh(MyMesh);
+
+	SetCollisionProfileName(CollisionProfile::InteractionOnly);
+
+	ReregisterComponent();
 
 	SlotIndexX = ConstSlotIndexX;
 	SlotIndexY = ConstSlotIndexY;
 
-	MyOwner->UpdateSlotItem(this);
+	MyActor->MoveSlotItem(this, ConstSlotIndexX, ConstSlotIndexY, true);
 	UpdateLocation(true);
 }
 
 void USokobanGameItem::DestructItem()
 {
+	SetCollisionProfileName(CollisionProfile::NoCollision);
+
 	ApplyRadiusDamage(1000.0f, GetComponentLocation(), 1.0f, 1.0f, true);
+	bHasUpdating = true;
+	DestructLimitTime.Reset(3.0f);
+}
+
+bool USokobanGameItem::HasUpdating() const
+{
+	return bHasUpdating;
+}
+
+USokobanGameSlot* USokobanGameItem::GetCurrentSlot() const
+{
+	return CurrentSlot;
 }
 
 int32 USokobanGameItem::GetSlotIndexX() const
@@ -90,80 +123,9 @@ int32 USokobanGameItem::GetSlotIndexX() const
 	return SlotIndexX;
 }
 
-void USokobanGameItem::SetSlotIndexX(int32 InValue)
-{
-	if (SlotIndexX != InValue || !HasBegunPlay())
-	{
-		SlotIndexX = InValue;
-		UpdateSlot();
-		UpdateLocation();
-	}
-}
-
 int32 USokobanGameItem::GetSlotIndexY() const
 {
 	return SlotIndexY;
-}
-
-void USokobanGameItem::SetSlotIndexY(int32 InValue)
-{
-	if (SlotIndexY != InValue || !HasBegunPlay())
-	{
-		SlotIndexY = InValue;
-		UpdateSlot();
-		UpdateLocation();
-	}
-}
-
-bool USokobanGameItem::CanMoveAround() const
-{
-	static TTuple<int32, int32> FourOffset[4] =
-	{
-		TTuple<int32, int32>(-1,  0),
-		TTuple<int32, int32>(0, -1),
-		TTuple<int32, int32>(0,  1),
-		TTuple<int32, int32>(1,  0)
-	};
-
-	auto CheckAsTuple = [&](int32 InDirectionEnum) -> bool
-	{
-		auto& [X, Y] = FourOffset[InDirectionEnum];
-		return MyActor->CheckIndexMovable(SlotIndexX + X, SlotIndexY + Y);
-	};
-
-	int32 Stack = 0;
-	for (int32 i = 0; i < 4; ++i)
-	{
-		if (!CheckAsTuple(i))
-		{
-			Stack += 1;
-			if (Stack == 2)
-			{
-				return false;
-			}
-		}
-		else
-		{
-			Stack = 0;
-		}
-	}
-
-	return true;
-}
-
-void USokobanGameItem::SetCurrentSlot(USokobanGameSlot* InSlot)
-{
-	if (CurrentSlot != nullptr)
-	{
-		CurrentSlot->SetItem(nullptr);
-	}
-
-	CurrentSlot = InSlot;
-}
-
-USokobanGameSlot* USokobanGameItem::GetCurrentSlot() const
-{
-	return CurrentSlot;
 }
 
 void USokobanGameItem::UpdateLocation(bool bForceMove)
@@ -184,16 +146,13 @@ ASokobanGameActor* USokobanGameItem::GetActor() const
 	return MyActor.Get();
 }
 
-void USokobanGameItem::UpdateSlot()
+void USokobanGameItem::RemoveSlotReference()
 {
-	auto MyOwner = Cast<ASokobanGameActor>(GetOwner());
-	if (MyOwner == nullptr)
+	if (CurrentSlot != nullptr)
 	{
-		SLOW_LOG(Error, TEXT("%s 컴포넌트는 반드시 %s 액터에 배치되어야 합니다."), nameof_c(USokobanGameItem), nameof_c(ASokobanGameActor));
+		CurrentSlot->SetItem(nullptr);
+		CurrentSlot = nullptr;
 	}
-
-	MyOwner->UpdateSlotItem(this);
-	MyOwner->ConsumeMove();
 }
 
 template<class First, class Second>

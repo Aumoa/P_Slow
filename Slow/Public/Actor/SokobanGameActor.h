@@ -18,6 +18,21 @@ class SLOW_API ASokobanGameActor : public AActor
 	GENERATED_BODY()
 
 private:
+	enum ConsumeFlags
+	{
+		CF_Succeeded = 0,
+		CF_Countdown = 1,
+	};
+
+	enum Tasks
+	{
+		Task_Destruct,
+		Task_DestructAll,
+		Task_Retry,
+		Task_Succeeded,
+	};
+
+private:
 	uint8 bRefreshed : 1;
 	uint8 bSucceeded : 1;
 
@@ -68,6 +83,7 @@ private:
 #endif
 
 	int32 RemainActionCount;
+	TQueue<Tasks> TaskQueue;
 
 public:
 	ASokobanGameActor();
@@ -80,10 +96,13 @@ public:
 	void PostEditChangeProperty(FPropertyChangedEvent& InEvent) override;
 #endif
 
-	void UpdateSlotItem(USokobanGameItem* InItem);
+	bool MoveSlotItem(USokobanGameItem* InItem, int32 DestX, int32 DestY, bool bForceRetry = false);
 	FVector2D QuerySlotLocation(int32 X, int32 Y) const;
 	bool CheckIndexMovable(int32 X, int32 Y) const;
-	void ConsumeMove();
+	ConsumeFlags ConsumeMove();
+
+	void Destruct();
+	void DestructAll();
 	void Retry();
 	void Succeeded();
 
@@ -98,6 +117,9 @@ public:
 	/** 자동 생성으로 만들어진 모든 컴포넌트를 제거합니다. */
 	UFUNCTION(CallInEditor, Category = "Auto Generation")
 	void RemoveAllAutoGenerationComponents();
+	/** 프로퍼티의 더티 상태를 초기화합니다. */
+	UFUNCTION(CallInEditor, Category = "Auto Generation")
+	void Cleanup();
 #endif
 
 private:
@@ -113,7 +135,8 @@ private:
 	USokobanGameSlot* const& GetCell(int32 InX, int32 InY) const;
 	TTuple<int32, int32> Break(int32 Number) const;
 
-	void SetItemIndex(USokobanGameItem* InItem, int32 X, int32 Y);
+	void ResolveTask();
 	void RefreshRootExtent();
+	void RefreshSlotReferences();
 	bool CheckGoals() const;
 };

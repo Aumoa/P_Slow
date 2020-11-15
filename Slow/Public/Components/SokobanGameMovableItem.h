@@ -3,6 +3,7 @@
 #pragma once
 
 #include "SokobanGameItem.h"
+#include "IInteractionComponent.h"
 
 #include "SokobanGameMovableItem.generated.h"
 
@@ -24,11 +25,11 @@ public:
 	USokobanGameMovableItem();
 
 	void BeginPlay() override;
-	void TickComponent(float InDeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
 	bool OnHitInteractionRay(AActor* InEventSender, FHitResult& InRemoteHitResult) override;
 
-	void Retry() override;
+	void CustomTick(float InDeltaSeconds) override;
+	bool HasUpdating() const override;
 
 	bool IsMoving() const;
 

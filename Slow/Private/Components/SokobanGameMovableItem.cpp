@@ -9,9 +9,7 @@
 
 USokobanGameMovableItem::USokobanGameMovableItem()
 {
-	PrimaryComponentTick.bCanEverTick = true;
-
-	InteropSpeed = 100.0f;
+	InteropSpeed = 300.0f;
 
 	CurDestLocation = FVector2D::ZeroVector;
 	bMoving = false;
@@ -24,42 +22,6 @@ void USokobanGameMovableItem::BeginPlay()
 
 	auto [X, Y, Z] = GetRelativeLocation();
 	CurDestLocation = { X, Y };
-}
-
-void USokobanGameMovableItem::TickComponent(float InDeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* TickFunction)
-{
-	Super::TickComponent(InDeltaSeconds, TickType, TickFunction);
-
-	if (bMoving)
-	{
-		FVector MyLocation3D = GetRelativeLocation();
-		FVector2D MyLocation = { MyLocation3D.X, MyLocation3D.Y };
-
-		FVector2D MovingDirection = CurDestLocation - MyLocation;
-		float MovingLength = MovingDirection.Size();
-		MovingDirection.Normalize();
-		float DeltaInteropSpeed = InDeltaSeconds * InteropSpeed;
-
-		// 남은 거리가 이동할 거리보다 작을 경우
-		if (MovingLength < DeltaInteropSpeed)
-		{
-			SetRelativeLocation(Select(CurDestLocation, 0, 0, 1, MyLocation3D));
-			bMoving = false;
-		}
-		else
-		{
-			const FVector2D Delta = MovingDirection * DeltaInteropSpeed;
-			SetRelativeLocation(Select(MyLocation + Delta, 0, 0, 1, MyLocation3D));
-		}
-	}
-
-	if (!bMoving)
-	{
-		if (bRetryRequest)
-		{
-			DestructItem();
-		}
-	}
 }
 
 bool USokobanGameMovableItem::OnHitInteractionRay(AActor* InEventSender, FHitResult& InRemoteHitResult)
@@ -97,45 +59,43 @@ bool USokobanGameMovableItem::OnHitInteractionRay(AActor* InEventSender, FHitRes
 	int32 MoveX = GetSlotIndexX() + SelectX;
 	int32 MoveY = GetSlotIndexY() + SelectY;
 
-	bool bMovable = GetActor()->CheckIndexMovable(MoveX, MoveY);
-	if (bMovable)
-	{
-		SetSlotIndexX(MoveX);
-		SetSlotIndexY(MoveY);
-	}
+	GetActor()->MoveSlotItem(this, MoveX, MoveY);
 
 	// 이동이 가능하든 불가능하든, 상호 작용 히트 자체는 성공했습니다.
 	return true;
 }
 
-void USokobanGameMovableItem::Retry()
+void USokobanGameMovableItem::CustomTick(float InDeltaSeconds)
 {
-	bRetryRequest = true;
+	Super::CustomTick(InDeltaSeconds);
 
-	ASlowPlayerController::FGameThreadActionDelegateArgs Args;
-	Args.Sender = this;
-	Args.DelayedInvoke = 4.0f;
-
-	auto Action = [&](UObject* InSender, UObject* InEventArgs)
+	if (bMoving)
 	{
-		// Refresh and reapply mesh object.
-		UDestructibleMesh* MeshObject = GetDestructibleMesh();
-		SetDestructibleMesh(nullptr);
-		SetDestructibleMesh(MeshObject);
+		FVector MyLocation3D = GetRelativeLocation();
+		FVector2D MyLocation = { MyLocation3D.X, MyLocation3D.Y };
 
-		Super::Retry();
-		bRetryRequest = false;
-	};
+		FVector2D MovingDirection = CurDestLocation - MyLocation;
+		float MovingLength = MovingDirection.Size();
+		MovingDirection.Normalize();
+		float DeltaInteropSpeed = InDeltaSeconds * InteropSpeed;
 
-	ASlowPlayerController* PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-	if (PlayerController == nullptr)
-	{
-		SLOW_LOG(Warning, TEXT("%s[0] is nullptr or not class which derived from %s."), nameof(PlayerController), nameof_c(ASlowPlayerController));
-		Super::Retry();
-		return;
+		// 남은 거리가 이동할 거리보다 작을 경우
+		if (MovingLength < DeltaInteropSpeed)
+		{
+			SetRelativeLocation(Select(CurDestLocation, 0, 0, 1, MyLocation3D));
+			bMoving = false;
+		}
+		else
+		{
+			const FVector2D Delta = MovingDirection * DeltaInteropSpeed;
+			SetRelativeLocation(Select(MyLocation + Delta, 0, 0, 1, MyLocation3D));
+		}
 	}
+}
 
-	PlayerController->EnqueueGameThreadAction(Action, Args);
+bool USokobanGameMovableItem::HasUpdating() const
+{
+	return IsMoving() || Super::HasUpdating();
 }
 
 bool USokobanGameMovableItem::IsMoving() const

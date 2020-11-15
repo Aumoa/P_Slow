@@ -24,6 +24,8 @@ else if (XY > Max)\
 	return __VA_ARGS__;\
 }
 
+#define CHECK_ITEM_INDEX(XY, Count, ...) CHECK_ITEM_COUNT(XY, 0, Count - 1, __VA_ARGS__)
+
 #define RegisterPropertyChanged(VarName)\
 if (PropertyName == nameof(VarName))\
 {\
@@ -59,7 +61,6 @@ void ASokobanGameActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetActorTickEnabled(false);
 	Refresh();
 
 	// 모든 하위 컴포넌트 중에서 USokobanGameItem 컴포넌트를 검색합니다.
@@ -72,8 +73,8 @@ void ASokobanGameActor::BeginPlay()
 		auto ItemComponent = Cast<USokobanGameItem>(Item);
 		if (ItemComponent != nullptr)
 		{
-			int32 X = ItemComponent->GetSlotIndexX();
-			int32 Y = ItemComponent->GetSlotIndexY();
+			int32 X = ItemComponent->ConstSlotIndexX;
+			int32 Y = ItemComponent->ConstSlotIndexY;
 			auto Key = TPair<int32, int32>(X, Y);
 
 			if (DuplicationChecker.Contains(Key))
@@ -87,15 +88,6 @@ void ASokobanGameActor::BeginPlay()
 
 			ItemComponents.Add(ItemComponent);
 		}
-	}
-
-	// 슬롯에 아이템 컴포넌트를 추가합니다.
-	for (auto& Item : ItemComponents)
-	{
-		int32 X = Item->GetSlotIndexX();
-		int32 Y = Item->GetSlotIndexY();
-
-		SetItemIndex(Item, X, Y);
 	}
 
 	// 목적지 표시 컴포넌트를 생성합니다.
@@ -117,6 +109,7 @@ void ASokobanGameActor::BeginPlay()
 	}
 
 	RemainActionCount = MaxActionCount;
+	RefreshSlotReferences();
 }
 
 void ASokobanGameActor::EndPlay(const EEndPlayReason::Type InEndPlayReason)
@@ -128,50 +121,19 @@ void ASokobanGameActor::Tick(float InDeltaSeconds)
 {
 	Super::Tick(InDeltaSeconds);
 
-	if (bSucceeded)
+	bool bUpdating = false;
+	for (auto& Item : ItemComponents)
 	{
-		bool bMoving = false;
-		for (auto& Item : ItemComponents)
+		if (Item->HasUpdating())
 		{
-			auto MovableItem = Cast<USokobanGameMovableItem>(Item);
-			if (MovableItem != nullptr && MovableItem->IsMoving())
-			{
-				bMoving = true;
-				break;
-			}
+			Item->CustomTick(InDeltaSeconds);
+			bUpdating = true;
 		}
+	}
 
-		if (!bMoving)
-		{
-			for (auto& Item : ItemComponents)
-			{
-				Item->DestructItem();
-				Item->SetCollisionProfileName(CollisionProfile::NoCollision);
-			}
-
-			SetActorTickEnabled(false);
-
-			auto HideAllComponents = [&, WeakThis = TWeakObjectPtr(this)](UObject* InSender, UObject* InEventArgs)
-			{
-				if (WeakThis.IsValid())
-				{
-					for (auto& Item : ItemComponents)
-					{
-						Item->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-						Item->DestroyComponent();
-						Item = nullptr;
-					}
-				}
-			};
-
-			ASlowPlayerController::FGameThreadActionDelegateArgs ActionDelArgs;
-			ActionDelArgs.Sender = this;
-			ActionDelArgs.Args = nullptr;
-			ActionDelArgs.DelayedInvoke = 3.0f;
-
-			auto PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-			PlayerController->EnqueueGameThreadAction(HideAllComponents, ActionDelArgs);
-		}
+	if (!bUpdating)
+	{
+		ResolveTask();
 	}
 }
 
@@ -204,24 +166,48 @@ void ASokobanGameActor::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 
 #endif
 
-void ASokobanGameActor::UpdateSlotItem(USokobanGameItem* InItem)
+bool ASokobanGameActor::MoveSlotItem(USokobanGameItem* InItem, int32 DestX, int32 DestY, bool bForceRetry)
 {
-	CheckNull(InItem);
+	CHECK_ITEM_INDEX(DestX, ItemCountX, false);
+	CHECK_ITEM_INDEX(DestY, ItemCountY, false);
 
-	int32 X = InItem->GetSlotIndexX();
-	int32 Y = InItem->GetSlotIndexY();
+	USokobanGameSlot& CurCell = *GetCell(DestX, DestY);
+	if (CurCell.GetItem() != nullptr)
+	{
+		return false;
+	}
 
-	CHECK_ITEM_COUNT(X, 0, ItemCountX - 1);
-	CHECK_ITEM_COUNT(Y, 0, ItemCountY - 1);
+	InItem->RemoveSlotReference();
 
-	USokobanGameSlot* Slot = GetCell(X, Y);
-	Slot->SetItem(InItem);
+	InItem->SlotIndexX = DestX;
+	InItem->SlotIndexY = DestY;
+	CurCell.SetItem(InItem);
+	InItem->CurrentSlot = &CurCell;
+	InItem->UpdateLocation();
+
+	if (HasActorBegunPlay() && !bForceRetry)
+	{
+		ConsumeFlags CF = ConsumeMove();
+
+		if (CheckGoals())
+		{
+			TaskQueue.Enqueue(Task_DestructAll);
+			TaskQueue.Enqueue(Task_Succeeded);
+		}
+		else if (CF == CF_Countdown)
+		{
+			TaskQueue.Enqueue(Task_Destruct);
+			TaskQueue.Enqueue(Task_Retry);
+		}
+	}
+
+	return true;
 }
 
 FVector2D ASokobanGameActor::QuerySlotLocation(int32 X, int32 Y) const
 {
-	CHECK_ITEM_COUNT(X, 0, ItemCountX - 1, FVector2D::ZeroVector);
-	CHECK_ITEM_COUNT(Y, 0, ItemCountY - 1, FVector2D::ZeroVector);
+	CHECK_ITEM_INDEX(X, ItemCountX, FVector2D::ZeroVector);
+	CHECK_ITEM_INDEX(Y, ItemCountY, FVector2D::ZeroVector);
 
 	int32 PivotX = ItemCountX / 2;
 	int32 PivotY = ItemCountY / 2;
@@ -240,8 +226,8 @@ FVector2D ASokobanGameActor::QuerySlotLocation(int32 X, int32 Y) const
 
 bool ASokobanGameActor::CheckIndexMovable(int32 X, int32 Y) const
 {
-	CHECK_ITEM_COUNT(X, 0, ItemCountX - 1, false);
-	CHECK_ITEM_COUNT(Y, 0, ItemCountY - 1, false);
+	CHECK_ITEM_INDEX(X, ItemCountX, false);
+	CHECK_ITEM_INDEX(Y, ItemCountY, false);
 
 	USokobanGameSlot* const& Slot = GetCell(X, Y);
 	USokobanGameItem* SlotItem = Slot->GetItem();
@@ -255,60 +241,58 @@ bool ASokobanGameActor::CheckIndexMovable(int32 X, int32 Y) const
 	return false;
 }
 
-void ASokobanGameActor::ConsumeMove()
+auto ASokobanGameActor::ConsumeMove() -> ConsumeFlags
 {
-	RemainActionCount -= 1;
-
-	if (CheckGoals())
+	if (RemainActionCount <= 0)
 	{
-		Succeeded();
+		return CF_Countdown;
 	}
-	else
+
+	RemainActionCount -= 1;
+	return CF_Succeeded;
+}
+
+void ASokobanGameActor::Destruct()
+{
+	for (auto& Item : ItemComponents)
 	{
-		bool bNeedRetry = true;
+		auto MovableItem = Cast<USokobanGameMovableItem>(Item);
+		SafeInvoke(MovableItem).DestructItem();
+	}
+}
 
-		auto IsGoal = [&](USokobanGameItem* ItemObject) -> bool
-		{
-			int32 X = ItemObject->GetSlotIndexX();
-			int32 Y = ItemObject->GetSlotIndexY();
-
-			for (auto& Index : GoalIndexes)
-			{
-				if (Index.X == X && Index.Y == Y)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		};
-
-		bNeedRetry = RemainActionCount <= 0;
-
-		if (bNeedRetry)
-		{
-			Retry();
-		}
+void ASokobanGameActor::DestructAll()
+{
+	for (auto& Item : ItemComponents)
+	{
+		SafeInvoke(Item).DestructItem();
 	}
 }
 
 void ASokobanGameActor::Retry()
 {
+	SLOW_LOG(Verbose, TEXT("실패. 재시작."));
+
 	for (auto& Item : ItemComponents)
 	{
 		SafeInvoke(Item).Retry();
 	}
 
-	RemainActionCount = MaxActionCount;
+	RefreshSlotReferences();
 
-	SLOW_LOG(Verbose, TEXT("실패. 재시작."));
+	RemainActionCount = MaxActionCount;
 }
 
 void ASokobanGameActor::Succeeded()
 {
 	bSucceeded = true;
-	SetActorTickEnabled(true);
 	SLOW_LOG(Verbose, TEXT("성공!"));
+
+	for (auto& Item : ItemComponents)
+	{
+		Item->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		Item->DestroyComponent();
+	}
 }
 
 void ASokobanGameActor::Refresh()
@@ -356,14 +340,13 @@ void ASokobanGameActor::CreateAuto()
 		{
 			auto [X, Y] = Break(i);
 
-			USokobanGameItem* ItemObject = NewObject<USokobanGameItem>(this, CurClass);
-			ItemObject->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			ItemObject->RegisterComponent();
+			USokobanGameItem& ItemObject = *NewObject<USokobanGameItem>(this, CurClass);
+			ItemObject.AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			ItemObject.RegisterComponent();
 
-			ItemObject->SetSlotIndexX(X);
-			ItemObject->SetSlotIndexY(Y);
+			MoveSlotItem(&ItemObject, X, Y);
 
-			AutoGeneratedComponents.Add(ItemObject);
+			AutoGeneratedComponents.Add(&ItemObject);
 		}
 	}
 }
@@ -372,13 +355,23 @@ void ASokobanGameActor::RemoveAllAutoGenerationComponents()
 {
 	for (int32 i = 0; i < AutoGeneratedComponents.Num(); ++i)
 	{
-		USokobanGameItem*& Cur = AutoGeneratedComponents[i];
-		Cur->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-		Cur->ConditionalBeginDestroy();
-		Cur = nullptr;
+		USokobanGameItem& Cur = *AutoGeneratedComponents[i];
+		Cur.DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		Cur.RemoveSlotReference();
+		Cur.ConditionalBeginDestroy();
 	}
 
 	AutoGeneratedComponents.SetNum(0);
+}
+
+void ASokobanGameActor::Cleanup()
+{
+	RemoveAllAutoGenerationComponents();
+
+	for (auto& Slot : SlotComponents)
+	{
+		Slot->SetItem(nullptr);
+	}
 }
 
 #endif
@@ -510,13 +503,29 @@ TTuple<int32, int32> ASokobanGameActor::Break(int32 Number) const
 	return TTuple<int32, int32>(Number % ItemCountX, Number / ItemCountX);
 }
 
-void ASokobanGameActor::SetItemIndex(USokobanGameItem* InItem, int32 X, int32 Y)
+void ASokobanGameActor::ResolveTask()
 {
-	USokobanGameSlot* Slot = GetCell(X, Y);
-	
-	Slot->SetItem(InItem);
-	InItem->SetSlotIndexX(X);
-	InItem->SetSlotIndexY(Y);
+	Tasks FirstTask = (Tasks)0;
+	bool bDequeue = TaskQueue.Dequeue(FirstTask);
+
+	if (bDequeue)
+	{
+		switch (FirstTask)
+		{
+		case Task_Destruct:
+			Destruct();
+			break;
+		case Task_DestructAll:
+			DestructAll();
+			break;
+		case Task_Retry:
+			Retry();
+			break;
+		case Task_Succeeded:
+			Succeeded();
+			break;
+		}
+	}
 }
 
 void ASokobanGameActor::RefreshRootExtent()
@@ -525,6 +534,25 @@ void ASokobanGameActor::RefreshRootExtent()
 	int32 ExtentX = ItemCountX + 2;
 	int32 ExtentY = ItemCountY + 2;
 	Root->SetBoxExtent(FVector(CellWidth * ExtentX * 0.5f, CellHeight * ExtentY * 0.5f, SlotMeshScale.Z * 2.0f));
+}
+
+void ASokobanGameActor::RefreshSlotReferences()
+{
+	for (auto& Item : ItemComponents)
+	{
+		SafeInvoke(Item).RemoveSlotReference();
+	}
+
+	for (auto& Item : ItemComponents)
+	{
+		int32 X = Item->GetSlotIndexX();
+		int32 Y = Item->GetSlotIndexY();
+
+		USokobanGameSlot& Slot = *GetCell(X, Y);
+		Slot.SetItem(Item);
+
+		Item->CurrentSlot = &Slot;
+	}
 }
 
 bool ASokobanGameActor::CheckGoals() const
@@ -543,4 +571,5 @@ bool ASokobanGameActor::CheckGoals() const
 }
 
 #undef CHECK_ITEM_COUNT
+#undef CHECK_ITEN_INDEX
 #undef RegisterPropertyChanged

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "IInteractionComponent.h"
+#include "Misc/TickTimeChecker.h"
 
 #include "SokobanGameItem.generated.h"
 
@@ -15,8 +15,12 @@ class SLOW_API USokobanGameItem : public UDestructibleComponent
 {
 	GENERATED_BODY()
 
+	friend class ASokobanGameActor;
+
 private:
 	mutable TWeakObjectPtr<ASokobanGameActor> MyActor;
+
+	uint8 bHasUpdating : 1;
 
 	/** 슬롯 인덱스 X를 설정합니다. */
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
@@ -28,7 +32,8 @@ private:
 	int32 ConstSlotIndexX;
 	int32 ConstSlotIndexY;
 
-	USokobanGameSlot* CurrentSlot = nullptr;
+	USokobanGameSlot* CurrentSlot;
+	FTickTimeChecker DestructLimitTime;
 
 protected:
 	enum Direction
@@ -50,23 +55,21 @@ public:
 	void PostEditChangeProperty(FPropertyChangedEvent& InEvent) override;
 #endif
 
+	virtual void CustomTick(float InDeltaSeconds);
 	virtual void Retry();
 	virtual void DestructItem();
+	virtual bool HasUpdating() const;
 
-	int32 GetSlotIndexX() const;
-	void SetSlotIndexX(int32 InValue);
-	int32 GetSlotIndexY() const;
-	void SetSlotIndexY(int32 InValue);
-	bool CanMoveAround() const;
-	void SetCurrentSlot(USokobanGameSlot* InSlot);
 	USokobanGameSlot* GetCurrentSlot() const;
+	int32 GetSlotIndexX() const;
+	int32 GetSlotIndexY() const;
 
 protected:
 	virtual void UpdateLocation(bool bForceMove = false);
 	ASokobanGameActor* GetActor() const;
 
 private:
-	void UpdateSlot();
+	void RemoveSlotReference();
 
 	template<class First, class Second>
 	static FVector Select(const First& InFirstItem, int32 X, int32 Y, int32 Z, const Second& InSecondItem);
