@@ -11,18 +11,9 @@ class USokobanGameSlot;
 enum ELevelTick;
 
 UCLASS(ClassGroup = (SokobanGame), meta = (BlueprintSpawnableComponent))
-class SLOW_API USokobanGameItem : public UDestructibleComponent, public IInteractionComponent
+class SLOW_API USokobanGameItem : public UDestructibleComponent
 {
 	GENERATED_BODY()
-
-private:
-	enum Direction
-	{
-		Dir_Forward,
-		Dir_Right,
-		Dir_Left,
-		Dir_Back
-	};
 
 private:
 	mutable TWeakObjectPtr<ASokobanGameActor> MyActor;
@@ -34,19 +25,26 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	int32 SlotIndexY;
 
-	FVector TwoDirection[2];
-
 	int32 ConstSlotIndexX;
 	int32 ConstSlotIndexY;
 
 	USokobanGameSlot* CurrentSlot = nullptr;
 
+protected:
+	enum Direction
+	{
+		Dir_Forward,
+		Dir_Right,
+		Dir_Left,
+		Dir_Back
+	};
+
+	FVector TwoDirection[2];
+
 public:
 	USokobanGameItem();
 
 	void BeginPlay() override;
-
-	bool OnHitInteractionRay(AActor* InEventSender, FHitResult& InRemoteHitResult) override;
 
 #if WITH_EDITOR
 	void PostEditChangeProperty(FPropertyChangedEvent& InEvent) override;

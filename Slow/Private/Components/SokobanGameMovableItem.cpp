@@ -62,6 +62,52 @@ void USokobanGameMovableItem::TickComponent(float InDeltaSeconds, ELevelTick Tic
 	}
 }
 
+bool USokobanGameMovableItem::OnHitInteractionRay(AActor* InEventSender, FHitResult& InRemoteHitResult)
+{
+	FVector FourDirection[4] =
+	{
+		TwoDirection[Dir_Forward],
+		TwoDirection[Dir_Right],
+		-TwoDirection[Dir_Right],
+		-TwoDirection[Dir_Forward]
+	};
+
+	// 히트 임팩트 방향과 가장 가까운 방향을 찾습니다.
+	float MinimumCosAngle = -1.0f;
+	int32 ChoosedIndex = -1;
+	for (int32 i = 0; i < UE_ARRAY_COUNT(FourDirection); ++i)
+	{
+		float CosAngle = FourDirection[i] | InRemoteHitResult.ImpactNormal;
+		if (CosAngle > MinimumCosAngle)
+		{
+			MinimumCosAngle = CosAngle;
+			ChoosedIndex = i;
+		}
+	}
+
+	static TTuple<int32, int32> FourOffset[4] =
+	{
+		TTuple<int32, int32>(-1,  0),
+		TTuple<int32, int32>(0, -1),
+		TTuple<int32, int32>(0,  1),
+		TTuple<int32, int32>(1,  0)
+	};
+
+	auto [SelectX, SelectY] = FourOffset[ChoosedIndex];
+	int32 MoveX = GetSlotIndexX() + SelectX;
+	int32 MoveY = GetSlotIndexY() + SelectY;
+
+	bool bMovable = GetActor()->CheckIndexMovable(MoveX, MoveY);
+	if (bMovable)
+	{
+		SetSlotIndexX(MoveX);
+		SetSlotIndexY(MoveY);
+	}
+
+	// 이동이 가능하든 불가능하든, 상호 작용 히트 자체는 성공했습니다.
+	return true;
+}
+
 void USokobanGameMovableItem::Retry()
 {
 	bRetryRequest = true;

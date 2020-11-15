@@ -7,7 +7,7 @@
 #include "SokobanGameMovableItem.generated.h"
 
 UCLASS(ClassGroup = (SokobanGame), meta = (BlueprintSpawnableComponent))
-class SLOW_API USokobanGameMovableItem : public USokobanGameItem
+class SLOW_API USokobanGameMovableItem : public USokobanGameItem, public IInteractionComponent
 {
 	GENERATED_BODY()
 
@@ -25,6 +25,8 @@ public:
 
 	void BeginPlay() override;
 	void TickComponent(float InDeltaSeconds, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
+
+	bool OnHitInteractionRay(AActor* InEventSender, FHitResult& InRemoteHitResult) override;
 
 	void Retry() override;
 
