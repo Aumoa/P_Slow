@@ -124,7 +124,7 @@ void ASokobanGameActor::Tick(float InDeltaSeconds)
 	bool bUpdating = false;
 	for (auto& Item : ItemComponents)
 	{
-		if (Item->HasUpdating())
+		if (Item != nullptr && Item->HasUpdating())
 		{
 			Item->CustomTick(InDeltaSeconds);
 			bUpdating = true;
