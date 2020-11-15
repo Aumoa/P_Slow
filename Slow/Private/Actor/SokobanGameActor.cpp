@@ -292,6 +292,7 @@ void ASokobanGameActor::Succeeded()
 	{
 		Item->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 		Item->DestroyComponent();
+		Item = nullptr;
 	}
 }
 
