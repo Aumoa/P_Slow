@@ -10,13 +10,31 @@
 class ASlowMobCharacterBase;
 
 UCLASS()
-class SLOW_API ASlowMobController : public ASlowAIController
+class SLOW_API ASlowMobController : public AAIController
 {
 	GENERATED_BODY()
 
 private:
 	uint8 bValidPossess : 1;
 	TWeakObjectPtr<ASlowMobCharacterBase> MobCharacter;
+	
+
+	FTimerHandle RepeatTimerHandle;
+	float RepeatInterval;
+
+	UPROPERTY()
+	class UBehaviorTree *BTAsset;
+
+	UPROPERTY()
+	class UBlackboardData *BBAsset;
+
+public:
+	static const FName HomePosKey;
+	static const FName PatrolPoskey;
+
+private:
+	void OnRepeatTimer();
+
 
 public:
 	ASlowMobController();

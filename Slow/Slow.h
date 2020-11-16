@@ -7,6 +7,7 @@
 #include "NavigationPath.h"
 #include "DrawDebugHelpers.h"
 #include "DestructibleComponent.h"
+#include "AIController.h"
 
 #include "UObject/NoExportTypes.h"
 #include "UObject/ConstructorHelpers.h"
@@ -46,6 +47,12 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Blueprint/WidgetTree.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
 
 #include "Camera/CameraComponent.h"
 

@@ -2,9 +2,8 @@
 
 #pragma once
 
-
-
 #include "SlowAIController.generated.h"
+
 
 UCLASS()
 class SLOW_API ASlowAIController : public AController
