@@ -31,6 +31,7 @@ private:
 public:
 	static const FName HomePosKey;
 	static const FName PatrolPoskey;
+	static const FName TargetKey;
 
 private:
 	void OnRepeatTimer();

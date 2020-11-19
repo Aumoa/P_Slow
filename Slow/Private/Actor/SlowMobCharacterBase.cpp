@@ -12,6 +12,11 @@ ASlowMobCharacterBase::ASlowMobCharacterBase()
 void ASlowMobCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 }
 
 void ASlowMobCharacterBase::Tick(float deltaTime)

@@ -16,6 +16,7 @@
 #include "Engine/DataTable.h"
 #include "Engine/LevelStreaming.h"
 #include "Engine/GameInstance.h"
+#include "Engine/World.h"
 
 #include "Animation/AnimMontage.h"
 #include "Animation/WidgetAnimation.h"
@@ -52,6 +53,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/BTService.h"
 
 
 #include "Camera/CameraComponent.h"

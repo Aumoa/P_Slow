@@ -22,6 +22,7 @@ public class Slow : ModuleRules
 			"UMG",
 			"Slate",
 			"SlateCore",
+			"GameplayTasks",
 
 			/* Plugins */
 			"ApexDestruction"

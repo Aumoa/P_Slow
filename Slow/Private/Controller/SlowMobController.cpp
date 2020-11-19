@@ -4,6 +4,7 @@
 
 const FName ASlowMobController::HomePosKey(TEXT("HomePos"));
 const FName ASlowMobController::PatrolPoskey(TEXT("PatrolPos"));
+const FName ASlowMobController::TargetKey(TEXT("Target"));
 
 ASlowMobController::ASlowMobController()
 {
