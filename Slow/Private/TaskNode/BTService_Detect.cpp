@@ -20,7 +20,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UWorld *World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 1400.0f;
+	float DetectRadius = 1000.0f;
 
 	if (World == nullptr)
 	{
@@ -59,5 +59,4 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		
 	}
 
-	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
 }

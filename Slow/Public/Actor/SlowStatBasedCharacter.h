@@ -21,8 +21,11 @@ class SLOW_API ASlowStatBasedCharacter : public ASlowCharacter
 private:
 	FAttrInstance AttrInstance;
 
+	
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FBaseAttributeConfig InitialAttribute;
+	FBaseAttributeConfig InitialAttribute;	
 
 protected:
 	void BeginPlay() override;
@@ -38,6 +41,8 @@ public:
 
 	virtual void ApplyEffect(const FStatModifyLinearEffect& InEffect);
 	FAttrInstance GetCurrentAttributes() const;
+
+	virtual bool Attack();
 
 protected:
 	void SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute);

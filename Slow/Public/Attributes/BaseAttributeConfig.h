@@ -19,4 +19,6 @@ public:
 	int64 MaxHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Start")
 	int64 StartHealth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	int64 DefaultDamage;
 };

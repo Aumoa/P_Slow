@@ -8,12 +8,17 @@
 void ASlowStatBasedCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	StatValidCheck();
+	AttrInstance.HealthPoint = InitialAttribute.StartHealth;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%s HP : %d / %d"), *this->GetName(), AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%s HP : %d / %d"), *this->GetName(), AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
 }
 
 ASlowStatBasedCharacter::ASlowStatBasedCharacter()
 {
-	StatValidCheck();
-	AttrInstance.HealthPoint = InitialAttribute.StartHealth;
+	
 }
 
 void ASlowStatBasedCharacter::Tick(float DeltaTime)
@@ -40,15 +45,20 @@ void ASlowStatBasedCharacter::ApplyEffect(const FStatModifyLinearEffect& InEffec
 
 	FAttrInstance InModifyValue = InEffect.GetModifyValue();
 
-	AttrInstance.HealthPoint += InModifyValue.HealthPoint;
+	AttrInstance.HealthPoint -= InModifyValue.HealthPoint;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Boss HP : %d / %d"), AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%s HP : %d / %d"), *this->GetName(),AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
 	StatValidCheck();
 }
 
 FAttrInstance ASlowStatBasedCharacter::GetCurrentAttributes() const
 {
 	return AttrInstance;
+}
+
+bool ASlowStatBasedCharacter::Attack()
+{
+	return false;
 }
 
 void ASlowStatBasedCharacter::SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute)
@@ -70,7 +80,7 @@ void ASlowStatBasedCharacter::StatValidCheck()
 	{
 		OnActorKill();
 	}
-	else if (AttrInstance.HealthPoint > InitialAttribute.MaxHealth)
+	else if (AttrInstance.HealthPoint >= InitialAttribute.MaxHealth)
 	{
 		AttrInstance.HealthPoint = InitialAttribute.MaxHealth;
 	}

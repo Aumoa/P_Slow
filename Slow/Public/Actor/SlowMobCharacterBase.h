@@ -7,10 +7,22 @@
 
 #include "SlowMobCharacterBase.generated.h"
 
+
 UCLASS()
 class SLOW_API ASlowMobCharacterBase : public ASlowStatBasedCharacter
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, Category = Weapon)
+	UBoxComponent* Collision_Attack;
+
+	FStatModifyLinearEffect* DamageEffect;
+
+private:
+	bool IsAttack;
+	float MaxAttackDelay = 3.0f;
+	float DeltaAttackDelay = 0.0f;
 
 public:
 	ASlowMobCharacterBase();
@@ -20,4 +32,10 @@ protected:
 
 public:
 	void Tick(float deltaTime) override;
+	UFUNCTION()
+	void OnHitCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	bool Attack() override;
+	
 };

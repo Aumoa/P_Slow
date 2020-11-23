@@ -55,6 +55,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BehaviorTree/BTService.h"
+#include "BehaviorTree/BTDecorator.h"
 
 
 #include "Camera/CameraComponent.h"

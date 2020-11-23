@@ -26,6 +26,7 @@ ASlowPlayableCharacter::ASlowPlayableCharacter()
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
 	Collision_Weapon = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collision_Weapon"));
 	Collision_Weapon->OnComponentBeginOverlap.AddDynamic(this, &ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap);
+	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	NewSpringArm();
 }
@@ -110,7 +111,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 			
 
 			FAttrInstance AttrData_Weapon;
-			AttrData_Weapon.HealthPoint = -WeaponManager->GetWeaponDataTable()->Damage;
+			AttrData_Weapon.HealthPoint = WeaponManager->GetWeaponDataTable()->Damage;
 			DamageEffect->SetModifyValue(AttrData_Weapon);
 
 			//무기 콜리전 세팅
@@ -123,7 +124,6 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 			
 			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 			//Collision_Weapon->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetIncludingScale);
-			UE_LOG(LogTemp, Warning, TEXT("CapsuleComponent name :: %s"), *Collision_Weapon->GetName());
 		}
 	}
 
@@ -223,12 +223,11 @@ void ASlowPlayableCharacter::OnPlayerAttack()
 
 		if (!(AnimInstance->Montage_IsPlaying(AttackMontage)))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Not Playing"));
+
 		}
 
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Playing"));
 			AnimInstance->Montage_JumpToSection(ComboList[ComboCount],AttackMontage);
 		}
 	}
