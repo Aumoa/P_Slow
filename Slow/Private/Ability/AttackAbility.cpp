@@ -99,6 +99,11 @@ void FAttackAbility::SetTarget(ASlowCharacter* InActor)
 	MyTarget = InActor;
 }
 
+TWeakObjectPtr<ASlowCharacter> FAttackAbility::GetTarget()
+{
+	return MyTarget;
+}
+
 template<class T, typename TEnableIf<TIsDerivedFrom<T, FRequirementBase>::Value>::Type* _TypeChecker> //FRequirementBase를 상속 받았는지 체크
 TArray<T*> FAttackAbility::ExportSpecialClasses(const TArray<TSharedPtr<FRequirementBase>>& InRequirementBaseArray)
 {

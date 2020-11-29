@@ -35,6 +35,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/CanvasPanelSlot.h"
 
 #include "GameFramework/Actor.h"
 #include "GameFramework/CharacterMovementComponent.h"

@@ -13,4 +13,6 @@ public:
 	IActorTargetAbility();
 
 	virtual void SetTarget(ASlowCharacter* InActor) = 0;
+
+	virtual TWeakObjectPtr<ASlowCharacter> GetTarget();
 };

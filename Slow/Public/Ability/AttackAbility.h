@@ -25,6 +25,7 @@ public:
 
 	bool ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer) override;
 	void SetTarget(ASlowCharacter* InActor) override;
+	TWeakObjectPtr<ASlowCharacter> GetTarget() override;
 
 private:
 	template<class T, typename TEnableIf<TIsDerivedFrom<T, FRequirementBase>::Value>::Type* _TypeChecker = nullptr>

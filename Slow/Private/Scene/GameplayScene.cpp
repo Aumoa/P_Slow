@@ -3,15 +3,19 @@
 #include "Scene/GameplayScene.h"
 
 #include "SlowGameInstance.h"
+#include "Manager/WidgetManager.h"
+#include "UI/Widget/SlowCombatUIWidget.h"
 
 UGameplayScene::UGameplayScene()
 {
 	SetCursorVisibleOverride(false);
 }
 
+
 void UGameplayScene::BeginPlay(UObject* Args)
 {
 	Super::BeginPlay(Args);
+
 }
 
 void UGameplayScene::EndPlay()

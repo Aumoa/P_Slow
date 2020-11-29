@@ -24,6 +24,20 @@ USlowWidgetBase* UWidgetManager::CreateSlowWidgetInternal(const FName& InReferen
 	return widget;
 }
 
+USlowWidgetBase* UWidgetManager::CreateHUDWidgetInternal(const FName& InReferenceKey, bool bVisible)
+{
+	USlowGameInstance* gameInstance = Super::GetGameInstance();
+
+	TSubclassOf<UUserWidget> widgetClass = UUIReference::GetReference(InReferenceKey);
+	USlowWidgetBase* widget = CreateWidget<USlowWidgetBase>(gameInstance->GetWorld(), widgetClass);
+
+	if (bVisible) {
+		widget->AddToViewport();
+	}
+
+	return widget;
+}
+
 UWidgetManager* UWidgetManager::GetSingletonInstance()
 {
 	return Super::GetSingletonInstance<UWidgetManager>();

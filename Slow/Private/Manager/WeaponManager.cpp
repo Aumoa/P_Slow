@@ -38,7 +38,7 @@ void UWeaponManager::Init()
 	WeaponArray.Emplace(HammerWeapon);
 	WeaponArray.Emplace(SwordWeapon);
 	WeaponArray.Emplace(HatchetWeapon);
-	CurrentWeapon = WeaponArray[0];
+	CurrentWeapon = nullptr;
 
 	IsBattle = false;
 }
@@ -54,6 +54,18 @@ UWeaponManager::UWeaponManager()
 
 void UWeaponManager::NextWeapon()
 {
+	if (CurrentWeapon == nullptr)
+	{
+		CurrentWeapon = WeaponArray[0];
+
+		CurrentWeapon->BeginWeapon();
+		SetSwapAnimState(true);
+
+		IsBattle = true;
+
+		return;
+	}
+	
 
 	if (WeaponArray.Find(CurrentWeapon) != INDEX_NONE)
 	{
@@ -114,7 +126,7 @@ int UWeaponManager::GetWeaponNum() const
 		
 		return WeaponArray.Find(CurrentWeapon);
 	}
-	return -3;
+	return -1;
 }
 
 void UWeaponManager::SetSwapAnimState(const bool Animstate)

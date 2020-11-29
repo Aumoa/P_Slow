@@ -17,6 +17,8 @@
 #include "Effect/StatModifyLinearEffect.h"
 #include "Attributes/AttrInstance.h"
 #include "TableRow/WeaponReferenceTableRow.h"
+#include "Manager/WidgetManager.h"
+#include "UI/Widget/SlowCombatUIWidget.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -60,6 +62,9 @@ void ASlowPlayableCharacter::BeginPlay()
 	AnimInstance = GetMesh()->GetAnimInstance();
 
 	DamageEffect = new FStatModifyLinearEffect(this);
+
+	MyCombatUIWidget = UWidgetManager::CreateSlowWidget<USlowCombatUIWidget>(TEXT("Widget.SlowCombatUI"));
+	MyCombatUIWidget->SetOwnerCharacter(this);
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -254,7 +259,6 @@ void ASlowPlayableCharacter::OnAttackInputChecking()
 		ComboCount = (ComboCount+1) % MaxComboCount;
 
 		IsOverlapAttack = false;
-		//OnPlayerAttackEnd();
 		OnColStartAttack();
 		OnPlayerAttack();
 	}
@@ -268,7 +272,7 @@ void ASlowPlayableCharacter::OnColStartAttack()
 
 void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASlowCharacter *OtherCharacter = Cast<ASlowCharacter>(OtherActor);
+	ASlowStatBasedCharacter *OtherCharacter = Cast<ASlowStatBasedCharacter>(OtherActor);
 
 	if(OtherCharacter == nullptr)
 		return;
@@ -281,6 +285,7 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 
 	AttackAbility->SetTarget(OtherCharacter);
 	AttackAbility->ExecuteIndirect(this);
+	MyCombatUIWidget->SetTarget(OtherCharacter);
 
 	DamageEffect->Apply(OtherCharacter);
 
@@ -527,4 +532,16 @@ bool ASlowPlayableCharacter::FireInteractionRay(float RayLength)
 	}
 
 	return InteractionComponent->OnHitInteractionRay(this, HitResult);
+}
+
+ASlowStatBasedCharacter* ASlowPlayableCharacter::GetTarget()
+{
+	if (AttackAbility == nullptr)
+	{
+		return nullptr;
+	}
+
+	ASlowStatBasedCharacter *Character = Cast<ASlowStatBasedCharacter>(AttackAbility->GetTarget());
+
+	return Character;
 }

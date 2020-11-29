@@ -6,3 +6,9 @@ IActorTargetAbility::IActorTargetAbility()
 {
 
 }
+
+TWeakObjectPtr<ASlowCharacter> IActorTargetAbility::GetTarget()
+{
+	return nullptr;
+}
+

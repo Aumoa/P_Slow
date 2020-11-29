@@ -15,6 +15,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UCapsuleComponent;
 class UAnimMontage;
+class USlowCombatUIWidget;
 
 
 UCLASS()
@@ -51,6 +52,9 @@ private:
 
 	UPROPERTY()
 	UAnimInstance *AnimInstance;
+
+	UPROPERTY()
+	USlowCombatUIWidget* MyCombatUIWidget;
 
 	FStatModifyLinearEffect *DamageEffect;
 
@@ -107,6 +111,9 @@ public:
 
 	bool FireInteractionRay(float RayLength = 300.0f);
 
+	UFUNCTION(BlueprintCallable)
+	ASlowStatBasedCharacter* GetTarget();
+
 private:
 	void NewWeaponManager();
 	void NewSpringArm();
@@ -114,6 +121,7 @@ private:
 	void OnMouseAction(bool bPressed);
 	void OnMouseSelection(bool bPressed);
 
+	
 	void OnPlayerAttack();
 
 	UFUNCTION(BlueprintCallable)

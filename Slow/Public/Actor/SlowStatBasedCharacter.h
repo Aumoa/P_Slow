@@ -44,6 +44,11 @@ public:
 
 	virtual bool Attack();
 
+	UFUNCTION(BlueprintCallable)
+	float GetMaxHP();
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentHP();
+
 protected:
 	void SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute);
 

@@ -10,6 +10,8 @@ void UGameplayStage01Scene::BeginPlay(UObject* Args)
 void UGameplayStage01Scene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
+
+	UE_LOG(LogTemp,Warning, TEXT("GameplayStage01Scene_BeginLevel()"));
 }
 
 void UGameplayStage01Scene::EndPlay()

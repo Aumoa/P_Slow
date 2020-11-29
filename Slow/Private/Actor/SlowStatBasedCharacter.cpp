@@ -61,6 +61,16 @@ bool ASlowStatBasedCharacter::Attack()
 	return false;
 }
 
+float ASlowStatBasedCharacter::GetMaxHP()
+{
+	return InitialAttribute.MaxHealth;
+}
+
+float ASlowStatBasedCharacter::GetCurrentHP()
+{
+	return AttrInstance.HealthPoint;
+}
+
 void ASlowStatBasedCharacter::SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute)
 {
 	InitialAttribute = InInitialAttribute;

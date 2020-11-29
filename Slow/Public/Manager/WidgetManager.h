@@ -25,9 +25,17 @@ public:
 		USlowWidgetBase* widget = CreateSlowWidgetInternal(InReferenceKey, InPlayerController, bVisible);
 		return Cast<T>(widget);
 	}
+	
+	template<class T>
+	static T* CreateHUDWidget(const FName& InReferenceKey, bool bVisible = true)
+	{
+		USlowWidgetBase* widget = CreateHUDWidgetInternal(InReferenceKey, bVisible);
+		return Cast<T>(widget);
+	}
 
 private:
 	static USlowWidgetBase* CreateSlowWidgetInternal(const FName& InReferenceKey, APlayerController* InPlayerController, bool bVisible);
+	static USlowWidgetBase* CreateHUDWidgetInternal(const FName& InReferenceKey,  bool bVisible);
 
 	static UWidgetManager* GetSingletonInstance();
 };
