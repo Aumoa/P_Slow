@@ -44,7 +44,6 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 		{
 			Collision_Attack->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			
-			
 		}
 
 		else if (DeltaAttackDelay >= MaxAttackDelay + 0.2f)
@@ -65,7 +64,7 @@ bool ASlowMobCharacterBase::Attack()
 
 	IsAttack = true;
 	DrawDebugBox(GetWorld(), Collision_Attack->GetComponentLocation(), Collision_Attack->GetScaledBoxExtent(), 
-		Collision_Attack->GetComponentRotation().Quaternion(),FColor::Yellow, false, 2.5f, 0, 5);
+		Collision_Attack->GetComponentRotation().Quaternion(),FColor::Yellow, false, 2.2f, 0, 5);
 	return true;
 }
 
@@ -75,22 +74,42 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 	ASlowStatBasedCharacter* OtherCharacter = Cast<ASlowStatBasedCharacter>(OtherActor);
 
 	if (OtherCharacter == nullptr)
-		return;
-
-	if (OtherActor == this)
-		return;
-
-	if (IsAttack == false)
 	{
-		Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: Error(OtherCharacter == Nullptr)"));
+
 		return;
 	}
 		
 
+	if (OtherActor == this)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: Error(OtherActor == this)"));
+		return;
+	}
+		
+
+	if (IsAttack == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: Error(IsAttack == false)"));
+		Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		return;
+	}
+
+	if (DeltaAttackDelay < MaxAttackDelay && DeltaAttackDelay >= MaxAttackDelay + 0.2f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: Error(Is not Attack Time)"));
+		Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		return;
+	}
+	Collision_Attack->AddRelativeLocation(FVector(0.001f,0,0));
+
 	DamageEffect->Apply(OtherCharacter);
 	IsAttack = false;
 
+	Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: character : %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: DeltaAttackDelay : %f"), DeltaAttackDelay);
 
 
 	

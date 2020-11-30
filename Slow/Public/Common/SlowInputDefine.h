@@ -11,6 +11,7 @@
 #define IA_Roll TEXT("Roll")
 #define IA_Cursor TEXT("Cursor")
 #define IA_Jump TEXT("Jump")
+#define IA_PeaceMode TEXT("PeaceMode")
 
 #define AX_MoveForward TEXT("MoveForward")
 #define AX_MoveRight TEXT("MoveRight")

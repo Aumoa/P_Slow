@@ -21,7 +21,7 @@ public:
 
 private:
 	bool IsAttack;
-	float MaxAttackDelay = 3.0f;
+	float MaxAttackDelay = 2.0f;
 	float DeltaAttackDelay = 0.0f;
 
 public:

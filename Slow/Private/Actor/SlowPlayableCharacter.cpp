@@ -74,8 +74,9 @@ void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
 		SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
 		//SpringArm->bDoCollisionTest = true;
 		//bUseControllerRotationYaw = true;
+
 		GetCharacterMovement()->bOrientRotationToMovement = true;
-		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+		//GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	}
 }
 
@@ -108,26 +109,9 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 			Equipment.Weapon = WeaponManager->GetCurrentWeapon();
 			SetWeaponSocketName();
 			SetWeaponMesh();
+			SetWeaponData();
 
-			AttackMontage = WeaponManager->GetAttackMontage();
-			ComboList = WeaponManager->GetComboList();
-			MaxComboCount = WeaponManager->GetMaxComboCount();
 			
-			
-
-			FAttrInstance AttrData_Weapon;
-			AttrData_Weapon.HealthPoint = WeaponManager->GetWeaponDataTable()->Damage;
-			DamageEffect->SetModifyValue(AttrData_Weapon);
-
-			//무기 콜리전 세팅
-			UCapsuleComponent *Collision_WeaponData = WeaponManager->GetCapsuleComponent();
-			Collision_Weapon->SetRelativeLocationAndRotation(Collision_WeaponData->GetRelativeLocation(),
-															Collision_WeaponData->GetRelativeRotation());
-			Collision_Weapon->SetCapsuleHalfHeight(Collision_WeaponData->GetUnscaledCapsuleHalfHeight());
-			Collision_Weapon->SetCapsuleRadius(Collision_WeaponData->GetUnscaledCapsuleRadius());
-			Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			
-			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 			//Collision_Weapon->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		}
 	}
@@ -143,7 +127,11 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	else if (ActionName == IA_Roll)
 	{
 		RollInput = true;
-		bPressedJump = true;
+		//bPressedJump = true;
+		//LaunchCharacter(GetActorForwardVector()*10000,true,true);
+		LaunchCharacter(GetActorForwardVector()*5000,true,true);
+
+		UE_LOG(LogTemp, Warning, TEXT("PlayerDerection :: %f %f %f"), PlayerDerection.X,PlayerDerection.Y,PlayerDerection.Z);
 		//FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
 		//Direction*=300.0f;
 		//GetMesh()->AddImpulseAtLocation(GetVelocity() * 300.0f, GetActorLocation());
@@ -151,7 +139,15 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	
 	else if (ActionName == IA_Jump)
 	{
+		bPressedJump = true;
+	}
 
+	else if (ActionName == IA_PeaceMode)
+	{
+		WeaponManager->SetPeaceMode();
+		DisableWeapon();
+
+		UE_LOG(LogTemp, Warning, TEXT("Weapon Is Activate ? :: %s"), Weapon->IsActive() ? TEXT("True") : TEXT("False"));
 	}
 }
 
@@ -208,20 +204,30 @@ void ASlowPlayableCharacter::OnPlayerAttack()
 	if (AnimInstance == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No AnimInstance! :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+		return;
 	}
 		
 	else if (AttackMontage == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Attack Montage! :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+		return;
 	}
 		
 	else if (ComboList.Num() == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No ComboList. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+		return;
+	}
+
+	else if (Equipment.Weapon == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Equipment.Weapon. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+		return;
 	}
 
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("OnPlayerAttack. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
 		IsAttack = true;
 
 		AnimInstance->Montage_Play(AttackMontage);
@@ -240,7 +246,6 @@ void ASlowPlayableCharacter::OnPlayerAttack()
 
 void ASlowPlayableCharacter::OnPlayerAttackEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AttackEnd ::"));
 	IsAttack = false;
 
 	if(ComboCount+1 == MaxComboCount)
@@ -336,11 +341,11 @@ FEquipments ASlowPlayableCharacter::GetCurrentEquipments() const
 
 void ASlowPlayableCharacter::OnMoveForward(float NewAxisValue)
 {
-	if (NewAxisValue == 0.0f)
+	/*if (NewAxisValue == 0.0f)
 	{
 		return;
 	}
-
+	*/
 	
 
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X);
@@ -348,33 +353,39 @@ void ASlowPlayableCharacter::OnMoveForward(float NewAxisValue)
 	Direction.Normalize();
 	AddMovementInput(Direction, NewAxisValue);
 
-	/*
-	FRotator rotation = FRotator(0, 0, GetControlRotation().Roll);
+	PlayerDerection = Direction;
+	
+
+	/*FRotator rotation = FRotator(0, 0, GetControlRotation().Roll);
 	FVector forward = FQuat(rotation).GetForwardVector();
 
-	AddMovementInput(forward, NewAxisValue);
-	*/
+	AddMovementInput(forward, NewAxisValue);*/
+
 	
 }
 
 void ASlowPlayableCharacter::OnMoveRight(float NewAxisValue)
 {
+	/*
 	if (NewAxisValue == 0.0f)
 	{
 		return;
 	}
+	*/
 
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::Y);
 	Direction.Z = 0.0f;
 	Direction.Normalize();
 	AddMovementInput(Direction, NewAxisValue);
 
-	/*
-	FRotator rotation = FRotator(0, 0, GetControlRotation().Roll);
+	PlayerDerection = Direction;
+
+
+	/*FRotator rotation = FRotator(0, 0, GetControlRotation().Roll);
 	FVector right = FQuat(rotation).GetRightVector();
 
-	AddMovementInput(right, NewAxisValue);
-	*/
+	AddMovementInput(right, NewAxisValue);*/
+
 
 }
 
@@ -491,6 +502,49 @@ void ASlowPlayableCharacter::SetWeaponSocketName()
 
 	WeaponSocket = WeaponManager->GetSocketName();
 	UE_LOG(LogTemp, Warning, TEXT("SetSocket :: SetSocketName :: %s"), *WeaponSocket.ToString());
+}
+
+void ASlowPlayableCharacter::SetWeaponData()
+{
+	AttackMontage = WeaponManager->GetAttackMontage();
+	ComboList = WeaponManager->GetComboList();
+	MaxComboCount = WeaponManager->GetMaxComboCount();
+
+	Weapon->Activate();
+	Collision_Weapon->Activate();
+
+	FAttrInstance AttrData_Weapon;
+	AttrData_Weapon.HealthPoint = WeaponManager->GetWeaponDataTable()->Damage;
+	DamageEffect->SetModifyValue(AttrData_Weapon);
+
+	//무기 콜리전 세팅
+	UCapsuleComponent* Collision_WeaponData = WeaponManager->GetCapsuleComponent();
+	Collision_Weapon->SetRelativeLocationAndRotation(Collision_WeaponData->GetRelativeLocation(),
+		Collision_WeaponData->GetRelativeRotation());
+	Collision_Weapon->SetCapsuleHalfHeight(Collision_WeaponData->GetUnscaledCapsuleHalfHeight());
+	Collision_Weapon->SetCapsuleRadius(Collision_WeaponData->GetUnscaledCapsuleRadius());
+	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+}
+
+void ASlowPlayableCharacter::DisableWeapon()
+{
+	Weapon->SetStaticMesh(nullptr);
+	AttackMontage = nullptr;
+	ComboList.Empty();
+	MaxComboCount = 0;
+
+	FAttrInstance AttrData_Weapon;
+	AttrData_Weapon.HealthPoint = 0;
+	DamageEffect->SetModifyValue(AttrData_Weapon);
+
+	Equipment.Weapon = nullptr;
+
+	Weapon->Deactivate();
+	Collision_Weapon->Deactivate();
+	
+	//AnimInstance->StopAllMontages(0.1f);
 }
 
 

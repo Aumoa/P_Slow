@@ -44,7 +44,7 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 
 	LatentInfo.ExecutionFunction = nameof_f(OnStreamLoaded_Boss1);
 	LatentInfo.UUID = 2;
-	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Boss_1-1"), true, false, LatentInfo);
+	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Boss_1-2"), true, false, LatentInfo);
 }
 
 void UGameplayLobbyScene::EndPlay()

@@ -5,6 +5,7 @@
 #include "UI/Control/SlowTextButton.h"
 #include "Manager/SceneManager.h"
 #include "Scene/GameplayLobbyScene.h"
+#include "Scene/GameplayStage01Scene.h"
 
 void USlowStageSelectsWidget::NativeConstruct()
 {
@@ -29,7 +30,8 @@ void USlowStageSelectsWidget::OnClicked_Stage1_1(USlowTextButton* InClickedButto
 
 void USlowStageSelectsWidget::OnClicked_Stage1_2(USlowTextButton* InClickedButton)
 {
-
+	NextScene = NewObject<UGameplayStage01Scene>();
+	Disposing.Broadcast();
 }
 
 void USlowStageSelectsWidget::OnClicked_Stage1_3(USlowTextButton* InClickedButton)

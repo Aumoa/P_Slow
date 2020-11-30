@@ -154,6 +154,16 @@ bool UWeaponManager::GetIsBattle()
 	return IsBattle;
 }
 
+void UWeaponManager::SetPeaceMode()
+{
+	if (CurrentWeapon != nullptr)
+	{
+		CurrentWeapon->EndWeapon();
+		CurrentWeapon = nullptr;
+		IsBattle = false;
+	}
+}
+
 UStaticMesh* UWeaponManager::GetWeaponMeshObject()
 {
 	if (CurrentWeapon != nullptr)

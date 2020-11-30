@@ -14,8 +14,15 @@ class SLOW_API UGameplayStage01Scene : public UGameplayScene
 
 private:
 
+	UPROPERTY()
+	APawn* TempSpawn;
+
+	TUniquePtr<FCriticalSection> StreamLoadCS;
+
 public:
 	void BeginPlay(UObject* Args = nullptr) override;
 	void BeginLevel(ASlowPlayerController* InPlayerController) override;
 	void EndPlay() override;
+
+	virtual void OnStreamLoaded();
 };

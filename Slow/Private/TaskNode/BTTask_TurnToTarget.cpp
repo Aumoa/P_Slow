@@ -28,7 +28,9 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 	LookVector.Z = 0.0f;
 
 	FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
-	Character->SetActorRotation(FMath::RInterpTo(Character->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(),2.0f));
-	
+	//Character->SetActorRotation(FMath::RInterpTo(Character->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(),1.0f));
+	Character->SetActorRotation(TargetRot);
+	UE_LOG(LogTemp,Warning, TEXT("UBTTask_TurnToTarget::ExecuteTask() : TargetRot (%f,%f,%f)"),TargetRot.Roll, TargetRot.Pitch, TargetRot.Yaw);
+
 	return EBTNodeResult::Succeeded;
 }

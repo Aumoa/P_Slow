@@ -74,6 +74,8 @@ private:
 	bool IsOverlapAttack;
 	//이미 데미지를 주었는지?
 	bool IsValidAttack;
+
+	FVector PlayerDerection;
 	
 
 protected:
@@ -108,6 +110,8 @@ public:
 	
 	void SetWeaponMesh();
 	void SetWeaponSocketName();
+	void SetWeaponData();
+	void DisableWeapon();
 
 	bool FireInteractionRay(float RayLength = 300.0f);
 

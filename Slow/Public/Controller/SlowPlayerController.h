@@ -60,4 +60,5 @@ private:
 	void OnRollButtonPressed();
 	void OnCursorActionPressed();
 	void OnJumpButtonPressed();
+	void OnPeaceModePressed();
 };

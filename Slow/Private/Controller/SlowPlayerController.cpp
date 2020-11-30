@@ -60,6 +60,7 @@ void ASlowPlayerController::SetupInputComponent()
 	InputComponent->BindAction(IA_Roll, IE_Pressed, this, &ASlowPlayerController::OnRollButtonPressed);
 	InputComponent->BindAction(IA_Cursor, IE_Pressed, this, &ASlowPlayerController::OnCursorActionPressed);
 	InputComponent->BindAction(IA_Jump, IE_Pressed, this, &ASlowPlayerController::OnJumpButtonPressed);
+	InputComponent->BindAction(IA_PeaceMode, IE_Pressed, this, &ASlowPlayerController::OnPeaceModePressed);
 }
 
 void ASlowPlayerController::OnPossess(APawn* Target)
@@ -169,7 +170,16 @@ void ASlowPlayerController::OnCursorActionPressed()
 
 void ASlowPlayerController::OnJumpButtonPressed()
 {
-	if (Possessed != nullptr) {
+	if (Possessed != nullptr) 
+	{
 		Possessed->OnActionInput(IA_Jump, true);
+	}
+}
+
+void ASlowPlayerController::OnPeaceModePressed()
+{
+	if (Possessed != nullptr)
+	{
+		Possessed->OnActionInput(IA_PeaceMode, true);
 	}
 }
