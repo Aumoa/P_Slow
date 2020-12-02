@@ -50,3 +50,7 @@ private:
 	static USceneBase* GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged );
 	static USceneManager* GetSingletonInstance();
 };
+
+#ifdef GAME_INSTANCE
+#define SCENE_MANAGER (*((USceneManager*)GAME_INSTANCE.GetManager(USceneManager::StaticClass())))
+#endif

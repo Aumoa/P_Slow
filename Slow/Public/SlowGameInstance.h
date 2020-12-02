@@ -44,3 +44,5 @@ public:
 private:
 	void InitializeManagers();
 };
+
+#define GAME_INSTANCE (*USlowGameInstance::GetGameInstance())

@@ -2,13 +2,12 @@
 
 #pragma once
 
-
-
 #include "SlowPlayerController.generated.h"
 
 class USlowGameInstance;
 class UInputComponent;
 class ASlowPlayableCharacter;
+class UCheatConsoleComponent;
 
 UCLASS()
 class SLOW_API ASlowPlayerController : public APlayerController
@@ -39,6 +38,9 @@ private:
 	TUniquePtr<FCriticalSection> GameThreadCS;
 	TArray<FGameThreadActionPair> GameThreadActionQueue;
 
+	UPROPERTY()
+	UCheatConsoleComponent* CheatConsole;
+
 public:
 	ASlowPlayerController();
 	
@@ -48,6 +50,7 @@ public:
 	void OnPossess(APawn* Target) override;
 	void OnUnPossess() override;
 	void Tick(float InDeltaSeconds) override;
+	FString ConsoleCommand(const FString& Command, bool bWriteToLog) override;
 
 	void EnqueueGameThreadAction(FGameThreadActionDelegate CallbackProc, const FGameThreadActionDelegateArgs& InArgs = FGameThreadActionDelegateArgs());
 

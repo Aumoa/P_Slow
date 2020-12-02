@@ -31,7 +31,13 @@ public:
 	void BeginPlay(UObject* Args = nullptr) override;
 	void BeginLevel(ASlowPlayerController* InPlayerController) override;
 	void EndPlay() override;
+	
+	void MigrateLevelGroup(FName LevelGroupName);
 
 protected:
 	virtual void OnStreamLoaded();
+
+private:
+	void BeginLoadLevel();
+	void EndLoadLevel();
 };

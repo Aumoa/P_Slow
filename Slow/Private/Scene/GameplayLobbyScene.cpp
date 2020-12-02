@@ -32,11 +32,10 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 
-	FLatentActionInfo LatentInfo;
-	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
-	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Loading"), true, true, LatentInfo);
+	BeginLoadLevel();
 
 	// 비동기 로딩 작업을 진행합니다.
+	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
 	LevelStreamingStatics->LoadSublevelGroup(WorldContext, TEXT("Base"), [&]()
 		{
 			OnStreamLoaded();
@@ -47,6 +46,18 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 void UGameplayLobbyScene::EndPlay()
 {
 	Super::EndPlay();
+}
+
+void UGameplayLobbyScene::MigrateLevelGroup(FName LevelGroupName)
+{
+	BeginLoadLevel();
+
+	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
+	LevelStreamingStatics->LoadSublevelGroup(WorldContext, LevelGroupName, [&]()
+		{
+			OnStreamLoaded();
+		}
+	);
 }
 
 void UGameplayLobbyScene::OnStreamLoaded()
@@ -64,12 +75,27 @@ void UGameplayLobbyScene::OnStreamLoaded()
 			}
 
 			ASlowPlayerController* const CachedPlayerController = WeakPlayerController.Get();
-			UGameplayStatics::UnloadStreamLevel(CachedPlayerController, TEXT("Loading"), FLatentActionInfo(), true);
 
 			FTransform initialSpawn = FTransform::Identity;
 			initialSpawn.SetLocation(FVector(4200.0f, 72400.0f, 12600.0f));
 			TempSpawn = USpawnManager::SpawnPlayerPawn(initialSpawn);
 			WeakPlayerController->Possess(TempSpawn);
+
+			EndLoadLevel();
 		}
 	);
+}
+
+void UGameplayLobbyScene::BeginLoadLevel()
+{
+	FLatentActionInfo LatentInfo;
+	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
+	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Loading"), true, true, LatentInfo);
+}
+
+void UGameplayLobbyScene::EndLoadLevel()
+{
+	FLatentActionInfo LatentInfo;
+	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
+	UGameplayStatics::UnloadStreamLevel(WorldContext, TEXT("Loading"), FLatentActionInfo(), true);
 }

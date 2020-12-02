@@ -9,6 +9,7 @@
 #include "Scene/SceneBase.h"
 #include "Actor/SlowPlayableCharacter.h"
 #include "Common/SlowCommonMacros.h"
+#include "Components/CheatConsoleComponent.h"
 
 ASlowPlayerController::FGameThreadActionDelegateArgs::FGameThreadActionDelegateArgs(UObject* InSender, UObject* InArgs, float InDelay)
 {
@@ -33,6 +34,8 @@ void ASlowPlayerController::FGameThreadActionDelegateArgs::ResolveInGameThread()
 ASlowPlayerController::ASlowPlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	CheatConsole = CreateEditorOnlyDefaultSubobject<UCheatConsoleComponent>(nameof(CheatConsole));
 }
 
 void ASlowPlayerController::BeginPlay()
@@ -108,6 +111,18 @@ void ASlowPlayerController::Tick(float InDeltaSeconds)
 
 		Args.ResolveInGameThread();
 		Func(Args.Sender.Get(), Args.Args.Get());
+	}
+}
+
+FString ASlowPlayerController::ConsoleCommand(const FString& Command, bool bWriteToLog)
+{
+	if (CheatConsole != nullptr && CheatConsole->ConsoleCommand(Command, bWriteToLog))
+	{
+		return TEXT("");
+	}
+	else
+	{
+		return Super::ConsoleCommand(Command, bWriteToLog);
 	}
 }
 
