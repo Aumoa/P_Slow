@@ -1,4 +1,4 @@
-﻿// Copyright 2020 Aumoa.lib. All right reserved.
+﻿// Copyright 2020 Team slow. All right reserved.
 
 #include "Components/CheatConsoleComponent.h"
 
