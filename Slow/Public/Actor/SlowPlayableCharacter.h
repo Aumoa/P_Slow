@@ -49,6 +49,9 @@ private:
 
 	UPROPERTY()
 	UAnimMontage *AttackMontage;
+	
+	UPROPERTY()
+	UAnimMontage *RollMontage;
 
 	UPROPERTY()
 	UAnimInstance *AnimInstance;
@@ -75,7 +78,13 @@ private:
 	//이미 데미지를 주었는지?
 	bool IsValidAttack;
 
-	FVector PlayerDerection;
+	float RollTime;
+
+	FVector PlayerDirection;
+
+	float AttackCooldown; //공격 쿨타임
+	float MoveCooldown; //이동 쿨타임
+	float BehaviorCooldown; //행동 쿨타임
 	
 
 protected:
@@ -141,4 +150,6 @@ private:
 	void OnMoveRight(float NewAxisValue);
 	void AddYawInput(float NewAxisValue);
 	void AddPitchInput(float NewAxisValue);
+
+	FVector GetPlayerDirection();
 };

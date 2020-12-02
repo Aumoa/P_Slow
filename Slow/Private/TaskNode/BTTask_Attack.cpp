@@ -30,7 +30,7 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	Super::TickTask(OwnerComp,NodeMemory,DeltaSeconds);
 	
 	
-	if (DeltaAttack >= 2.3f)
+	if (DeltaAttack >= 2.8f)
 	{
 		DeltaAttack = 0.0f;
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

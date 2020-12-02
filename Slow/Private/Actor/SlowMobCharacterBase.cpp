@@ -105,7 +105,7 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 
 	DamageEffect->Apply(OtherCharacter);
 	IsAttack = false;
-
+	DeltaAttackDelay = 0.0f;
 	Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: character : %s"), *OtherActor->GetName());

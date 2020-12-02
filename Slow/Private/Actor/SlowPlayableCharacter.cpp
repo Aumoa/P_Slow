@@ -30,6 +30,9 @@ ASlowPlayableCharacter::ASlowPlayableCharacter()
 	Collision_Weapon->OnComponentBeginOverlap.AddDynamic(this, &ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap);
 	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> Roll_MTG(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Roll.MTG_PC_Roll'"));
+	RollMontage = Roll_MTG.Object;
+
 	NewSpringArm();
 }
 
@@ -65,6 +68,12 @@ void ASlowPlayableCharacter::BeginPlay()
 
 	MyCombatUIWidget = UWidgetManager::CreateSlowWidget<USlowCombatUIWidget>(TEXT("Widget.SlowCombatUI"));
 	MyCombatUIWidget->SetOwnerCharacter(this);
+
+	PlayerDirection = GetActorForwardVector();
+	RollTime = -1.0f;
+	BehaviorCooldown = 0.0f;
+	AttackCooldown = 0.0f;
+	MoveCooldown = 0.0f;
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -83,6 +92,33 @@ void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
 void ASlowPlayableCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (RollTime > 0.0f)
+	{
+		RollTime -= DeltaTime;
+		LaunchCharacter(PlayerDirection * 180000 * DeltaTime, true, true);
+	}
+
+	if (AttackCooldown > 0.0f && BehaviorCooldown <= 0.0f)
+	{
+		AttackCooldown -= DeltaTime;
+	}
+
+	if (MoveCooldown > 0.0f && BehaviorCooldown <= 0.0f)
+	{
+		MoveCooldown -= DeltaTime;
+	}
+
+
+	if (BehaviorCooldown > 0.0f)
+	{
+		BehaviorCooldown -= DeltaTime;
+	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: AttackCoolDown : %f "), AttackCooldown);
+	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: MoveCoolDown : %f "), MoveCooldown);
+	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: BehaviorCoolDown : %f "), BehaviorCooldown);
+	
 }
 
 
@@ -126,12 +162,22 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	else if (ActionName == IA_Roll)
 	{
-		RollInput = true;
-		//bPressedJump = true;
-		//LaunchCharacter(GetActorForwardVector()*10000,true,true);
-		LaunchCharacter(GetActorForwardVector()*5000,true,true);
+		if (BehaviorCooldown > 0.0f)
+		{
+			return;
+		}
 
-		UE_LOG(LogTemp, Warning, TEXT("PlayerDerection :: %f %f %f"), PlayerDerection.X,PlayerDerection.Y,PlayerDerection.Z);
+		OnPlayerAttackEnd();
+		AnimInstance->StopAllMontages(0.01f);
+		AnimInstance->Montage_Play(RollMontage);
+		RollInput = true;
+
+		PlayerDirection = GetPlayerDirection();
+
+		RollTime = 0.4f;
+		BehaviorCooldown = 0.6f;
+		
+		
 		//FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
 		//Direction*=300.0f;
 		//GetMesh()->AddImpulseAtLocation(GetVelocity() * 300.0f, GetActorLocation());
@@ -179,6 +225,12 @@ void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
 
 void ASlowPlayableCharacter::OnMouseSelection(bool bPressed)
 {
+	if (AttackCooldown + BehaviorCooldown > 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnMouseSelection :: Is AttackCoolDown"));
+		return;
+	}
+
 	if (bPressed)
 	{
 		if (IsAttack == false)
@@ -225,10 +277,21 @@ void ASlowPlayableCharacter::OnPlayerAttack()
 		return;
 	}
 
+	else if (AnimInstance->Montage_IsPlaying(RollMontage))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RollMontage Is Playing. Try after. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
+		return;
+	}
+
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnPlayerAttack. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
 		IsAttack = true;
+		IsValidAttack = true;
+		MoveCooldown = 0.1f;
+
+		PlayerDirection = GetPlayerDirection();
+		LaunchCharacter(PlayerDirection * 500, true, true);
 
 		AnimInstance->Montage_Play(AttackMontage);
 
@@ -279,14 +342,26 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 {
 	ASlowStatBasedCharacter *OtherCharacter = Cast<ASlowStatBasedCharacter>(OtherActor);
 
-	if(OtherCharacter == nullptr)
+	if (OtherCharacter == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap :: Error(OtherCharacter is null)"));
 		return;
+	}
+		
 	
-	if(OtherActor == this)
+	if (OtherActor == this)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap :: Error(OtherActor is null)"));
 		return;
+	}
+		
 	
-	if(IsValidAttack)
+	if (IsValidAttack == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap :: Error(IsValideAttack is false)"));
 		return;
+	}
+		
 
 	AttackAbility->SetTarget(OtherCharacter);
 	AttackAbility->ExecuteIndirect(this);
@@ -294,6 +369,7 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 
 	DamageEffect->Apply(OtherCharacter);
 
+	IsValidAttack = false;
 	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
@@ -346,14 +422,22 @@ void ASlowPlayableCharacter::OnMoveForward(float NewAxisValue)
 		return;
 	}
 	*/
+	if (MoveCooldown + BehaviorCooldown > 0.0f)
+	{
+		return;
+	}
+
+	/*if (AnimInstance->IsAnyMontagePlaying())
+	{
+		return;
+	}*/
+
 	
 
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X);
 	Direction.Z = 0.0f;
 	Direction.Normalize();
 	AddMovementInput(Direction, NewAxisValue);
-
-	PlayerDerection = Direction;
 	
 
 	/*FRotator rotation = FRotator(0, 0, GetControlRotation().Roll);
@@ -372,14 +456,22 @@ void ASlowPlayableCharacter::OnMoveRight(float NewAxisValue)
 		return;
 	}
 	*/
+	if (MoveCooldown + BehaviorCooldown > 0.0f)
+	{
+		return;
+	}
+
+	/*if (AnimInstance->IsAnyMontagePlaying())
+	{
+		return;
+	}*/
+
 
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::Y);
+	
 	Direction.Z = 0.0f;
 	Direction.Normalize();
 	AddMovementInput(Direction, NewAxisValue);
-
-	PlayerDerection = Direction;
-
 
 	/*FRotator rotation = FRotator(0, 0, GetControlRotation().Roll);
 	FVector right = FQuat(rotation).GetRightVector();
@@ -408,6 +500,14 @@ void ASlowPlayableCharacter::AddPitchInput(float NewAxisValue)
 	}
 
 	AddControllerPitchInput(NewAxisValue);
+}
+FVector ASlowPlayableCharacter::GetPlayerDirection()
+{
+	FVector	Direction = GetActorForwardVector();
+	Direction.Z = 0.0f;
+	Direction.Normalize();
+
+	return Direction;
 }
 #pragma endregion
 

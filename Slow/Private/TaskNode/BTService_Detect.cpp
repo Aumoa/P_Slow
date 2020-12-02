@@ -20,7 +20,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UWorld *World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 1000.0f;
+	float DetectRadius = 2000.0f;
 
 	if (World == nullptr)
 	{
