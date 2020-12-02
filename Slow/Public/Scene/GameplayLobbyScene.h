@@ -9,6 +9,7 @@
 
 class APawn;
 class ASlowPlayerController;
+class ULevelStreamingStatics;
 
 UCLASS()
 class SLOW_API UGameplayLobbyScene : public UGameplayScene
@@ -21,8 +22,8 @@ private:
 
 	UPROPERTY()
 	APawn* TempSpawn;
-
-	TUniquePtr<FCriticalSection> StreamLoadCS;
+	UPROPERTY()
+	ULevelStreamingStatics* LevelStreamingStatics;
 
 public:
 	UGameplayLobbyScene();
@@ -31,13 +32,6 @@ public:
 	void BeginLevel(ASlowPlayerController* InPlayerController) override;
 	void EndPlay() override;
 
+protected:
 	virtual void OnStreamLoaded();
-
-private:
-	UFUNCTION()
-	void OnStreamLoaded_Base();
-	UFUNCTION()
-	void OnStreamLoaded_Boss1();
-
-	void OnStreamLoaded_CheckAndInvoke();
 };

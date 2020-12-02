@@ -8,18 +8,19 @@
 #include "Controller/SlowPlayerController.h"
 #include "Common/SlowCommonMacros.h"
 #include "Common/SlowLogDefine.h"
+#include "Misc/LevelStreamingStatics.h"
 
 UGameplayLobbyScene::UGameplayLobbyScene()
 {
 	bStreamLoaded_Base = false;
 	bStreamLoaded_Boss1 = false;
+
+	LevelStreamingStatics = CreateDefaultSubobject<ULevelStreamingStatics>(TEXT("LevelStreaming"));
 }
 
 void UGameplayLobbyScene::BeginPlay(UObject* Args)
 {
 	Super::BeginPlay(Args);
-
-	StreamLoadCS = MakeUnique<FCriticalSection>();
 
 	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
 
@@ -36,15 +37,11 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Loading"), true, true, LatentInfo);
 
 	// 비동기 로딩 작업을 진행합니다.
-	LatentInfo.CallbackTarget = this;
-	LatentInfo.ExecutionFunction = nameof_f(OnStreamLoaded_Base);
-	LatentInfo.UUID = 1;
-	LatentInfo.Linkage = 0;
-	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Base"), true, false, LatentInfo);
-
-	LatentInfo.ExecutionFunction = nameof_f(OnStreamLoaded_Boss1);
-	LatentInfo.UUID = 2;
-	UGameplayStatics::LoadStreamLevel(WorldContext, TEXT("Map_1S_Boss_1-2"), true, false, LatentInfo);
+	LevelStreamingStatics->LoadSublevelGroup(WorldContext, TEXT("Base"), [&]()
+		{
+			OnStreamLoaded();
+		}
+	);
 }
 
 void UGameplayLobbyScene::EndPlay()
@@ -75,34 +72,4 @@ void UGameplayLobbyScene::OnStreamLoaded()
 			WeakPlayerController->Possess(TempSpawn);
 		}
 	);
-}
-
-void UGameplayLobbyScene::OnStreamLoaded_Base()
-{
-	ScopedLock(StreamLoadCS);
-
-	bStreamLoaded_Base = true;
-
-	OnStreamLoaded_CheckAndInvoke();
-}
-
-void UGameplayLobbyScene::OnStreamLoaded_Boss1()
-{
-	ScopedLock(StreamLoadCS);
-
-	bStreamLoaded_Boss1 = true;
-
-	OnStreamLoaded_CheckAndInvoke();
-}
-
-void UGameplayLobbyScene::OnStreamLoaded_CheckAndInvoke()
-{
-	bool bSucceeded =
-		bStreamLoaded_Base &&
-		bStreamLoaded_Boss1;
-
-	if (bSucceeded)
-	{
-		OnStreamLoaded();
-	}
 }
