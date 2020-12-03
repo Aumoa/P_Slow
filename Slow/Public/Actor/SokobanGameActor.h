@@ -48,6 +48,9 @@ private:
 	/** 행동 카운트를 나타냅니다. */
 	UPROPERTY(EditAnywhere, Category = "Game", meta = (AllowPrivateAccess = "true"))
 	int32 MaxActionCount;
+	/** 퍼즐을 완료할 경우 이동할 서브레벨 그룹 이름을 나타냅니다. */
+	UPROPERTY(EditAnywhere, Category = "Game", meta = (AllowPrivateAccess = "true"))
+	FName SublevelGroupTableName;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* Root;

@@ -2,6 +2,7 @@
 
 #include "Actor/SokobanGameActor.h"
 
+#include "SlowGameInstance.h"
 #include "Common/SlowLogDefine.h"
 #include "Common/SlowCommonMacros.h"
 #include "Common/SlowCollisionProfile.h"
@@ -10,6 +11,8 @@
 #include "Components/SokobanGameMovableItem.h"
 #include "Components/GoalIndicatorComponent.h"
 #include "Controller/SlowPlayerController.h"
+#include "Manager/SceneManager.h"
+#include "Scene/GameplayLobbyScene.h"
 
 #define CHECK_ITEM_COUNT(XY, Min, Max, ...) \
 if (XY < Min)\
@@ -31,6 +34,10 @@ if (PropertyName == nameof(VarName))\
 {\
 	OnPropertyChanged_##VarName();\
 }
+
+#if WITH_EDITOR
+TAutoConsoleVariable<bool> CVar_SlowSokobanCheat(TEXT("Slow.SokobanCheat"), false, TEXT("DO NOT FAIL SOKOBAN GAME"));
+#endif
 
 ASokobanGameActor::ASokobanGameActor()
 {
@@ -133,6 +140,19 @@ void ASokobanGameActor::Tick(float InDeltaSeconds)
 
 	if (!bUpdating)
 	{
+		if (bSucceeded)
+		{
+			auto CurrentScene = Cast<UGameplayLobbyScene>(SCENE_MANAGER.GetCurrentScene());
+			if (CurrentScene == nullptr)
+			{
+				SLOW_LOG(Error, TEXT("Scene type cannot allow level group transition. It is temporal implement."));
+			}
+			else
+			{
+				CurrentScene->MigrateLevelGroup(SublevelGroupTableName);
+			}
+		}
+
 		ResolveTask();
 	}
 }
@@ -243,7 +263,11 @@ bool ASokobanGameActor::CheckIndexMovable(int32 X, int32 Y) const
 
 auto ASokobanGameActor::ConsumeMove() -> ConsumeFlags
 {
-	if (RemainActionCount <= 0)
+	if (RemainActionCount <= 0
+#if WITH_EDITOR
+		&& CVar_SlowSokobanCheat.GetValueOnGameThread()
+#endif
+		)
 	{
 		return CF_Countdown;
 	}

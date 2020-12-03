@@ -5,9 +5,11 @@
 #include "SlowGameInstance.h"
 #include "Common/SlowCommonMacros.h"
 #include "Manager/SceneManager.h"
+#include "Manager/SpawnManager.h"
 #include "Scene/GameplayLobbyScene.h"
+#include "Actor/SlowPlayableCharacter.h"
 
-#define MakeCheat(CheatName) else if (Splits[0] == FString(#CheatName))
+#define MakeCheat(CheatName) else if (Splits[0].ToLower() == FString(#CheatName).ToLower())
 
 UCheatConsoleComponent::UCheatConsoleComponent()
 {
@@ -19,12 +21,23 @@ bool UCheatConsoleComponent::ConsoleCommand(const FString& CheatString, bool bWr
 	TArray<FString> Splits;
 	CheatString.ParseIntoArray(Splits, TEXT(" "), true);
 
+	TFunction<void(int32)> IndexOutOfRangeLogger = [&](int32 Index)
+	{
+		SLOW_LOG(Warning, TEXT("Index[%d] is out of range."), Index);
+	};
+
+	FString DefaultArgStr = TEXT("");
+	int32 DefaultArgInt = 0;
+	float DefaultArgFloat = 0;
+	bool bIndexOutOfRange = false;
+
 	auto ArgsAsString = [&](int32 Index) -> FString
 	{
-		if (Index >= Splits.Num())
+		if (Index >= Splits.Num() - 1)
 		{
-			SLOW_LOG(Error, TEXT("Index[%d] is out of range."), Index);
-			return TEXT("");
+			IndexOutOfRangeLogger(Index);
+			bIndexOutOfRange = true;
+			return DefaultArgStr;
 		}
 
 		return Splits[Index + 1];
@@ -32,14 +45,26 @@ bool UCheatConsoleComponent::ConsoleCommand(const FString& CheatString, bool bWr
 
 	auto ArgsAsInt = [&](int32 Index)
 	{
-		FString Str = ArgsAsString(Index);
-		return FCString::Atoi(*Str);
+		if (Index >= Splits.Num() - 1)
+		{
+			IndexOutOfRangeLogger(Index);
+			bIndexOutOfRange = true;
+			return DefaultArgInt;
+		}
+
+		return FCString::Atoi(*Splits[Index + 1]);
 	};
 
 	auto ArgsAsFloat = [&](int32 Index)
 	{
-		FString Str = ArgsAsString(Index);
-		return FCString::Atof(*Str);
+		if (Index >= Splits.Num() - 1)
+		{
+			IndexOutOfRangeLogger(Index);
+			bIndexOutOfRange = true;
+			return DefaultArgFloat;
+		}
+
+		return FCString::Atof(*Splits[Index + 1]);
 	};
 
 	auto CheatFailedHandle = [](const TCHAR* Message)
@@ -62,6 +87,25 @@ bool UCheatConsoleComponent::ConsoleCommand(const FString& CheatString, bool bWr
 		}
 
 		GameplayScene->MigrateLevelGroup(*ArgsAsString(0));
+	}
+
+	MakeCheat(Goto)
+	{
+		IndexOutOfRangeLogger = [&](int32 Index)
+		{
+			SLOW_LOG(Warning, TEXT("Goto cheat need three arguments."));
+		};
+
+		ASlowPlayableCharacter* PlayerPawn = SPAWN_MANAGER.GetPlayerPawn();
+		if (PlayerPawn != nullptr)
+		{
+			FTransform CurrTransform = PlayerPawn->GetActorTransform();
+			CurrTransform.SetLocation(FVector(ArgsAsFloat(0), ArgsAsFloat(1), ArgsAsFloat(2)));
+			if (!bIndexOutOfRange)
+			{
+				PlayerPawn->SetActorTransform(CurrTransform);
+			}
+		}
 	}
 
 	else
