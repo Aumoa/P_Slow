@@ -53,6 +53,8 @@ void USokobanGameItem::BeginPlay()
 	ConstSlotIndexY = SlotIndexY;
 }
 
+#if WITH_EDITOR
+
 void USokobanGameItem::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 {
 	Super::PostEditChangeProperty(InEvent);
@@ -69,6 +71,8 @@ void USokobanGameItem::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 		MyActor->MoveSlotItem(this, SlotIndexX, SlotIndexY);
 	}
 }
+
+#endif
 
 void USokobanGameItem::CustomTick(float InDeltaSeconds)
 {
