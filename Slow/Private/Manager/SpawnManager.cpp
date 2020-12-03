@@ -11,24 +11,49 @@
 #include "Statics/SlowNavigationSystem.h"
 #include "Components/SpawnerComponent.h"
 
+USpawnManager::USpawnManager()
+{
+	CorePlayerChar = nullptr;
+}
+
 ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform)
 {
-	auto instance = GetSingletonInstance();
-	auto world = instance->GetWorld();
+	if (CorePlayerChar == nullptr)
+	{
+		auto instance = GetSingletonInstance();
+		auto world = instance->GetWorld();
 
-	if (world == nullptr) {
-		SLOW_LOG(Error, TEXT("GameInstance haven't world context."));
+		if (world == nullptr) {
+			SLOW_LOG(Error, TEXT("GameInstance haven't world context."));
+			return nullptr;
+		}
+
+		TSubclassOf<AActor> _class = UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter"));
+		FVector amendedLocation = Transform.GetLocation();
+
+		if (FSlowNavigationSystem::FindActorStandableLocation(world, Cast<AActor>(_class->GetDefaultObject()), Transform.GetLocation(), &amendedLocation)) {
+			Transform.SetLocation(amendedLocation);
+		}
+
+		CorePlayerChar = world->SpawnActor<ASlowPlayableCharacter>(UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter")), Transform);
+	}
+	else
+	{
+		CorePlayerChar->SetActorTransform(Transform);
+	}
+
+	return CorePlayerChar;
+}
+
+ASlowPlayableCharacter* USpawnManager::GetPlayerPawn() const
+{
+	if (CorePlayerChar == nullptr)
+	{
+		SLOW_LOG(Error, TEXT("There is no player pawn."));
 		return nullptr;
 	}
 
-	TSubclassOf<AActor> _class = UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter"));
-	FVector amendedLocation = Transform.GetLocation();
-
-	if (FSlowNavigationSystem::FindActorStandableLocation(world, Cast<AActor>(_class->GetDefaultObject()), Transform.GetLocation(), &amendedLocation)) {
-		Transform.SetLocation(amendedLocation);
-	}
-
-	return world->SpawnActor<ASlowPlayableCharacter>(UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter")), Transform);
+	return CorePlayerChar;
 }
 
 void USpawnManager::AddSpawner(USpawnerComponent* InSpawner)

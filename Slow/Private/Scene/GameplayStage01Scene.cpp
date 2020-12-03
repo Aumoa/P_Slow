@@ -54,10 +54,8 @@ void UGameplayStage01Scene::OnStreamLoaded()
 		ASlowPlayerController* const CachedPlayerController = WeakPlayerController.Get();
 		UGameplayStatics::UnloadStreamLevel(CachedPlayerController, TEXT("Loading"), FLatentActionInfo(), true);
 
-		FTransform initialSpawn = FTransform::Identity;
-		initialSpawn.SetLocation(FVector(28650.0f, 110880.0f, -16500.0f));
-		TempSpawn = USpawnManager::SpawnPlayerPawn(initialSpawn);
+		FTransform initialSpawn = SPAWN_MANAGER.GetSpawnerTransformByType(ESpawnerType::Character);
+		TempSpawn = SPAWN_MANAGER.SpawnPlayerPawn(initialSpawn);
 		WeakPlayerController->Possess(TempSpawn);
-	}
-	);
+	});
 }

@@ -9,6 +9,8 @@ ASpawner::ASpawner()
 	Root = CreateDefaultSubobject<USceneComponent>(nameof(Root));
 	RootComponent = Root;
 
+	Root->SetMobility(EComponentMobility::Static);
+
 	SpawnerComponent = CreateDefaultSubobject<USpawnerComponent>(nameof(SpawnerComponent));
 	AddOwnedComponent(SpawnerComponent);
 }

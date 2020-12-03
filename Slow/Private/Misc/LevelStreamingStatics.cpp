@@ -14,7 +14,10 @@ ULevelStreamingStatics::ULevelStreamingStatics()
 	checkf(DataTableLoad.Succeeded(), TEXT("Cannot found datatable in \"%s\"."), *ReferencePath);
 	DataTable = DataTableLoad.Object;
 
+	TempWorldContext = nullptr;
 	CS_AsyncTaskResult = MakeUnique<FCriticalSection>();
+	NumAsyncTasks = 0;
+	CompletedTasks = 0;
 }
 
 void ULevelStreamingStatics::LoadSublevelGroup(UObject* InWorldContext, const FName& SublevelGroupName, TFunction<void()> CompletionCallback)
@@ -39,41 +42,70 @@ void ULevelStreamingStatics::LoadSublevelGroup(UObject* InWorldContext, const FN
 
 	// Save async task configuration.
 	AsyncLoadCallback = CompletionCallback;
-	CompletedTasks = 0;
-	NumAsyncTasks = UnloadLevelTasks.Num() + LastCommittedLevels.Num();
+	TempWorldContext = InWorldContext;
 
 	for (int32 i = 0; i < LastCommittedLevels.Num(); ++i)
 	{
 		LastCommittedLevels[i] = *StreamingLevelsName[i];
 	}
 
-	// Unload preloaded levels.
-	FLatentActionInfo LatentActionInfo;
-	LatentActionInfo.CallbackTarget = this;
-	LatentActionInfo.UUID = 1;
-	LatentActionInfo.Linkage = 0;
-	LatentActionInfo.ExecutionFunction = nameof_f(AsyncTaskResult);
-
-	for (auto& LevelName : UnloadLevelTasks)
+	if (UnloadLevelTasks.Num() == 0)
 	{
-		UGameplayStatics::UnloadStreamLevel(InWorldContext, LevelName, LatentActionInfo, false);
-		LatentActionInfo.UUID += 1;
+		AsyncTaskUnloadResult();
 	}
-
-	// Load stream levels.
-	for (auto& LevelName : LastCommittedLevels)
+	else
 	{
-		UGameplayStatics::LoadStreamLevel(InWorldContext, LevelName, true, false, LatentActionInfo);
-		LatentActionInfo.UUID += 1;
+		// Unload preloaded levels.
+		FLatentActionInfo LatentActionInfo;
+		LatentActionInfo.CallbackTarget = this;
+		LatentActionInfo.UUID = 1;
+		LatentActionInfo.Linkage = 0;
+		LatentActionInfo.ExecutionFunction = nameof_f(AsyncTaskUnloadResult);
+
+		CompletedTasks = 0;
+		NumAsyncTasks = LastCommittedLevels.Num();
+
+		for (auto& LevelName : UnloadLevelTasks)
+		{
+			UGameplayStatics::UnloadStreamLevel(InWorldContext, LevelName, LatentActionInfo, false);
+			LatentActionInfo.UUID += 1;
+		}
 	}
 }
 
-void ULevelStreamingStatics::AsyncTaskResult()
+void ULevelStreamingStatics::AsyncTaskUnloadResult()
 {
 	ScopedLock(CS_AsyncTaskResult);
 
 	CompletedTasks += 1;
-	if (CompletedTasks == NumAsyncTasks && AsyncLoadCallback)
+	if (CompletedTasks >= NumAsyncTasks)
+	{
+		FLatentActionInfo LatentActionInfo;
+		LatentActionInfo.CallbackTarget = this;
+		LatentActionInfo.UUID = 1;
+		LatentActionInfo.Linkage = 0;
+		LatentActionInfo.ExecutionFunction = nameof_f(AsyncTaskLoadResult);
+
+		CompletedTasks = 0;
+		NumAsyncTasks = LastCommittedLevels.Num();
+
+		// Load stream levels.
+		for (auto& LevelName : LastCommittedLevels)
+		{
+			UGameplayStatics::LoadStreamLevel(TempWorldContext, LevelName, true, false, LatentActionInfo);
+			LatentActionInfo.UUID += 1;
+		}
+
+		TempWorldContext = nullptr;
+	}
+}
+
+void ULevelStreamingStatics::AsyncTaskLoadResult()
+{
+	ScopedLock(CS_AsyncTaskResult);
+
+	CompletedTasks += 1;
+	if (CompletedTasks >= NumAsyncTasks && AsyncLoadCallback)
 	{
 		AsyncLoadCallback();
 	}

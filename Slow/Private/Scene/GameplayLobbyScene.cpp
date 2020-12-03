@@ -76,10 +76,13 @@ void UGameplayLobbyScene::OnStreamLoaded()
 
 			ASlowPlayerController* const CachedPlayerController = WeakPlayerController.Get();
 
-			FTransform initialSpawn = FTransform::Identity;
-			initialSpawn.SetLocation(FVector(4200.0f, 72400.0f, 12600.0f));
-			TempSpawn = USpawnManager::SpawnPlayerPawn(initialSpawn);
-			WeakPlayerController->Possess(TempSpawn);
+			FTransform initialSpawn = SPAWN_MANAGER.GetSpawnerTransformByType(ESpawnerType::Character);
+			TempSpawn = SPAWN_MANAGER.SpawnPlayerPawn(initialSpawn);
+
+			if (WeakPlayerController->GetPawn() == nullptr)
+			{
+				WeakPlayerController->Possess(TempSpawn);
+			}
 
 			EndLoadLevel();
 		}

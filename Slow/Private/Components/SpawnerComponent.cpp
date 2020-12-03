@@ -40,6 +40,10 @@ void USpawnerComponent::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 	{
 		OnChangeSpawnerTypeProperty();
 	}
+	else if (PropertyName == nameof(CustomKey))
+	{
+		OnChangeCustomKeyProperty();
+	}
 }
 
 #endif
@@ -66,6 +70,14 @@ FString USpawnerComponent::GetCustomKey() const
 void USpawnerComponent::OnChangeSpawnerTypeProperty()
 {
 	bSpawnerTypeIsCustom = SpawnerType == ESpawnerType::Custom;
+}
+
+void USpawnerComponent::OnChangeCustomKeyProperty()
+{
+	if (bSpawnerTypeIsCustom == true)
+	{
+		SpawnerType = ESpawnerType::Custom;
+	}
 }
 
 #endif

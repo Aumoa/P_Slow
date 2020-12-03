@@ -42,5 +42,6 @@ public:
 private:
 #if WITH_EDITOR
 	void OnChangeSpawnerTypeProperty();
+	void OnChangeCustomKeyProperty();
 #endif
 };

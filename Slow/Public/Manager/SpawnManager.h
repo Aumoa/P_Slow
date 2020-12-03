@@ -18,12 +18,20 @@ class SLOW_API USpawnManager : public UManagerBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY()
+	ASlowPlayableCharacter* CorePlayerChar;
+
 	TMap<ESpawnerType, USpawnerComponent*> Spawners;
 	TMap<FString, USpawnerComponent*> CustomSpawners;
 	
 public:
+	USpawnManager();
+
 	UFUNCTION(BlueprintCallable, Category = "SpawnManager")
-	static ASlowPlayableCharacter* SpawnPlayerPawn(FTransform Transform);
+	ASlowPlayableCharacter* SpawnPlayerPawn(FTransform Transform);
+
+	UFUNCTION(BlueprintPure, Category = "SpawnManager")
+	ASlowPlayableCharacter* GetPlayerPawn() const;
 
 	UFUNCTION(BlueprintCallable, Category = "SpawnManager")
 	void AddSpawner(USpawnerComponent* InSpawner);

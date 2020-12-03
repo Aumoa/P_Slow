@@ -14,6 +14,7 @@ private:
 
 	TArray<FName> LastCommittedLevels;
 
+	UObject* TempWorldContext;
 	TUniquePtr<FCriticalSection> CS_AsyncTaskResult;
 	TFunction<void()> AsyncLoadCallback;
 	int32 NumAsyncTasks;
@@ -26,5 +27,7 @@ public:
 
 private:
 	UFUNCTION()
-	void AsyncTaskResult();
+	void AsyncTaskUnloadResult();
+	UFUNCTION()
+	void AsyncTaskLoadResult();
 };
