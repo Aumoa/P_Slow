@@ -82,6 +82,8 @@ void ASlowPlayerController::OnUnPossess()
 
 void ASlowPlayerController::Tick(float InDeltaSeconds)
 {
+	Super::Tick(InDeltaSeconds);
+
 	TArray<FGameThreadActionPair> ExecuteQueue;
 	{
 		ScopedLock(GameThreadCS);
