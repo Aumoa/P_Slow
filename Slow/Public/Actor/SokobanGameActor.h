@@ -73,7 +73,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Appearance", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGoalIndicatorComponent> GoalIndicatorClass;
 
-#if WITH_EDITOR
+#if WITH_EDITORONLY_DATA
 	/** 자동 생성에 사용할 아이템 클래스를 설정합니다. */
 	UPROPERTY(EditAnywhere, Category = "Auto Generation", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<USokobanGameItem>> ItemClass;

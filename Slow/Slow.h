@@ -8,6 +8,8 @@
 #include "DrawDebugHelpers.h"
 #include "DestructibleComponent.h"
 #include "AIController.h"
+#include "Engine.h"
+#include "TimerManager.h"
 
 #include "UObject/NoExportTypes.h"
 #include "UObject/ConstructorHelpers.h"
