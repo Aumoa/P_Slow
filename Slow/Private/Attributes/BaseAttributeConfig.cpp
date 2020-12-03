@@ -4,5 +4,8 @@
 
 FBaseAttributeConfig::FBaseAttributeConfig()
 {
-	
+	MinHealth = 0;
+	MaxHealth = 100;
+	StartHealth = MaxHealth;
+	DefaultDamage = 0;
 }
