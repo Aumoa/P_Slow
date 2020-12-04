@@ -56,11 +56,6 @@ FAttrInstance ASlowStatBasedCharacter::GetCurrentAttributes() const
 	return AttrInstance;
 }
 
-bool ASlowStatBasedCharacter::Attack()
-{
-	return false;
-}
-
 float ASlowStatBasedCharacter::GetMaxHP()
 {
 	return InitialAttribute.MaxHealth;

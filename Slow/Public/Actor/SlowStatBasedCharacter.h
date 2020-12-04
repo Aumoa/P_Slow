@@ -42,8 +42,6 @@ public:
 	virtual void ApplyEffect(const FStatModifyLinearEffect& InEffect);
 	FAttrInstance GetCurrentAttributes() const;
 
-	virtual bool Attack();
-
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHP();
 	UFUNCTION(BlueprintCallable)

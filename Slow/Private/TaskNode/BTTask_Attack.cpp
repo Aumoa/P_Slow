@@ -12,14 +12,16 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	auto character = Cast<ASlowStatBasedCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+	auto character = Cast<ASlowMobCharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
 	if (character == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("BTTask_Attack :: character : %s"), *character->GetName());
-	character->Attack();
+
+	character->PlayMontage(character->GetAttackMontage(0));
+
 	IsAttacking = true;
 
 	return EBTNodeResult::InProgress;

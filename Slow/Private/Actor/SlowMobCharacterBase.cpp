@@ -9,10 +9,21 @@ ASlowMobCharacterBase::ASlowMobCharacterBase()
 	AIControllerClass = ASlowMobController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	Collision_Attack = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision_Attack"));
-	Collision_Attack->SetupAttachment(RootComponent);
-	Collision_Attack->OnComponentBeginOverlap.AddDynamic(this, &ASlowMobCharacterBase::OnHitCollisionBeginOverlap);
-	Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttackSocketName = TEXT("AttackSocket");
+
+	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
+	AttackCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
+	
+	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ASlowMobCharacterBase::OnHitCollisionBeginOverlap);
+	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	AttackCollision->RegisterComponent();
+	AddInstanceComponent(AttackCollision);
+
+	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_FourWayAttack.MTG_Boss1_FourWayAttack'")).Object);
+	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_ComboAttack.MTG_Boss1_ComboAttack'")).Object);
+	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_spinningAttack.MTG_Boss1_SpinningAttack'")).Object);
+	
 	
 }
 
@@ -25,46 +36,81 @@ void ASlowMobCharacterBase::BeginPlay()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttackSocketName);
+	AttackCollision->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//AttackCollision->SetRelativeRotation(FRotator(0,90,0));
+
 	DamageEffect = new FStatModifyLinearEffect(this);
 	FAttrInstance DamageEffectAttr;
 	DamageEffectAttr.HealthPoint = InitialAttribute.DefaultDamage;
 	DamageEffect->SetModifyValue(DamageEffectAttr);
+
+	
 }
 
 void ASlowMobCharacterBase::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
-
-	if (IsAttack)
-	{
-		DeltaAttackDelay += deltaTime;
-
-
-		if (DeltaAttackDelay >= MaxAttackDelay && DeltaAttackDelay < MaxAttackDelay + 0.2f)
-		{
-			Collision_Attack->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			
-		}
-
-		else if (DeltaAttackDelay >= MaxAttackDelay + 0.2f)
-		{
-			Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			IsAttack = false;
-			DeltaAttackDelay = 0.0f;
-		}
-	}
 }
 
-bool ASlowMobCharacterBase::Attack()
+bool ASlowMobCharacterBase::Monster_Attack()
 {
-	if (Collision_Attack == nullptr)
+	if (AttackCollision == nullptr)
 	{
 		return false;
 	}
 
 	IsAttack = true;
-	DrawDebugBox(GetWorld(), Collision_Attack->GetComponentLocation(), Collision_Attack->GetScaledBoxExtent(), 
-		Collision_Attack->GetComponentRotation().Quaternion(),FColor::Yellow, false, 2.2f, 0, 5);
+	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	/*DrawDebugBox(GetWorld(), AttackCollision->GetComponentLocation(), AttackCollision->GetScaledBoxExtent(),
+		AttackCollision->GetComponentRotation().Quaternion(),FColor::Yellow, false, 2.2f, 0, 5);*/
+	return true;
+}
+
+void ASlowMobCharacterBase::Monster_AttackEnd()
+{
+	if (AttackCollision == nullptr)
+	{
+		return;
+	}
+
+	IsAttack = false;
+
+	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+UBoss1AnimInstance* ASlowMobCharacterBase::GetBossAnimInstance()
+{
+	UBoss1AnimInstance *BossAnimInstance = Cast<UBoss1AnimInstance>(GetAnimInstance());
+
+	if (BossAnimInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::GetBossAnimInstance :: Fail to Cast UBoss1AnimInstance."));
+		return nullptr;
+	}
+
+	return BossAnimInstance;
+}
+
+UAnimMontage* ASlowMobCharacterBase::GetAttackMontage(int FindNum)
+{
+	if (!AttackMontages.IsValidIndex(FindNum))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::GetAttackMontage :: No Found index[%d]."),FindNum);
+		return nullptr;
+	}
+	
+	return AttackMontages[FindNum];
+}
+
+bool ASlowMobCharacterBase::PlayMontage(UAnimMontage* montage)
+{
+	if (GetMesh()->GetAnimInstance()->Montage_Play(montage) == 0.f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::PlayMontage :: Fail to Play Montage"));
+		return false;
+	}
+
 	return true;
 }
 
@@ -91,26 +137,16 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 	if (IsAttack == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: Error(IsAttack == false)"));
-		Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		return;
 	}
 
-	if (DeltaAttackDelay < MaxAttackDelay && DeltaAttackDelay >= MaxAttackDelay + 0.2f)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: Error(Is not Attack Time)"));
-		Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		return;
-	}
-	Collision_Attack->AddRelativeLocation(FVector(0.001f,0,0));
+	//AttackCollision->AddRelativeLocation(FVector(0.001f,0,0));
 
 	DamageEffect->Apply(OtherCharacter);
 	IsAttack = false;
-	DeltaAttackDelay = 0.0f;
-	Collision_Attack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: character : %s"), *OtherActor->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: DeltaAttackDelay : %f"), DeltaAttackDelay);
-
-
-	
 }

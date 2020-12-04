@@ -7,22 +7,32 @@
 
 #include "SlowMobCharacterBase.generated.h"
 
+class UAnimMontage;
+class UBoss1AnimInstance;
 
 UCLASS()
 class SLOW_API ASlowMobCharacterBase : public ASlowStatBasedCharacter
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditAnywhere, Category = Weapon)
-	UBoxComponent* Collision_Attack;
+private:
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UStaticMeshComponent* Weapon;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UCapsuleComponent* AttackCollision;
+
+	UPROPERTY()
+	TArray<UAnimMontage*> AttackMontages;
 
 	FStatModifyLinearEffect* DamageEffect;
+
 
 private:
 	bool IsAttack;
 	float MaxAttackDelay = 2.0f;
-	float DeltaAttackDelay = 0.0f;
+
+	FName AttackSocketName;
 
 public:
 	ASlowMobCharacterBase();
@@ -36,6 +46,14 @@ public:
 	void OnHitCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	bool Attack() override;
+	UFUNCTION(BlueprintCallable)
+	bool Monster_Attack();
+	UFUNCTION(BlueprintCallable)
+	void Monster_AttackEnd();
 	
+	UBoss1AnimInstance* GetBossAnimInstance();
+
+	UAnimMontage* GetAttackMontage(int FindNum);
+
+	bool PlayMontage(UAnimMontage *montage);
 };
