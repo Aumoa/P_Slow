@@ -56,6 +56,16 @@ FAttrInstance ASlowStatBasedCharacter::GetCurrentAttributes() const
 	return AttrInstance;
 }
 
+bool ASlowStatBasedCharacter::AddFaint(float num)
+{
+	return false;
+}
+
+float ASlowStatBasedCharacter::GetBehaviorCoolDown() const
+{
+	return 0.0f;
+}
+
 float ASlowStatBasedCharacter::GetMaxHP()
 {
 	return InitialAttribute.MaxHealth;

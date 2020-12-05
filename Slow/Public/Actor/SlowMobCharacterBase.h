@@ -25,13 +25,17 @@ private:
 	UPROPERTY()
 	TArray<UAnimMontage*> AttackMontages;
 
+	UPROPERTY()
+	UAnimMontage* FaintMontage;
+
 	FStatModifyLinearEffect* DamageEffect;
 
 
 private:
 	bool IsAttack;
-	float MaxAttackDelay = 2.0f;
-
+	float BehaviorCoolDown;
+	float DeltaHP;
+	float CumDamageTime;
 	FName AttackSocketName;
 
 public:
@@ -45,6 +49,8 @@ public:
 	UFUNCTION()
 	void OnHitCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	bool AddFaint(float num) override;
+	float GetBehaviorCoolDown() const override;
 
 	UFUNCTION(BlueprintCallable)
 	bool Monster_Attack();
@@ -54,6 +60,7 @@ public:
 	UBoss1AnimInstance* GetBossAnimInstance();
 
 	UAnimMontage* GetAttackMontage(int FindNum);
+	
 
 	bool PlayMontage(UAnimMontage *montage);
 };

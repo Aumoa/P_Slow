@@ -14,17 +14,18 @@ ASlowMobCharacterBase::ASlowMobCharacterBase()
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
 	AttackCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
 	
-	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ASlowMobCharacterBase::OnHitCollisionBeginOverlap);
+	
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	AttackCollision->RegisterComponent();
-	AddInstanceComponent(AttackCollision);
+	/*AttackCollision->RegisterComponent();
+	AddInstanceComponent(AttackCollision);*/
 
 	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_FourWayAttack.MTG_Boss1_FourWayAttack'")).Object);
 	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_ComboAttack.MTG_Boss1_ComboAttack'")).Object);
 	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_spinningAttack.MTG_Boss1_SpinningAttack'")).Object);
 	
-	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FaintAnim(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_Faint.MTG_Boss1_Faint'"));
+	FaintMontage = FaintAnim.Object;
 }
 
 void ASlowMobCharacterBase::BeginPlay()
@@ -45,12 +46,33 @@ void ASlowMobCharacterBase::BeginPlay()
 	DamageEffectAttr.HealthPoint = InitialAttribute.DefaultDamage;
 	DamageEffect->SetModifyValue(DamageEffectAttr);
 
-	
+	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ASlowMobCharacterBase::OnHitCollisionBeginOverlap);
+	DeltaHP = GetCurrentHP();
+	CumDamageTime = 0.0f;
 }
 
 void ASlowMobCharacterBase::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
+
+	if (BehaviorCoolDown > 0.0f)
+	{
+		BehaviorCoolDown -= deltaTime;
+	}
+
+	if (CumDamageTime >= 5.0f)
+	{
+		CumDamageTime = 0;
+		DeltaHP = GetCurrentHP();
+	}
+
+	else
+	{
+		if (DeltaHP - GetCurrentHP() >= GetMaxHP() * 0.16f)
+		{
+			AddFaint(2.0f);
+		}
+	}
 }
 
 bool ASlowMobCharacterBase::Monster_Attack()
@@ -61,6 +83,7 @@ bool ASlowMobCharacterBase::Monster_Attack()
 	}
 
 	IsAttack = true;
+	//UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::Monster_Attack :: Monster Attack Init!"));
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	/*DrawDebugBox(GetWorld(), AttackCollision->GetComponentLocation(), AttackCollision->GetScaledBoxExtent(),
 		AttackCollision->GetComponentRotation().Quaternion(),FColor::Yellow, false, 2.2f, 0, 5);*/
@@ -76,6 +99,8 @@ void ASlowMobCharacterBase::Monster_AttackEnd()
 
 	IsAttack = false;
 
+	//UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::Monster_AttackEnd :: Monster Attack End..."));
+	//UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::Monster_AttackEnd :: Monster Attack End..."));
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -103,6 +128,11 @@ UAnimMontage* ASlowMobCharacterBase::GetAttackMontage(int FindNum)
 	return AttackMontages[FindNum];
 }
 
+float ASlowMobCharacterBase::GetBehaviorCoolDown() const
+{
+	return BehaviorCoolDown;
+}
+
 bool ASlowMobCharacterBase::PlayMontage(UAnimMontage* montage)
 {
 	if (GetMesh()->GetAnimInstance()->Montage_Play(montage) == 0.f)
@@ -113,6 +143,8 @@ bool ASlowMobCharacterBase::PlayMontage(UAnimMontage* montage)
 
 	return true;
 }
+
+
 
 void ASlowMobCharacterBase::OnHitCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -144,9 +176,25 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 	//AttackCollision->AddRelativeLocation(FVector(0.001f,0,0));
 
 	DamageEffect->Apply(OtherCharacter);
+	OtherCharacter->AddFaint(0.5f);
 	IsAttack = false;
 
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: character : %s"), *OtherActor->GetName());
+}
+
+bool ASlowMobCharacterBase::AddFaint(float num)
+{
+	if (num <= 0.0f)
+	{
+		return false;
+	}
+
+	if (BehaviorCoolDown < num)
+		BehaviorCoolDown = num;
+
+	GetMesh()->GetAnimInstance()->StopAllMontages(0.01f);
+	PlayMontage(FaintMontage);
+
+	return true;
 }

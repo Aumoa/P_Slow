@@ -42,6 +42,9 @@ public:
 	virtual void ApplyEffect(const FStatModifyLinearEffect& InEffect);
 	FAttrInstance GetCurrentAttributes() const;
 
+	virtual bool AddFaint(float num);
+	virtual float GetBehaviorCoolDown() const;
+
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHP();
 	UFUNCTION(BlueprintCallable)

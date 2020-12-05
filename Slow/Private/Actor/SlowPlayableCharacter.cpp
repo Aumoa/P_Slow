@@ -33,6 +33,11 @@ ASlowPlayableCharacter::ASlowPlayableCharacter()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> Roll_MTG(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Roll.MTG_PC_Roll'"));
 	RollMontage = Roll_MTG.Object;
 
+	HurtMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Hurt_Ham.MTG_PC_Hurt_Ham'")).Object);
+	HurtMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Hurt_Sw.MTG_PC_Hurt_Sw'")).Object);
+	HurtMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Hurt_Hat.MTG_PC_Hurt_Hat'")).Object);
+	HurtMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Faint.MTG_PC_Faint'")).Object);
+
 	NewSpringArm();
 }
 
@@ -71,9 +76,10 @@ void ASlowPlayableCharacter::BeginPlay()
 
 	PlayerDirection = GetActorForwardVector();
 	RollTime = -1.0f;
-	BehaviorCooldown = 0.0f;
+	BehaviorCoolDown = 0.0f;
 	AttackCooldown = 0.0f;
 	MoveCooldown = 0.0f;
+
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -99,25 +105,25 @@ void ASlowPlayableCharacter::Tick(float DeltaTime)
 		LaunchCharacter(PlayerDirection * 180000 * DeltaTime, true, true);
 	}
 
-	if (AttackCooldown > 0.0f && BehaviorCooldown <= 0.0f)
+	if (AttackCooldown > 0.0f && BehaviorCoolDown <= 0.0f)
 	{
 		AttackCooldown -= DeltaTime;
 	}
 
-	if (MoveCooldown > 0.0f && BehaviorCooldown <= 0.0f)
+	if (MoveCooldown > 0.0f && BehaviorCoolDown <= 0.0f)
 	{
 		MoveCooldown -= DeltaTime;
 	}
 
 
-	if (BehaviorCooldown > 0.0f)
+	if (BehaviorCoolDown > 0.0f)
 	{
-		BehaviorCooldown -= DeltaTime;
+		BehaviorCoolDown -= DeltaTime;
 	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: AttackCoolDown : %f "), AttackCooldown);
 	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: MoveCoolDown : %f "), MoveCooldown);
-	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: BehaviorCoolDown : %f "), BehaviorCooldown);
+	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: BehaviorCoolDown : %f "), BehaviorCoolDown);
 	
 }
 
@@ -162,7 +168,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	else if (ActionName == IA_Roll)
 	{
-		if (BehaviorCooldown > 0.0f)
+		if (BehaviorCoolDown > 0.0f)
 		{
 			return;
 		}
@@ -175,7 +181,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		PlayerDirection = GetPlayerDirection();
 
 		RollTime = 0.4f;
-		BehaviorCooldown = 0.6f;
+		BehaviorCoolDown = 0.6f;
 		
 		
 		//FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
@@ -225,7 +231,7 @@ void ASlowPlayableCharacter::OnMouseAction(bool bPressed)
 
 void ASlowPlayableCharacter::OnMouseSelection(bool bPressed)
 {
-	if (AttackCooldown + BehaviorCooldown > 0.0f)
+	if (AttackCooldown + BehaviorCoolDown > 0.0f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnMouseSelection :: Is AttackCoolDown"));
 		return;
@@ -422,7 +428,7 @@ void ASlowPlayableCharacter::OnMoveForward(float NewAxisValue)
 		return;
 	}
 	*/
-	if (MoveCooldown + BehaviorCooldown > 0.0f)
+	if (MoveCooldown + BehaviorCoolDown > 0.0f)
 	{
 		return;
 	}
@@ -456,7 +462,7 @@ void ASlowPlayableCharacter::OnMoveRight(float NewAxisValue)
 		return;
 	}
 	*/
-	if (MoveCooldown + BehaviorCooldown > 0.0f)
+	if (MoveCooldown + BehaviorCoolDown > 0.0f)
 	{
 		return;
 	}
@@ -686,6 +692,37 @@ bool ASlowPlayableCharacter::FireInteractionRay(float RayLength)
 	}
 
 	return InteractionComponent->OnHitInteractionRay(this, HitResult);
+}
+
+bool ASlowPlayableCharacter::AddFaint(float num)
+{
+	if (num <= 0.0f)
+	{
+		return false;
+	}
+
+	if(BehaviorCoolDown < num)
+		BehaviorCoolDown = num;
+
+	int WeaponNum = GetCurrentWeaponNum();
+
+	OnPlayerAttackEnd();
+
+	AnimInstance->StopAllMontages(0.01f);
+
+	if (WeaponNum == -1)
+	{
+		AnimInstance->Montage_Play(HurtMontages[HurtMontages.Num() - 1]); //평화 상태라면 배열 가장 마지막 애니메이션 출력
+	}
+
+	AnimInstance->Montage_Play(HurtMontages[WeaponNum]);
+
+	return true;
+}
+
+float ASlowPlayableCharacter::GetBehaviorCoolDown() const
+{
+	return BehaviorCoolDown;
 }
 
 ASlowStatBasedCharacter* ASlowPlayableCharacter::GetTarget()

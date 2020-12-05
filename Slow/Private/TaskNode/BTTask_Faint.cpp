@@ -1,14 +1,14 @@
 // Copyright 2020 Team slow. All right reserved.
 
-#include "TaskNode/BTTask_Attack.h"
+#include "TaskNode/BTTask_Faint.h"
 #include "Actor/SlowMobCharacterBase.h"
 
-UBTTask_Attack::UBTTask_Attack()
+UBTTask_Faint::UBTTask_Faint()
 {
-	bNotifyTick = true;
+
 }
 
-EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Faint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -29,11 +29,11 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Faint::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::TickTask(OwnerComp,NodeMemory,DeltaSeconds);
-	
-	
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+
+
 	if (DeltaAttack >= 2.8f)
 	{
 		DeltaAttack = 0.0f;
@@ -42,7 +42,7 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 
 	else
 	{
-		DeltaAttack+=DeltaSeconds;
-		
+		DeltaAttack += DeltaSeconds;
+
 	}
 }

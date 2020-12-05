@@ -19,6 +19,7 @@
 #include "Engine/LevelStreaming.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
+#include "Math/UnrealMathUtility.h"
 
 #include "Animation/AnimMontage.h"
 #include "Animation/WidgetAnimation.h"

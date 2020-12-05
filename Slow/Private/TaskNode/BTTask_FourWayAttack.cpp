@@ -1,14 +1,15 @@
 // Copyright 2020 Team slow. All right reserved.
 
-#include "TaskNode/BTTask_Attack.h"
+#include "TaskNode/BTTask_FourWayAttack.h"
+#include "Actor/SlowStatBasedCharacter.h"
 #include "Actor/SlowMobCharacterBase.h"
 
-UBTTask_Attack::UBTTask_Attack()
+UBTTask_FourWayAttack::UBTTask_FourWayAttack()
 {
 	bNotifyTick = true;
 }
 
-EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_FourWayAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -20,20 +21,18 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	//UE_LOG(LogTemp, Warning, TEXT("BTTask_Attack :: character : %s"), *character->GetName());
 
-	int32 RandNum = FMath::RandRange(0, 2);
+	character->PlayMontage(character->GetAttackMontage(0));
 
-	character->PlayMontage(character->GetAttackMontage(RandNum));
-	UE_LOG(LogTemp, Warning, TEXT("BTTask_Attack :: Rand Num : %d"), RandNum);
 	IsAttacking = true;
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_FourWayAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::TickTask(OwnerComp,NodeMemory,DeltaSeconds);
-	
-	
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+
+
 	if (DeltaAttack >= 2.8f)
 	{
 		DeltaAttack = 0.0f;
@@ -42,7 +41,7 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 
 	else
 	{
-		DeltaAttack+=DeltaSeconds;
-		
+		DeltaAttack += DeltaSeconds;
+
 	}
 }

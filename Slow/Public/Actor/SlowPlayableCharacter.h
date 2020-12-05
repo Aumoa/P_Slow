@@ -49,6 +49,9 @@ private:
 
 	UPROPERTY()
 	UAnimMontage *AttackMontage;
+
+	UPROPERTY()
+	TArray<UAnimMontage*> HurtMontages;
 	
 	UPROPERTY()
 	UAnimMontage *RollMontage;
@@ -84,7 +87,7 @@ private:
 
 	float AttackCooldown; //공격 쿨타임
 	float MoveCooldown; //이동 쿨타임
-	float BehaviorCooldown; //행동 쿨타임
+	float BehaviorCoolDown; //행동 쿨타임
 	
 
 protected:
@@ -100,6 +103,8 @@ public:
 	void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual FEquipments GetCurrentEquipments() const override;
+	bool AddFaint(float num) override;
+	float GetBehaviorCoolDown() const override;
 	
 	void OnActionInput(const FName& ActionName, bool bPressed);
 	
@@ -123,6 +128,8 @@ public:
 	void DisableWeapon();
 
 	bool FireInteractionRay(float RayLength = 300.0f);
+
+	
 
 	UFUNCTION(BlueprintCallable)
 	ASlowStatBasedCharacter* GetTarget();
