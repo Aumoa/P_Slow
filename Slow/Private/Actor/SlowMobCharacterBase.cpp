@@ -59,6 +59,11 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 	{
 		BehaviorCoolDown -= deltaTime;
 	}
+	
+	else if(IsDead)
+	{
+		Destroy();
+	}
 
 	if (CumDamageTime >= 5.0f)
 	{
@@ -71,6 +76,8 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 		if (DeltaHP - GetCurrentHP() >= GetMaxHP() * 0.16f)
 		{
 			AddFaint(2.0f);
+			CumDamageTime = 0;
+			DeltaHP = GetCurrentHP();
 		}
 	}
 }
@@ -128,9 +135,21 @@ UAnimMontage* ASlowMobCharacterBase::GetAttackMontage(int FindNum)
 	return AttackMontages[FindNum];
 }
 
+bool ASlowMobCharacterBase::GetIsDead() const
+{
+	return IsDead;
+}
+
 float ASlowMobCharacterBase::GetBehaviorCoolDown() const
 {
 	return BehaviorCoolDown;
+}
+
+void ASlowMobCharacterBase::OnActorKill()
+{
+	GetMesh()->GetAnimInstance()->StopAllMontages(0.01f);
+	BehaviorCoolDown = 3.0f;
+	IsDead = true;
 }
 
 bool ASlowMobCharacterBase::PlayMontage(UAnimMontage* montage)
@@ -176,7 +195,7 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 	//AttackCollision->AddRelativeLocation(FVector(0.001f,0,0));
 
 	DamageEffect->Apply(OtherCharacter);
-	OtherCharacter->AddFaint(0.5f);
+	OtherCharacter->AddFaint(0.3f);
 	IsAttack = false;
 
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -186,6 +205,11 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 bool ASlowMobCharacterBase::AddFaint(float num)
 {
 	if (num <= 0.0f)
+	{
+		return false;
+	}
+
+	if (IsDead)
 	{
 		return false;
 	}

@@ -173,6 +173,20 @@ bool USlowAnimInstance::GetIsBattle() const
 	return false;
 }
 
+bool USlowAnimInstance::GetIsDead() const
+{
+	if (USlowAnimInstance::ManagerAccessibleState)
+	{
+		if (SlowPC != nullptr)
+		{
+			return SlowPC->GetIsDead();
+		}
+
+	}
+
+	return false;
+}
+
 void USlowAnimInstance::SetManagerAccessibleState(const bool AccessState)
 {
 	USlowAnimInstance::ManagerAccessibleState = AccessState;

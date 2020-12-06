@@ -18,17 +18,11 @@ class SLOW_API ASlowStatBasedCharacter : public ASlowCharacter
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	FAttrInstance AttrInstance;
 
-	
-
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FBaseAttributeConfig InitialAttribute;	
-
-protected:
-	void BeginPlay() override;
 
 public:
 	ASlowStatBasedCharacter();
@@ -44,6 +38,8 @@ public:
 
 	virtual bool AddFaint(float num);
 	virtual float GetBehaviorCoolDown() const;
+	virtual void SetBehaviorCoolDown(float num);
+
 
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHP();
@@ -52,7 +48,7 @@ public:
 
 protected:
 	void SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute);
-
+	void BeginPlay() override;
 	virtual void OnActorKill();
 
 private:

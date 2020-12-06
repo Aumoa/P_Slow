@@ -55,10 +55,9 @@ void USceneManager::SwitchScene(USceneBase* InNextScene, UObject* Args)
 		Instance->CurrentScene->EndPlay();
 	}
 
-	if (Instance->CurrentScene != InNextScene) {
-		Instance->CurrentScene = InNextScene;
-		bChanged = true;
-	}
+	Instance->CurrentScene = InNextScene;
+	bChanged = true;
+	
 
 	if (bChanged) {
 		Instance->CurrentScene->BeginPlay(Args);
@@ -98,7 +97,7 @@ USceneBase* USceneManager::GetSceneByName(USceneManager* Instance, const FString
 
 	else {
 		UE_LOG(LogSlow, Error, TEXT("Scene name: [%s] is not registered."), *SceneName);
-		return Instance->CurrentScene;;
+		return Instance->CurrentScene;
 	}
 
 	if (Instance->CurrentScene != NextScene) {

@@ -22,4 +22,9 @@ protected:
 
 	void NativeBeginPlay() override;
 	void NativeUpdateAnimation(float DeltaSeconds) override;
+
+public:
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
+	bool GetBoss_IsDead();
+
 };

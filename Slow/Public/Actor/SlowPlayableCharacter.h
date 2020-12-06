@@ -44,6 +44,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	UCapsuleComponent* Collision_Weapon;
 
+	UPROPERTY(EditAnyWhere, Category = Camera)
+	TSubclassOf<UCameraShake> CS_PlayerAttack;
+
 	UPROPERTY()
 	UWeaponManager *WeaponManager;
 
@@ -61,6 +64,8 @@ private:
 
 	UPROPERTY()
 	USlowCombatUIWidget* MyCombatUIWidget;
+
+	
 
 	FStatModifyLinearEffect *DamageEffect;
 
@@ -80,8 +85,12 @@ private:
 	bool IsOverlapAttack;
 	//이미 데미지를 주었는지?
 	bool IsValidAttack;
+	bool IsDead;
 
 	float RollTime;
+	float RollCost = 22;
+
+	float PlayerKill_ZPos;
 
 	FVector PlayerDirection;
 
@@ -105,6 +114,8 @@ public:
 	virtual FEquipments GetCurrentEquipments() const override;
 	bool AddFaint(float num) override;
 	float GetBehaviorCoolDown() const override;
+	void SetBehaviorCoolDown(float num) override;
+	void OnActorKill() override;
 	
 	void OnActionInput(const FName& ActionName, bool bPressed);
 	
@@ -120,6 +131,7 @@ public:
 	bool GetIsFindInteractionObject();
 	bool GetRollAnimState();
 	bool GetIsBattle();
+	bool GetIsDead() const;
 
 	
 	void SetWeaponMesh();
@@ -150,6 +162,9 @@ private:
 	void OnAttackInputChecking();
 	UFUNCTION(BlueprintCallable)
 	void OnColStartAttack();
+
+	void OnPlayerAttackMontageEnd();
+
 	UFUNCTION()
 	void OnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

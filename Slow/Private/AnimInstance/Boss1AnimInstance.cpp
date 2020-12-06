@@ -32,3 +32,13 @@ void UBoss1AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 }
+
+bool UBoss1AnimInstance::GetBoss_IsDead()
+{
+	if (LastUpdatedMob == nullptr)
+	{
+		return false;
+	}
+
+	return LastUpdatedMob->GetIsDead();
+}

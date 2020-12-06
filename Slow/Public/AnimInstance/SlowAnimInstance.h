@@ -67,6 +67,9 @@ public:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetIsBattle() const;
 
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
+	bool GetIsDead() const;
+
 	static void SetManagerAccessibleState(const bool Accessstate);
 	static bool GetManagerAccessibleState();
 

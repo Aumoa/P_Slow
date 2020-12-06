@@ -33,6 +33,8 @@ private:
 
 private:
 	bool IsAttack;
+	bool IsDead;
+
 	float BehaviorCoolDown;
 	float DeltaHP;
 	float CumDamageTime;
@@ -51,6 +53,7 @@ public:
 			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	bool AddFaint(float num) override;
 	float GetBehaviorCoolDown() const override;
+	void OnActorKill() override;
 
 	UFUNCTION(BlueprintCallable)
 	bool Monster_Attack();
@@ -60,6 +63,7 @@ public:
 	UBoss1AnimInstance* GetBossAnimInstance();
 
 	UAnimMontage* GetAttackMontage(int FindNum);
+	bool GetIsDead() const;
 	
 
 	bool PlayMontage(UAnimMontage *montage);

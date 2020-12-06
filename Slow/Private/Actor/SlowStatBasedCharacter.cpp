@@ -11,9 +11,7 @@ void ASlowStatBasedCharacter::BeginPlay()
 
 	StatValidCheck();
 	AttrInstance.HealthPoint = InitialAttribute.StartHealth;
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%s HP : %d / %d"), *this->GetName(), AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%s HP : %d / %d"), *this->GetName(), AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
+	AttrInstance.StaminaPoint = InitialAttribute.StartStamina;
 }
 
 ASlowStatBasedCharacter::ASlowStatBasedCharacter()
@@ -24,6 +22,12 @@ ASlowStatBasedCharacter::ASlowStatBasedCharacter()
 void ASlowStatBasedCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (InitialAttribute.StaminaIncrease != 0)
+	{
+		AttrInstance.StaminaPoint += InitialAttribute.StaminaIncrease * DeltaTime;
+		StatValidCheck();
+	}
 }
 
 FEquipments ASlowStatBasedCharacter::GetCurrentEquipments() const
@@ -66,6 +70,11 @@ float ASlowStatBasedCharacter::GetBehaviorCoolDown() const
 	return 0.0f;
 }
 
+void ASlowStatBasedCharacter::SetBehaviorCoolDown(float num)
+{
+	return;
+}
+
 float ASlowStatBasedCharacter::GetMaxHP()
 {
 	return InitialAttribute.MaxHealth;
@@ -85,7 +94,8 @@ void ASlowStatBasedCharacter::SetInitialAttribute(const FBaseAttributeConfig& In
 void ASlowStatBasedCharacter::OnActorKill()
 {
 	// 기본 행동은 이 액터를 게임 월드에서 파괴하는 것입니다.
-	Destroy();
+	//Destroy();
+	return;
 }
 
 void ASlowStatBasedCharacter::StatValidCheck()
@@ -98,5 +108,10 @@ void ASlowStatBasedCharacter::StatValidCheck()
 	else if (AttrInstance.HealthPoint >= InitialAttribute.MaxHealth)
 	{
 		AttrInstance.HealthPoint = InitialAttribute.MaxHealth;
+	}
+
+	if (AttrInstance.StaminaPoint >= InitialAttribute.MaxStamina)
+	{
+		AttrInstance.StaminaPoint = InitialAttribute.MaxStamina;
 	}
 }

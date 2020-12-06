@@ -19,6 +19,21 @@ float USlowCombatUIWidget::GetBossHP_Percent()
 	return result;
 }
 
+FName USlowCombatUIWidget::GetBossName()
+{
+	if (MyTarget == nullptr)
+	{
+		return TEXT(" ");
+	}
+
+	if (GetBossHP_Percent() <= 0.0f)
+	{
+		return TEXT(" ");
+	}
+	
+	return MyTarget->GetInitialAttribute().FriendlyName;
+}
+
 float USlowCombatUIWidget::GetPlayerHP_Percent()
 {
 	if (OwnerCharacter == nullptr)
@@ -27,6 +42,18 @@ float USlowCombatUIWidget::GetPlayerHP_Percent()
 	}
 
 	float result = OwnerCharacter->GetCurrentHP() / OwnerCharacter->GetMaxHP();
+
+	return result;
+}
+
+float USlowCombatUIWidget::GetPlayerStamina_Percent()
+{
+	if (OwnerCharacter == nullptr)
+	{
+		return 0.0f;
+	}
+
+	float result = OwnerCharacter->GetCurrentAttributes().StaminaPoint / OwnerCharacter->GetInitialAttribute().MaxStamina;
 
 	return result;
 }

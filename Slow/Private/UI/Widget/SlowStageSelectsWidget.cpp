@@ -43,4 +43,4 @@ void USlowStageSelectsWidget::OnClicked_Cancel(USlowTextButton* InClickedButton)
 {
 	NextScene = nullptr;
 	Disposing.Broadcast();
-}
+}	

@@ -19,6 +19,8 @@
 #include "TableRow/WeaponReferenceTableRow.h"
 #include "Manager/WidgetManager.h"
 #include "UI/Widget/SlowCombatUIWidget.h"
+#include "Scene/GameplayLobbyScene.h"
+#include "Manager/SceneManager.h"
 
 ASlowPlayableCharacter::ASlowPlayableCharacter()
 {	
@@ -32,6 +34,14 @@ ASlowPlayableCharacter::ASlowPlayableCharacter()
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> Roll_MTG(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Roll.MTG_PC_Roll'"));
 	RollMontage = Roll_MTG.Object;
+
+	static ConstructorHelpers::FClassFinder<UCameraShake> CS_LoadCoustom(TEXT("/Game/Slow/Blueprints/Components/BP_PlayerAttackCameraShake"));
+	if (CS_LoadCoustom.Succeeded())
+	{
+		CS_PlayerAttack = CS_LoadCoustom.Class;
+	}
+	
+	//UE_LOG(LogTemp, Warning, TEXT("CS_PlayerAttack : %s "), *CS_PlayerAttack->GetName());
 
 	HurtMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Hurt_Ham.MTG_PC_Hurt_Ham'")).Object);
 	HurtMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/PC/MTG_PC_Hurt_Sw.MTG_PC_Hurt_Sw'")).Object);
@@ -79,6 +89,8 @@ void ASlowPlayableCharacter::BeginPlay()
 	BehaviorCoolDown = 0.0f;
 	AttackCooldown = 0.0f;
 	MoveCooldown = 0.0f;
+	
+	PlayerKill_ZPos = GetActorLocation().Z - 7000;
 
 }
 
@@ -121,6 +133,11 @@ void ASlowPlayableCharacter::Tick(float DeltaTime)
 		BehaviorCoolDown -= DeltaTime;
 	}
 
+	if (GetActorLocation().Z <= PlayerKill_ZPos)
+	{
+		OnActorKill();
+	}
+
 	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: AttackCoolDown : %f "), AttackCooldown);
 	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: MoveCoolDown : %f "), MoveCooldown);
 	//UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::Tick :: BehaviorCoolDown : %f "), BehaviorCoolDown);
@@ -132,7 +149,19 @@ void ASlowPlayableCharacter::Tick(float DeltaTime)
 
 void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPressed)
 {
+	if (ActionName == IA_PeaceMode && IsDead)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnActionInput :: Reset Init!!"));
+		USceneManager::SwitchScene(USceneManager::GetCurrentScene());
+		return;
+	}
 
+
+	if (BehaviorCoolDown > 0.0f)
+	{
+		return;
+	}
+	
 	if (ActionName == IA_MouseAction)
 	{
 		OnMouseAction(bPressed);
@@ -168,12 +197,13 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 
 	else if (ActionName == IA_Roll)
 	{
-		if (BehaviorCoolDown > 0.0f)
+
+		if (AttrInstance.StaminaPoint < RollCost)
 		{
 			return;
 		}
 
-		OnPlayerAttackEnd();
+		OnPlayerAttackMontageEnd();
 		AnimInstance->StopAllMontages(0.01f);
 		AnimInstance->Montage_Play(RollMontage);
 		RollInput = true;
@@ -181,7 +211,10 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		PlayerDirection = GetPlayerDirection();
 
 		RollTime = 0.4f;
-		BehaviorCoolDown = 0.6f;
+		AttrInstance.StaminaPoint -= RollCost;
+		BehaviorCoolDown = 0.5f;
+
+
 		
 		
 		//FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
@@ -198,8 +231,6 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	{
 		WeaponManager->SetPeaceMode();
 		DisableWeapon();
-
-		UE_LOG(LogTemp, Warning, TEXT("Weapon Is Activate ? :: %s"), Weapon->IsActive() ? TEXT("True") : TEXT("False"));
 	}
 }
 
@@ -239,6 +270,7 @@ void ASlowPlayableCharacter::OnMouseSelection(bool bPressed)
 
 	if (bPressed)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("IsAttack :: %s"), IsAttack == true ? TEXT("True") : TEXT("False"));
 		if (IsAttack == false)
 		{
 			ComboCount = 0;
@@ -283,15 +315,14 @@ void ASlowPlayableCharacter::OnPlayerAttack()
 		return;
 	}
 
-	else if (AnimInstance->Montage_IsPlaying(RollMontage))
+	/*else if (AnimInstance->Montage_IsPlaying(RollMontage))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("RollMontage Is Playing. Try after. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
 		return;
-	}
+	}*/
 
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnPlayerAttack. :: ASlowPlayableCharacter -> OnPlayerAttack()"));
 		IsAttack = true;
 		IsValidAttack = true;
 		MoveCooldown = 0.1f;
@@ -299,6 +330,7 @@ void ASlowPlayableCharacter::OnPlayerAttack()
 		PlayerDirection = GetPlayerDirection();
 		LaunchCharacter(PlayerDirection * 500, true, true);
 
+		AnimInstance->StopAllMontages(0.15f);
 		AnimInstance->Montage_Play(AttackMontage);
 
 		if (!(AnimInstance->Montage_IsPlaying(AttackMontage)))
@@ -344,6 +376,16 @@ void ASlowPlayableCharacter::OnColStartAttack()
 		Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
+void ASlowPlayableCharacter::OnPlayerAttackMontageEnd()
+{
+	IsAttack = false;
+
+	ComboCount = 0;
+
+	if (Collision_Weapon != nullptr)
+		Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ASlowStatBasedCharacter *OtherCharacter = Cast<ASlowStatBasedCharacter>(OtherActor);
@@ -377,6 +419,7 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 
 	IsValidAttack = false;
 	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CS_PlayerAttack,1.0f);
 
 	UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
 }
@@ -493,6 +536,11 @@ void ASlowPlayableCharacter::AddYawInput(float NewAxisValue)
 	{
 		return;
 	}
+
+	if (IsDead)
+	{
+		return;
+	}
 	
 	AddControllerYawInput(NewAxisValue);
 }
@@ -501,6 +549,11 @@ void ASlowPlayableCharacter::AddPitchInput(float NewAxisValue)
 {
 
 	if (NewAxisValue == 0.0f)
+	{
+		return;
+	}
+
+	if (IsDead)
 	{
 		return;
 	}
@@ -571,6 +624,11 @@ bool ASlowPlayableCharacter::GetIsBattle()
 	}
 
 	return false;
+}
+
+bool ASlowPlayableCharacter::GetIsDead() const
+{
+	return IsDead;
 }
 
 
@@ -704,15 +762,26 @@ bool ASlowPlayableCharacter::AddFaint(float num)
 	if(BehaviorCoolDown < num)
 		BehaviorCoolDown = num;
 
+	if (IsDead)
+	{
+		return false;
+	}
+
 	int WeaponNum = GetCurrentWeaponNum();
 
-	OnPlayerAttackEnd();
+	OnPlayerAttackMontageEnd();
 
 	AnimInstance->StopAllMontages(0.01f);
 
 	if (WeaponNum == -1)
 	{
 		AnimInstance->Montage_Play(HurtMontages[HurtMontages.Num() - 1]); //평화 상태라면 배열 가장 마지막 애니메이션 출력
+		return true;
+	}
+
+	if (!HurtMontages.IsValidIndex(WeaponNum))
+	{
+		return false;
 	}
 
 	AnimInstance->Montage_Play(HurtMontages[WeaponNum]);
@@ -723,6 +792,23 @@ bool ASlowPlayableCharacter::AddFaint(float num)
 float ASlowPlayableCharacter::GetBehaviorCoolDown() const
 {
 	return BehaviorCoolDown;
+}
+
+void ASlowPlayableCharacter::SetBehaviorCoolDown(float num)
+{	
+	BehaviorCoolDown = num;
+}
+
+void ASlowPlayableCharacter::OnActorKill()
+{
+	if (IsDead)
+	{
+		return;
+	}
+
+	BehaviorCoolDown = 99999.0f;
+	IsDead = true;
+	UWidgetManager::CreateSlowWidget<USlowWidgetBase>(TEXT("Widget.SlowDeathLogoUI"));
 }
 
 ASlowStatBasedCharacter* ASlowPlayableCharacter::GetTarget()

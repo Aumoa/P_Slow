@@ -30,7 +30,13 @@ public:
 	float GetBossHP_Percent();
 
 	UFUNCTION(BlueprintCallable)
+	FName GetBossName();
+
+	UFUNCTION(BlueprintCallable)
 	float GetPlayerHP_Percent();
+
+	UFUNCTION(BlueprintCallable)
+	float GetPlayerStamina_Percent();
 
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentWeapon();
@@ -38,6 +44,4 @@ public:
 	void SetTarget(ASlowStatBasedCharacter *Target);
 
 	void SetOwnerCharacter(ASlowPlayableCharacter* Character);
-
-	
 };

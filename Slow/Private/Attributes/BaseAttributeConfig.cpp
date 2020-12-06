@@ -7,5 +7,10 @@ FBaseAttributeConfig::FBaseAttributeConfig()
 	MinHealth = 0;
 	MaxHealth = 100;
 	StartHealth = MaxHealth;
+	MinStamina = 0;
+	MaxStamina = 100;
+	StartStamina = 100;
 	DefaultDamage = 0;
+	FriendlyName = TEXT("");
+
 }

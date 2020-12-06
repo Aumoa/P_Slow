@@ -45,6 +45,4 @@ private:
 	static USceneManager* GetSingletonInstance();
 };
 
-#ifdef GAME_INSTANCE
 #define SCENE_MANAGER (*((USceneManager*)GAME_INSTANCE.GetManager(USceneManager::StaticClass())))
-#endif
