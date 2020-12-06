@@ -26,6 +26,8 @@
 #include "Animation/UMGSequencePlayer.h"
 #include "Animation/AnimInstance.h"
 
+#include "Animation/AnimNotifies/AnimNotify_PlaySound.h"
+
 #include "Components/CapsuleComponent.h"
 #include "Components/MovementBehavior.h"
 #include "Components/InputComponent.h"
