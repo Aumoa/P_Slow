@@ -75,6 +75,11 @@ void ASlowStatBasedCharacter::SetBehaviorCoolDown(float num)
 	return;
 }
 
+float ASlowStatBasedCharacter::GetFaintHP()
+{
+	return 0.0f;
+}
+
 float ASlowStatBasedCharacter::GetMaxHP()
 {
 	return InitialAttribute.MaxHealth;

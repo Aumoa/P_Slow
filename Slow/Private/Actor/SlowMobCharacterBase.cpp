@@ -26,6 +26,13 @@ ASlowMobCharacterBase::ASlowMobCharacterBase()
 	
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> FaintAnim(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_Faint.MTG_Boss1_Faint'"));
 	FaintMontage = FaintAnim.Object;
+
+	static ConstructorHelpers::FClassFinder<UCameraShake> CS_LoadCoustom(TEXT("/Game/Slow/Blueprints/Components/BP_BossAttackCameraShake"));
+	if (CS_LoadCoustom.Succeeded())
+	{
+		CS_BossAttack = CS_LoadCoustom.Class;
+	}
+
 }
 
 void ASlowMobCharacterBase::BeginPlay()
@@ -73,11 +80,17 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 
 	else
 	{
-		if (DeltaHP - GetCurrentHP() >= GetMaxHP() * 0.16f)
+		if (DeltaHP - GetCurrentHP() >= GetMaxHP() * GetInitialAttribute().FaintPercent)
 		{
-			AddFaint(2.0f);
+			AddFaint(6.f);
 			CumDamageTime = 0;
 			DeltaHP = GetCurrentHP();
+			
+		}
+
+		else
+		{
+			CumDamageTime += deltaTime;
 		}
 	}
 }
@@ -152,6 +165,16 @@ void ASlowMobCharacterBase::OnActorKill()
 	IsDead = true;
 }
 
+float ASlowMobCharacterBase::GetFaintHP()
+{
+	if (BehaviorCoolDown > 0.0f)
+	{
+		return GetInitialAttribute().MaxHealth;
+	}
+
+	return DeltaHP;
+}
+
 bool ASlowMobCharacterBase::PlayMontage(UAnimMontage* montage)
 {
 	if (GetMesh()->GetAnimInstance()->Montage_Play(montage) == 0.f)
@@ -199,7 +222,7 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 	IsAttack = false;
 
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CS_BossAttack, 1.0f);
 }
 
 bool ASlowMobCharacterBase::AddFaint(float num)
@@ -219,6 +242,7 @@ bool ASlowMobCharacterBase::AddFaint(float num)
 
 	GetMesh()->GetAnimInstance()->StopAllMontages(0.01f);
 	PlayMontage(FaintMontage);
+	
 
 	return true;
 }

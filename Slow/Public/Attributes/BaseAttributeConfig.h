@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Number")
 	int64 StaminaIncrease;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float FaintPercent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Number")
 	int64 DefaultDamage;
 

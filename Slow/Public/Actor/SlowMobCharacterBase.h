@@ -28,12 +28,16 @@ private:
 	UPROPERTY()
 	UAnimMontage* FaintMontage;
 
+	UPROPERTY(EditAnyWhere, Category = Camera)
+	TSubclassOf<UCameraShake> CS_BossAttack;
+
 	FStatModifyLinearEffect* DamageEffect;
 
 
 private:
 	bool IsAttack;
 	bool IsDead;
+	bool IsFaint;
 
 	float BehaviorCoolDown;
 	float DeltaHP;
@@ -54,6 +58,7 @@ public:
 	bool AddFaint(float num) override;
 	float GetBehaviorCoolDown() const override;
 	void OnActorKill() override;
+	float GetFaintHP() override;
 
 	UFUNCTION(BlueprintCallable)
 	bool Monster_Attack();

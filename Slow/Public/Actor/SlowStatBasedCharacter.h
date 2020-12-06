@@ -39,12 +39,13 @@ public:
 	virtual bool AddFaint(float num);
 	virtual float GetBehaviorCoolDown() const;
 	virtual void SetBehaviorCoolDown(float num);
-
+	virtual float GetFaintHP();
 
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHP();
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentHP();
+	
 
 protected:
 	void SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute);

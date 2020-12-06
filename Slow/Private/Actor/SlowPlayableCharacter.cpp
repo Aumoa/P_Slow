@@ -419,7 +419,14 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 
 	IsValidAttack = false;
 	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CS_PlayerAttack,1.0f);
+
+	float CameraShakeScale = 1.f;
+
+	if (MyCombatUIWidget->GetBossFaint_Percent() < 0.0f)
+	{
+		CameraShakeScale = 2.5f;
+	}
+	GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CS_PlayerAttack,1.0f* CameraShakeScale);
 
 	UE_LOG(LogTemp, Warning, TEXT("Collision BeginOverlap :: %s"), *OtherActor->GetName());
 }

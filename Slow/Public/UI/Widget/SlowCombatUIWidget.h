@@ -33,10 +33,15 @@ public:
 	FName GetBossName();
 
 	UFUNCTION(BlueprintCallable)
+	float GetBossFaint_Percent();
+
+	UFUNCTION(BlueprintCallable)
 	float GetPlayerHP_Percent();
 
 	UFUNCTION(BlueprintCallable)
 	float GetPlayerStamina_Percent();
+
+	
 
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentWeapon();

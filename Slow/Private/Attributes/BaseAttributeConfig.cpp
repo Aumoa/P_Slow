@@ -11,6 +11,7 @@ FBaseAttributeConfig::FBaseAttributeConfig()
 	MaxStamina = 100;
 	StartStamina = 100;
 	DefaultDamage = 0;
+	FaintPercent = 0.16f;
 	FriendlyName = TEXT("");
 
 }

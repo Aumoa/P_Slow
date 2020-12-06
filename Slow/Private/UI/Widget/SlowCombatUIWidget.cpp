@@ -34,6 +34,19 @@ FName USlowCombatUIWidget::GetBossName()
 	return MyTarget->GetInitialAttribute().FriendlyName;
 }
 
+float USlowCombatUIWidget::GetBossFaint_Percent()
+{
+	if (MyTarget == nullptr)
+	{
+		return 0.0f;
+	}
+	// (GetMaxHP() * GetInitialAttribute().FaintPercent - (DeltaHP - GetCurrentHP())) / GetMaxHP() * GetInitialAttribute().FaintPercent
+
+	return ((MyTarget->GetInitialAttribute().MaxHealth * MyTarget->GetInitialAttribute().FaintPercent) 
+	- (MyTarget->GetFaintHP() - MyTarget->GetCurrentHP()))
+	/ (MyTarget->GetInitialAttribute().MaxHealth * MyTarget->GetInitialAttribute().FaintPercent);
+}
+
 float USlowCombatUIWidget::GetPlayerHP_Percent()
 {
 	if (OwnerCharacter == nullptr)
