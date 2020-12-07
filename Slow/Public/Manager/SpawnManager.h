@@ -28,7 +28,7 @@ public:
 	USpawnManager();
 
 	UFUNCTION(BlueprintCallable, Category = "SpawnManager")
-	ASlowPlayableCharacter* SpawnPlayerPawn(FTransform Transform);
+	ASlowPlayableCharacter* SpawnPlayerPawn(FTransform Transform, bool bForceSpawn = false);
 
 	UFUNCTION(BlueprintPure, Category = "SpawnManager")
 	ASlowPlayableCharacter* GetPlayerPawn() const;

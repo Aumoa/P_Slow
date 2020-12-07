@@ -38,7 +38,7 @@ bool USokobanGameMovableItem::OnHitInteractionRay(AActor* InEventSender, FHitRes
 	float MinimumCosAngle = -1.0f;
 	int32 ChoosedIndex = -1;
 	for (int32 i = 0; i < UE_ARRAY_COUNT(FourDirection); ++i)
-	{
+	{ 
 		float CosAngle = FourDirection[i] | InRemoteHitResult.ImpactNormal;
 		if (CosAngle > MinimumCosAngle)
 		{

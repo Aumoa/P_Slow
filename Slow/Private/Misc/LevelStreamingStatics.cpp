@@ -14,6 +14,7 @@ ULevelStreamingStatics::ULevelStreamingStatics()
 	checkf(DataTableLoad.Succeeded(), TEXT("Cannot found datatable in \"%s\"."), *ReferencePath);
 	DataTable = DataTableLoad.Object;
 
+	LastCommittedSublevelGroup = NAME_None;
 	TempWorldContext = nullptr;
 	CS_AsyncTaskResult = MakeUnique<FCriticalSection>();
 	NumAsyncTasks = 0;
@@ -39,6 +40,7 @@ void ULevelStreamingStatics::LoadSublevelGroup(UObject* InWorldContext, const FN
 	// Save unload tasks and load tasks.
 	TArray<FName> UnloadLevelTasks = MoveTemp(LastCommittedLevels);
 	LastCommittedLevels.SetNum(StreamingLevelsName.Num());
+	LastCommittedSublevelGroup = SublevelGroupName;
 
 	// Save async task configuration.
 	AsyncLoadCallback = CompletionCallback;
@@ -71,6 +73,17 @@ void ULevelStreamingStatics::LoadSublevelGroup(UObject* InWorldContext, const FN
 			LatentActionInfo.UUID += 1;
 		}
 	}
+}
+
+void ULevelStreamingStatics::ReloadCurrentSublevel(UObject* InWorldContext, TFunction<void()> CompletionCallback)
+{
+	if (LastCommittedSublevelGroup == NAME_None)
+	{
+		SLOW_LOG(Error, TEXT("%s is NAME_None"), nameof(LastCommittedSublevelGroup));
+		return;
+	}
+
+	LoadSublevelGroup(InWorldContext, LastCommittedSublevelGroup, CompletionCallback);
 }
 
 void ULevelStreamingStatics::AsyncTaskUnloadResult()

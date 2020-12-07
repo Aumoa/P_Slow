@@ -16,7 +16,7 @@ USpawnManager::USpawnManager()
 	CorePlayerChar = nullptr;
 }
 
-ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform)
+ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform, bool bForceSpawn)
 {
 	if (CorePlayerChar == nullptr)
 	{
@@ -39,7 +39,17 @@ ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform)
 	}
 	else
 	{
-		CorePlayerChar->SetActorTransform(Transform);
+		if (bForceSpawn)
+		{
+			CorePlayerChar->Destroy();
+			CorePlayerChar = nullptr;
+
+			SpawnPlayerPawn(Transform, false);
+		}
+		else
+		{
+			CorePlayerChar->SetActorTransform(Transform);
+		}
 	}
 
 	return CorePlayerChar;

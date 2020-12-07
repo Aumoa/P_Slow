@@ -89,9 +89,8 @@ void ASlowPlayableCharacter::BeginPlay()
 	BehaviorCoolDown = 0.0f;
 	AttackCooldown = 0.0f;
 	MoveCooldown = 0.0f;
-	
-	PlayerKill_ZPos = GetActorLocation().Z - 7000;
 
+	RefreshKillOffset();
 }
 
 void ASlowPlayableCharacter::SetControlMode(int32 ControlMode)
@@ -133,7 +132,7 @@ void ASlowPlayableCharacter::Tick(float DeltaTime)
 		BehaviorCoolDown -= DeltaTime;
 	}
 
-	if (GetActorLocation().Z <= PlayerKill_ZPos)
+	if (GetActorLocation().Z <= PlayerKill_ZPos && KillActorOffsetFlag)
 	{
 		OnActorKill();
 	}
@@ -152,7 +151,16 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	if (ActionName == IA_PeaceMode && IsDead)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnActionInput :: Reset Init!!"));
-		USceneManager::SwitchScene(USceneManager::GetCurrentScene());
+
+		auto LobbyScene = Cast<UGameplayLobbyScene>(USceneManager::GetCurrentScene());
+		if (LobbyScene == nullptr)
+		{
+			SLOW_LOG(Error, TEXT("Current scene is not lobby scene."));
+			return;
+		}
+
+		LastLevelName = LobbyScene->GetCurrentLevelName();
+		USceneManager::SwitchScene(LobbyScene);
 		return;
 	}
 
@@ -723,8 +731,18 @@ void ASlowPlayableCharacter::DisableWeapon()
 
 bool ASlowPlayableCharacter::FireInteractionRay(float RayLength)
 {
-	const FVector MyLocation = GetActorLocation();
-	const FVector ForwardDir = GetActorRotation().RotateVector(FVector::ForwardVector);
+	FVector MyLocation = GetActorLocation();
+	const FVector ForwardDir = GetPlayerDirection();
+
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (Capsule == nullptr)
+	{
+		return false;
+	}	
+
+	float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+	MyLocation.Z -= HalfHeight;
+	MyLocation.Z += 50.0f;
 
 	const FVector RayStart = MyLocation;
 	const FVector RayEnd = MyLocation + ForwardDir * RayLength;
@@ -757,6 +775,26 @@ bool ASlowPlayableCharacter::FireInteractionRay(float RayLength)
 	}
 
 	return InteractionComponent->OnHitInteractionRay(this, HitResult);
+}
+
+void ASlowPlayableCharacter::SetKillOffsetState(bool bNewFlag)
+{
+	KillActorOffsetFlag = bNewFlag;
+}
+
+void ASlowPlayableCharacter::RefreshKillOffset(bool bAutoWakeup)
+{
+	PlayerKill_ZPos = GetActorLocation().Z - 7000;
+	
+	if (bAutoWakeup)
+	{
+		SetKillOffsetState(true);
+	}
+}
+
+FName ASlowPlayableCharacter::GetLastLevelName() const
+{
+	return LastLevelName;
 }
 
 bool ASlowPlayableCharacter::AddFaint(float num)

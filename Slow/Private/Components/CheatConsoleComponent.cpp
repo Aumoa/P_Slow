@@ -77,6 +77,18 @@ bool UCheatConsoleComponent::ConsoleCommand(const FString& CheatString, bool bWr
 		return false;
 	}
 
+	MakeCheat(ReloadLevel)
+	{
+		auto GameplayScene = Cast<UGameplayLobbyScene>(SCENE_MANAGER.GetCurrentScene());
+		if (GameplayScene == nullptr)
+		{
+			CheatFailedHandle(TEXT("Current scene is not type of GameplayLobbyScene."));
+			return true;
+		}
+
+		GameplayScene->ReloadLevels();
+	}
+
 	MakeCheat(MigrateLevelGroup)
 	{
 		auto GameplayScene = Cast<UGameplayLobbyScene>(SCENE_MANAGER.GetCurrentScene());

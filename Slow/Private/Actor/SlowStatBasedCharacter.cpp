@@ -9,9 +9,9 @@ void ASlowStatBasedCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	StatValidCheck();
 	AttrInstance.HealthPoint = InitialAttribute.StartHealth;
 	AttrInstance.StaminaPoint = InitialAttribute.StartStamina;
+	StatValidCheck();
 }
 
 ASlowStatBasedCharacter::ASlowStatBasedCharacter()
@@ -106,7 +106,7 @@ void ASlowStatBasedCharacter::OnActorKill()
 void ASlowStatBasedCharacter::StatValidCheck()
 {
 	// HP 스탯에 대한 변경 사항을 검사합니다.
-	if (AttrInstance.HealthPoint < InitialAttribute.MinHealth)
+	if (AttrInstance.HealthPoint <= InitialAttribute.MinHealth)
 	{
 		OnActorKill();
 	}

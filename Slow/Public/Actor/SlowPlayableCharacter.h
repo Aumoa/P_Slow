@@ -86,6 +86,7 @@ private:
 	//이미 데미지를 주었는지?
 	bool IsValidAttack;
 	bool IsDead;
+	bool KillActorOffsetFlag = true;
 
 	float RollTime;
 	float RollCost = 22;
@@ -98,6 +99,7 @@ private:
 	float MoveCooldown; //이동 쿨타임
 	float BehaviorCoolDown; //행동 쿨타임
 	
+	FName LastLevelName;
 
 protected:
 	void BeginPlay() override;
@@ -140,8 +142,9 @@ public:
 	void DisableWeapon();
 
 	bool FireInteractionRay(float RayLength = 300.0f);
-
-	
+	void SetKillOffsetState(bool bNewFlag);
+	void RefreshKillOffset(bool bAutoWakeup = true);
+	FName GetLastLevelName() const;
 
 	UFUNCTION(BlueprintCallable)
 	ASlowStatBasedCharacter* GetTarget();

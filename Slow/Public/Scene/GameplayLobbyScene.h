@@ -25,6 +25,9 @@ private:
 	UPROPERTY()
 	ULevelStreamingStatics* LevelStreamingStatics;
 
+	TOptional<float> SavedGravityScale;
+	static FName LastLevelName;
+
 public:
 	UGameplayLobbyScene();
 
@@ -33,9 +36,12 @@ public:
 	void EndPlay() override;
 	
 	void MigrateLevelGroup(FName LevelGroupName);
+	void ReloadLevels();
+
+	FName GetCurrentLevelName() const;
 
 protected:
-	virtual void OnStreamLoaded();
+	virtual void OnStreamLoaded(bool bReinitCharacter = false);
 
 private:
 	void BeginLoadLevel();

@@ -13,6 +13,7 @@ private:
 	static UDataTable* DataTable;
 
 	TArray<FName> LastCommittedLevels;
+	FName LastCommittedSublevelGroup;
 
 	UObject* TempWorldContext;
 	TUniquePtr<FCriticalSection> CS_AsyncTaskResult;
@@ -24,6 +25,7 @@ public:
 	ULevelStreamingStatics();
 
 	void LoadSublevelGroup(UObject* InWorldContext, const FName& SublevelGroupName, TFunction<void()> CompletionCallback);
+	void ReloadCurrentSublevel(UObject* InWorldContext, TFunction<void()> CompletionCallback);
 
 private:
 	UFUNCTION()

@@ -10,6 +10,8 @@
 #include "Common/SlowLogDefine.h"
 #include "Misc/LevelStreamingStatics.h"
 
+FName UGameplayLobbyScene::LastLevelName;
+
 UGameplayLobbyScene::UGameplayLobbyScene()
 {
 	bStreamLoaded_Base = false;
@@ -35,8 +37,25 @@ void UGameplayLobbyScene::BeginLevel(ASlowPlayerController* InPlayerController)
 	BeginLoadLevel();
 
 	// 비동기 로딩 작업을 진행합니다.
+	TOptional<float> PrevGravityScale;
+	ASlowPlayableCharacter* Pawn = SPAWN_MANAGER.GetPlayerPawn();
+	FName TargetLevelName = LastLevelName == NAME_None ? TEXT("Base") : LastLevelName;
+
+	if (Pawn != nullptr)
+	{
+		Pawn->SetKillOffsetState(false);
+
+		auto Movement = Cast<UCharacterMovementComponent>(Pawn->GetMovementComponent());
+		if (Movement != nullptr)
+		{
+			SavedGravityScale = Movement->GravityScale;
+			Movement->GravityScale = 0;
+		}
+	}
+
 	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
-	LevelStreamingStatics->LoadSublevelGroup(WorldContext, TEXT("Base"), [&]()
+	LastLevelName = TargetLevelName;
+	LevelStreamingStatics->LoadSublevelGroup(WorldContext, TargetLevelName, [&]()
 		{
 			OnStreamLoaded();
 		}
@@ -53,6 +72,7 @@ void UGameplayLobbyScene::MigrateLevelGroup(FName LevelGroupName)
 	BeginLoadLevel();
 
 	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
+	LastLevelName = LevelGroupName;
 	LevelStreamingStatics->LoadSublevelGroup(WorldContext, LevelGroupName, [&]()
 		{
 			OnStreamLoaded();
@@ -60,7 +80,21 @@ void UGameplayLobbyScene::MigrateLevelGroup(FName LevelGroupName)
 	);
 }
 
-void UGameplayLobbyScene::OnStreamLoaded()
+void UGameplayLobbyScene::ReloadLevels()
+{
+	LevelStreamingStatics->ReloadCurrentSublevel(USlowGameInstance::GetGameInstance(), [&]()
+		{
+			OnStreamLoaded(true);
+		}
+	);
+}
+
+FName UGameplayLobbyScene::GetCurrentLevelName() const
+{
+	return LastLevelName;
+}
+
+void UGameplayLobbyScene::OnStreamLoaded(bool bReinitCharacter)
 {
 	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
 	ASlowPlayerController* const PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(WorldContext, 0));
@@ -77,11 +111,23 @@ void UGameplayLobbyScene::OnStreamLoaded()
 			ASlowPlayerController* const CachedPlayerController = WeakPlayerController.Get();
 
 			FTransform initialSpawn = SPAWN_MANAGER.GetSpawnerTransformByType(ESpawnerType::Character);
-			TempSpawn = SPAWN_MANAGER.SpawnPlayerPawn(initialSpawn);
+			TempSpawn = SPAWN_MANAGER.SpawnPlayerPawn(initialSpawn, bReinitCharacter);
 
 			if (WeakPlayerController->GetPawn() == nullptr)
 			{
 				WeakPlayerController->Possess(TempSpawn);
+			}
+
+			auto PlayableCharacter = Cast<ASlowPlayableCharacter>(TempSpawn);
+			if (PlayableCharacter != nullptr)
+			{
+				PlayableCharacter->RefreshKillOffset();
+
+				if (UCharacterMovementComponent* Movement = nullptr; SavedGravityScale.IsSet() && Cast<UCharacterMovementComponent>(PlayableCharacter->GetMovementComponent()))
+				{
+					Movement->GravityScale = SavedGravityScale.GetValue();
+					SavedGravityScale = TOptional<float>();
+				}
 			}
 
 			EndLoadLevel();
