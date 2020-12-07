@@ -148,6 +148,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	ASlowStatBasedCharacter* GetTarget();
+	UFUNCTION(BlueprintCallable)
+	bool CreateCombatUIWidget();
 
 private:
 	void NewWeaponManager();

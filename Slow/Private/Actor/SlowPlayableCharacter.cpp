@@ -81,9 +81,6 @@ void ASlowPlayableCharacter::BeginPlay()
 
 	DamageEffect = new FStatModifyLinearEffect(this);
 
-	MyCombatUIWidget = UWidgetManager::CreateSlowWidget<USlowCombatUIWidget>(TEXT("Widget.SlowCombatUI"));
-	MyCombatUIWidget->SetOwnerCharacter(this);
-
 	PlayerDirection = GetActorForwardVector();
 	RollTime = -1.0f;
 	BehaviorCoolDown = 0.0f;
@@ -866,4 +863,17 @@ ASlowStatBasedCharacter* ASlowPlayableCharacter::GetTarget()
 	ASlowStatBasedCharacter *Character = Cast<ASlowStatBasedCharacter>(AttackAbility->GetTarget());
 
 	return Character;
+}
+
+bool ASlowPlayableCharacter::CreateCombatUIWidget()
+{
+	MyCombatUIWidget = UWidgetManager::CreateSlowWidget<USlowCombatUIWidget>(TEXT("Widget.SlowCombatUI"));
+	if (MyCombatUIWidget == nullptr)
+	{
+		return false;
+	}
+
+	MyCombatUIWidget->SetOwnerCharacter(this);
+
+	return false;
 }
