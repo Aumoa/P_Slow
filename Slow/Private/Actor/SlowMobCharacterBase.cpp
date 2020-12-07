@@ -72,6 +72,13 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 		Destroy();
 	}
 
+	else if(IsFaint)
+	{
+		CumDamageTime = 0;
+		DeltaHP = GetCurrentHP();
+		IsFaint = false;
+	}
+
 	if (CumDamageTime >= 5.0f)
 	{
 		CumDamageTime = 0;
@@ -80,12 +87,9 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 
 	else
 	{
-		if (DeltaHP - GetCurrentHP() >= GetMaxHP() * GetInitialAttribute().FaintPercent)
+		if (!IsFaint && DeltaHP - GetCurrentHP() >= GetMaxHP() * GetInitialAttribute().FaintPercent)
 		{
 			AddFaint(6.f);
-			CumDamageTime = 0;
-			DeltaHP = GetCurrentHP();
-			
 		}
 
 		else
@@ -242,7 +246,7 @@ bool ASlowMobCharacterBase::AddFaint(float num)
 
 	GetMesh()->GetAnimInstance()->StopAllMontages(0.01f);
 	PlayMontage(FaintMontage);
-	
+	IsFaint = true;
 
 	return true;
 }

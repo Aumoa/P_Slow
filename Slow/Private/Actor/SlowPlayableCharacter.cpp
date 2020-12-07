@@ -325,10 +325,10 @@ void ASlowPlayableCharacter::OnPlayerAttack()
 	{
 		IsAttack = true;
 		IsValidAttack = true;
-		MoveCooldown = 0.1f;
+		MoveCooldown = 0.2f;
 
 		PlayerDirection = GetPlayerDirection();
-		LaunchCharacter(PlayerDirection * 500, true, true);
+		LaunchCharacter(PlayerDirection * 1000, true, true);
 
 		AnimInstance->StopAllMontages(0.15f);
 		AnimInstance->Montage_Play(AttackMontage);
