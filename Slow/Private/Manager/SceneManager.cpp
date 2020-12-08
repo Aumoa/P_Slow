@@ -5,6 +5,7 @@
 #include "SlowGameInstance.h"
 #include "SlowConfig.h"
 #include "Common/SlowLogDefine.h"
+#include "Manager/ConfigManager.h"
 
 USceneManager* USceneManager::SingletonInstance = nullptr;
 
@@ -12,7 +13,7 @@ void USceneManager::Initialize(USlowGameInstance* GInstance)
 {
 	Super::Initialize(GInstance);
 
-	auto Config = GInstance->GetConfig();
+	auto Config = CONFIG_MANAGER.GetBlueprintConfig();
 
 	StartupScene = NewObject<USceneBase>(this, Config->StartupScene);
 	DemoScene = NewObject<USceneBase>(this, Config->DemoScene);
@@ -27,7 +28,7 @@ void USceneManager::BeginLevel(ASlowPlayerController* InPlayerController)
 		CurrentScene->BeginLevel(InPlayerController);
 	}
 	else {
-		LoadScene(GetGameInstance()->GetConfig()->EntryPoint);
+		LoadScene(CONFIG_MANAGER.GetBlueprintConfig()->EntryPoint);
 	}
 }
 

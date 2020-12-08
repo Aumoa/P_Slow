@@ -6,6 +6,8 @@
 
 #include "ConfigManager.generated.h"
 
+class USlowConfig;
+
 UCLASS()
 class SLOW_API UConfigManager : public UManagerBase
 {
@@ -14,8 +16,19 @@ class SLOW_API UConfigManager : public UManagerBase
 private:
 	static UConfigManager* SingletonInstance;
 
+	UPROPERTY()
+	UClass* SoftClassReference;
+
+	UPROPERTY()
+	USlowConfig* Config;
+
 public:
+	UConfigManager();
+
 	void Initialize(USlowGameInstance* GInstance) override;
+
+	UFUNCTION(BlueprintPure)
+	USlowConfig* GetBlueprintConfig() const;
 
 	static UConfigManager* GetInstance();
 };

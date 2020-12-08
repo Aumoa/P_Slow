@@ -27,7 +27,7 @@
 void UWeaponManager::Init()
 {
 	USlowGameInstance* GInstance = USlowGameInstance::GetGameInstance();
-	auto Config = GInstance->GetConfig();
+	auto Config = CONFIG_MANAGER.GetBlueprintConfig();
 
 	WeaponArray.Empty();
 

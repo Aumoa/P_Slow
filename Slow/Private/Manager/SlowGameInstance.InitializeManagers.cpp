@@ -10,10 +10,10 @@
 
 void USlowGameInstance::InitializeManagers()
 {
+	Managers.Add(NewObject<UConfigManager>(this));
 	Managers.Add(NewObject<USceneManager>(this));
 	Managers.Add(NewObject<USpawnManager>(this));
 	Managers.Add(NewObject<UWidgetManager>(this));
-	Managers.Add(NewObject<UConfigManager>(this));
 	Managers.Add(NewObject<UInputManager>(this));
 
 	for (int32 i = 0, count = Managers.Num(); i < count; ++i) {

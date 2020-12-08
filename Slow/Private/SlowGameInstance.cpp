@@ -10,15 +10,8 @@ USlowGameInstance* USlowGameInstance::Instance;
 
 void USlowGameInstance::Init()
 {
-	Config = NewObject<USlowConfig>(this);
-
 	Instance = this;
 	InitializeManagers();
-}
-
-USlowConfig* USlowGameInstance::GetConfig() const
-{
-	return Config;
 }
 
 USlowGameInstance* USlowGameInstance::GetGameInstance()

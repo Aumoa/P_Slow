@@ -4,7 +4,6 @@
 
 #include "SlowGameInstance.generated.h"
 
-class USlowConfig;
 class UManagerBase;
 
 UCLASS()
@@ -20,15 +19,10 @@ private:
 
 private:
 	UPROPERTY()
-	USlowConfig* Config;
-	UPROPERTY()
 	TArray<UManagerBase*> Managers;
 
 public:
 	void Init() override;
-
-	UFUNCTION(BlueprintCallable)
-	USlowConfig* GetConfig() const;
 
 	UFUNCTION(BlueprintCallable)
 	static USlowGameInstance* GetGameInstance();

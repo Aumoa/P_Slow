@@ -7,6 +7,7 @@
 #include "SlowConfig.h"
 #include "Manager/SceneManager.h"
 #include "Manager/WidgetManager.h"
+#include "Manager/ConfigManager.h"
 #include "UI/Widget/DemoWidget.h"
 
 void UDemoScene::BeginPlay(UObject* Args)
@@ -38,7 +39,7 @@ void UDemoScene::OnDemoEnded()
 
 void UDemoScene::OpenNextScene()
 {
-	auto Config = GameInstance->GetConfig();
+	auto Config = CONFIG_MANAGER.GetBlueprintConfig();
 
 	if (Config->bSkipDemo) {
 		OnDemoEnded();
