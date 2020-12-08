@@ -22,22 +22,11 @@ private:
 	UPROPERTY()
 	USceneBase* CurrentScene;
 
-	UPROPERTY()
-	USceneBase* StartupScene;
-	UPROPERTY()
-	USceneBase* DemoScene;
-	UPROPERTY()
-	USceneBase* IntroScene;
-	UPROPERTY()
-	USceneBase* GameplayScene;
-
 public:
 	void Initialize(USlowGameInstance* GInstance) override;
 
 	void BeginLevel(ASlowPlayerController* InPlayerController);
 
-	UFUNCTION(BlueprintCallable, Category = "SceneManager")
-	void LoadScene(const FString& SceneName, UObject* Args = nullptr);
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
 	void SwitchScene(USceneBase* InNextScene, UObject* Args = nullptr);
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
@@ -46,9 +35,6 @@ public:
 	void SendInputAction(const FName& ActionName, bool bPressed);
 
 	static USceneManager* GetInstance();
-
-private:
-	USceneBase* GetSceneByName(const FString& SceneName, bool& bChanged);
 };
 
 #define SCENE_MANAGER (*USceneManager::GetInstance())

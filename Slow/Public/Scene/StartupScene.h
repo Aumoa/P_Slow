@@ -2,21 +2,19 @@
 
 #pragma once
 
-
 #include "Scene/SceneBase.h"
 
 #include "StartupScene.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class SLOW_API UStartupScene : public USceneBase
 {
 	GENERATED_BODY()
 	
 public:
-	void BeginPlay( UObject* Args = nullptr ) override;
+	UStartupScene();
+
+	void BeginPlay(UObject* Args = nullptr) override;
 	void EndPlay() override;
 
 private:

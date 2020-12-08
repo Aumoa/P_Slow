@@ -1,16 +1,22 @@
 // Copyright 2020 Team slow. All right reserved.
 
-
 #include "Scene/StartupScene.h"
 
-#include "SlowGameInstance.h"
-#include "Common/SlowLogDefine.h"
+#include "SlowConfig.h"
 #include "Common/SlowConsoleVar.h"
 #include "Manager/SceneManager.h"
+#include "Manager/ConfigManager.h"
+#include "Scene/DemoScene.h"
+#include "Scene/IntroScene.h"
+
+UStartupScene::UStartupScene()
+{
+	PersistentLevelName = TEXT("Startup");
+}
 
 void UStartupScene::BeginPlay( UObject* Args )
 {
-	UGameplayStatics::OpenLevel( this, TEXT( "Startup" ) );
+	Super::BeginPlay(Args);
 
 	OpenDemoScene();
 }
@@ -22,14 +28,21 @@ void UStartupScene::EndPlay()
 
 void UStartupScene::OpenDemoScene()
 {
-	bool bSkipDemo = ConsoleVariable::Slow::SkipDemo.GetValueOnGameThread();
+	using namespace ConsoleVariable::Slow;
 
-	FString NextSceneName = TEXT("Demo");
+	USlowConfig* const Config = CONFIG_MANAGER.GetBlueprintConfig();
 
+	bool bSkipDemo = SkipDemo.GetValueOnGameThread() || Config->IsSkipDemo();
+
+	USceneBase* NextScene = nullptr;
 	if (bSkipDemo)
 	{
-		NextSceneName = TEXT("Intro");
+		NextScene = NewObject<UIntroScene>(GetOuter());
+	}
+	else
+	{
+		NextScene = NewObject<UDemoScene>(GetOuter());
 	}
 
-	SCENE_MANAGER.LoadScene(NextSceneName);
+	SCENE_MANAGER.SwitchScene(NextScene);
 }

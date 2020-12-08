@@ -1,39 +1,23 @@
 // Copyright 2020. Team slow, All right reserved.
 
 #include "Manager/WeaponManager.h"
+
 #include "SlowConfig.h"
-#include "SlowGameInstance.h"
-#include "Manager/ManagerBase.h"
+#include "Manager/ConfigManager.h"
 #include "Ability/WeaponBase.h"
 #include "Ability/HatchetWeapon.h"
 #include "Ability/HammerWeapon.h"
 #include "Ability/SwordWeapon.h"
 
-/*void UWeaponManager::Initialize(USlowGameInstance* GInstance)
-{
-	Super::Initialize(GInstance);
-
-	auto Config = GInstance->GetConfig();
-
-	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->HatchetWeapon));
-	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->SwordWeapon));
-	WeaponArray.Emplace(NewObject<UWeaponBase>(this, Config->HammerWeapon));
-	CurrentWeapon = WeaponArray[0];
-	SwapAnimState = false;
-	
-}*/
-
-
 void UWeaponManager::Init()
 {
-	USlowGameInstance* GInstance = USlowGameInstance::GetGameInstance();
 	auto Config = CONFIG_MANAGER.GetBlueprintConfig();
 
 	WeaponArray.Empty();
 
-	HammerWeapon = NewObject<UWeaponBase>(this, Config->HammerWeapon);
-	SwordWeapon = NewObject<UWeaponBase>(this, Config->SwordWeapon);
-	HatchetWeapon = NewObject<UWeaponBase>(this, Config->HatchetWeapon);
+	HammerWeapon = NewObject<UWeaponBase>(this, Config->GetHammerWeaponClass());
+	SwordWeapon = NewObject<UWeaponBase>(this, Config->GetSwordWeaponClass());
+	HatchetWeapon = NewObject<UWeaponBase>(this, Config->GetHatchetWeaponClass());
 
 	WeaponArray.Emplace(HammerWeapon);
 	WeaponArray.Emplace(SwordWeapon);

@@ -8,7 +8,7 @@
 
 UGameplayScene::UGameplayScene()
 {
-	SetCursorVisibleOverride(false);
+	bCursorVisibleOverride = false;
 }
 
 

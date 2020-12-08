@@ -7,6 +7,7 @@
 #include "Manager/WidgetManager.h"
 #include "UI/Widget/IntroWidget.h"
 #include "AnimInstance/SlowAnimInstance.h"
+#include "Scene/GameplayLobbyScene.h"
 
 void UIntroScene::BeginPlay(UObject* Args)
 {
@@ -37,5 +38,5 @@ void UIntroScene::OnActionInput(const FName& ActionName, bool bPressed)
 
 void UIntroScene::OnIntroNextSceneInput()
 {
-	SCENE_MANAGER.LoadScene(TEXT("Gameplay"));
+	SCENE_MANAGER.SwitchScene(NewObject<UGameplayLobbyScene>(GetOuter()));
 }

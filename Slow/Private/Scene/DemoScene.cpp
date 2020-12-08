@@ -1,19 +1,22 @@
 // Copyright 2020 Team slow. All right reserved.
 
-
 #include "Scene/DemoScene.h"
 
-#include "SlowGameInstance.h"
-#include "SlowConfig.h"
 #include "Manager/SceneManager.h"
 #include "Manager/WidgetManager.h"
-#include "Manager/ConfigManager.h"
 #include "UI/Widget/DemoWidget.h"
+#include "Scene/IntroScene.h"
+#include "Common/SlowCommonMacros.h"
+
+UDemoScene::UDemoScene()
+{
+	bCursorVisibleOverride = true;
+	PersistentLevelName = TEXT("Demo");
+}
 
 void UDemoScene::BeginPlay(UObject* Args)
 {
-	GameInstance = USlowGameInstance::GetGameInstance();
-	OpenNextScene();
+
 }
 
 void UDemoScene::BeginLevel(ASlowPlayerController* InPlayerController)
@@ -21,7 +24,7 @@ void UDemoScene::BeginLevel(ASlowPlayerController* InPlayerController)
 	Super::BeginLevel(InPlayerController);
 
 	MyWidget = WIDGET_MANAGER.CreateSlowWidget<UDemoWidget>(TEXT("Widget.DemoScene.Demo"));
-	MyWidget->DemoEnded.AddUObject(this, &UDemoScene::OnDemoEnded);
+	MyWidget->PendingClose.AddThisUObject(OnDemoEnded);
 }
 
 void UDemoScene::EndPlay()
@@ -34,17 +37,5 @@ void UDemoScene::EndPlay()
 
 void UDemoScene::OnDemoEnded()
 {
-	SCENE_MANAGER.LoadScene(TEXT("Intro"));
-}
-
-void UDemoScene::OpenNextScene()
-{
-	auto Config = CONFIG_MANAGER.GetBlueprintConfig();
-
-	if (Config->bSkipDemo) {
-		OnDemoEnded();
-	}
-	else {
-		UGameplayStatics::OpenLevel(this, TEXT("Demo"));
-	}
+	SCENE_MANAGER.SwitchScene(NewObject<UIntroScene>(GetOuter()));
 }

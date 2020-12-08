@@ -2,23 +2,26 @@
 
 #pragma once
 
-
-
-#include "Misc/KeepRelative.h"
-
 #include "SceneBase.generated.h"
 
 class ULevel;
 class UWorld;
 class ASlowPlayerController;
 
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, abstract)
 class SLOW_API USceneBase : public UObject
 {
 	GENERATED_BODY()
 
 private:
+	TWeakObjectPtr<ASlowPlayerController> PlayerController;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (BlueprintProtected = "true"))
 	uint8 bCursorVisibleOverride : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (BlueprintProtected = "true"))
+	FName PersistentLevelName;
 
 public:
 	USceneBase();
@@ -30,8 +33,5 @@ public:
 	virtual void OnActionInput(const FName& ActionName, bool bPressed);
 
 	bool GetCursorVisibleOverride() const;
-	APlayerController* GetCurrentPlayerController() const;
-
-protected:
-	void SetCursorVisibleOverride(bool bVisible);
+	ASlowPlayerController* GetCurrentPlayerController() const;
 };

@@ -2,7 +2,6 @@
 
 #pragma once
 
-
 #include "Scene/SceneBase.h"
 
 #include "DemoScene.generated.h"
@@ -16,18 +15,15 @@ class SLOW_API UDemoScene : public USceneBase
 	GENERATED_BODY()
 
 private:
-	TWeakObjectPtr<USlowGameInstance> GameInstance;
-
 	UPROPERTY()
 	UDemoWidget* MyWidget;
 
 public:
+	UDemoScene();
+
 	void BeginPlay( UObject* Args = nullptr ) override;
 	void BeginLevel(ASlowPlayerController* InPlayerController) override;
 	void EndPlay() override;
 
 	UFUNCTION( BlueprintCallable ) void OnDemoEnded();
-
-private:
-	void OpenNextScene();
 };

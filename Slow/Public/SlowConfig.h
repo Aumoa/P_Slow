@@ -2,32 +2,31 @@
 
 #pragma once
 
-
-
-#include "Scene/SceneBase.h"
-#include "Ability/WeaponBase.h"
-#include "Actor/SlowPlayableCharacter.h"
-
 #include "SlowConfig.generated.h"
+
+class UWeaponBase;
 
 UCLASS( Blueprintable )
 class SLOW_API USlowConfig : public UObject
 {
 	GENERATED_BODY()
-
-public:
-	USlowConfig( const FObjectInitializer& Initializer );
 	
-public:
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "General" ) FString EntryPoint;
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "General" ) bool bSkipDemo;
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "General", meta = (AllowPrivateAccess = "true"))
+	uint8 bSkipDemo : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf <UWeaponBase> HatchetWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf <UWeaponBase> SwordWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf <UWeaponBase> HammerWeapon;
 
 public:
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> StartupScene;
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> DemoScene;
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Scene" ) TSubclassOf<USceneBase> IntroScene;
+	USlowConfig(const FObjectInitializer& Initializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") TSubclassOf <UWeaponBase> HatchetWeapon;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") TSubclassOf <UWeaponBase> SwordWeapon;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") TSubclassOf <UWeaponBase> HammerWeapon;
+	bool IsSkipDemo() const;
+	TSubclassOf<UWeaponBase> GetHatchetWeaponClass() const;
+	TSubclassOf<UWeaponBase> GetSwordWeaponClass() const;
+	TSubclassOf<UWeaponBase> GetHammerWeaponClass() const;
 };

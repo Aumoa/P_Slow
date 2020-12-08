@@ -39,23 +39,13 @@ void UGameplayStage01Scene::EndPlay()
 
 void UGameplayStage01Scene::OnStreamLoaded()
 {
-	USlowGameInstance* const WorldContext = USlowGameInstance::GetGameInstance();
-	ASlowPlayerController* const PlayerController = Cast<ASlowPlayerController>(UGameplayStatics::GetPlayerController(WorldContext, 0));
-	checkf(PlayerController != nullptr, TEXT("%s: %s에서 가져온 %s가 nullptr입니다."), __FUNCTIONT__, nameof(WorldContext), nameof(PlayerController));
-
-	PlayerController->EnqueueGameThreadAction([&, WeakPlayerController = TWeakObjectPtr<ASlowPlayerController>(PlayerController)](UObject* InSender, UObject* InArgs)
+	GetCurrentPlayerController()->EnqueueGameThreadAction([&](UObject* InSender, UObject* InArgs)
 	{
-		if (!WeakPlayerController.IsValid())
-		{
-			UE_LOG(LogSlow, Error, TEXT("%s: %s가 올바르지 않은 값을 참조합니다. GC 또는 스레드 오류일 수 있습니다."), __FUNCTIONT__, nameof(WeakPlayerController));
-			return;
-		}
-
-		ASlowPlayerController* const CachedPlayerController = WeakPlayerController.Get();
+		ASlowPlayerController* const CachedPlayerController = GetCurrentPlayerController();
 		UGameplayStatics::UnloadStreamLevel(CachedPlayerController, TEXT("Loading"), FLatentActionInfo(), true);
 
 		FTransform initialSpawn = SPAWN_MANAGER.GetSpawnerTransformByType(ESpawnerType::Character);
 		TempSpawn = SPAWN_MANAGER.SpawnPlayerPawn(initialSpawn);
-		WeakPlayerController->Possess(TempSpawn);
+		CachedPlayerController->Possess(TempSpawn);
 	});
 }

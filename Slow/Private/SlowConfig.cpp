@@ -1,10 +1,8 @@
 // Copyright 2020 Team slow. All right reserved.
 
-
 #include "SlowConfig.h"
 
 #include "Scene/StartupScene.h"
-#include "Scene/DemoScene.h"
 #include "Scene/IntroScene.h"
 
 #include "Ability/HatchetWeapon.h"
@@ -13,14 +11,29 @@
 
 USlowConfig::USlowConfig( const FObjectInitializer& Initializer ) : Super( Initializer )
 {
-	EntryPoint = TEXT( "Startup" );
 	bSkipDemo = false;
-
-	StartupScene = UStartupScene::StaticClass();
-	DemoScene = UDemoScene::StaticClass();
-	IntroScene = UIntroScene::StaticClass();
 
 	HatchetWeapon = UHatchetWeapon::StaticClass();
 	SwordWeapon = USwordWeapon::StaticClass();
 	HammerWeapon = UHammerWeapon::StaticClass();
+}
+
+bool USlowConfig::IsSkipDemo() const
+{
+	return bSkipDemo;
+}
+
+TSubclassOf<UWeaponBase> USlowConfig::GetHatchetWeaponClass() const
+{
+	return HatchetWeapon;
+}
+
+TSubclassOf<UWeaponBase> USlowConfig::GetSwordWeaponClass() const
+{
+	return SwordWeapon;
+}
+
+TSubclassOf<UWeaponBase> USlowConfig::GetHammerWeaponClass() const
+{
+	return HammerWeapon;
 }
