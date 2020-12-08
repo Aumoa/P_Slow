@@ -19,6 +19,8 @@ private:
 	UIntroWidget* MyMainWidget;
 
 public:
+	UIntroScene();
+
 	void BeginPlay(UObject* Args = nullptr) override;
 	void BeginLevel(ASlowPlayerController* InPlayerController) override;
 	void EndPlay() override;

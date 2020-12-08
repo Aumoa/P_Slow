@@ -4,9 +4,12 @@
 
 #include "Controller/SlowPlayerController.h"
 #include "Common/SlowCommonMacros.h"
+#include "Misc/LevelStreamingStatics.h"
 
 USceneBase::USceneBase()
 {
+	LevelStreaming = CreateDefaultSubobject<ULevelStreamingStatics>(nameof(LevelStreaming));
+
 	bCursorVisibleOverride = true;
 	PersistentLevelName = NAME_None;
 }
@@ -42,9 +45,25 @@ ASlowPlayerController* USceneBase::GetCurrentPlayerController() const
 	ASlowPlayerController* Ref = PlayerController.Get();
 	if (Ref == nullptr)
 	{
-		SLOW_LOG(Error, TEXT("PlayerController that referenced on BeginLevel function is not valid on current time."));
+		SLOW_LOG(Error, TEXT("PlayerController that referenced on %s function is not valid on current time."), nameof_f(BeginLevel));
 		return nullptr;
 	}
 
 	return Ref;
+}
+
+void USceneBase::LoadSublevelGroup(FName SublevelGroup)
+{
+	LevelStreaming->LoadSublevelGroup(PlayerController.Get(), SublevelGroup, [&]()
+		{
+			PlayerController->EnqueueGameThreadAction([&](UObject* InSender, UObject* InArgs)
+				{
+					UNREFERENCED_PARAMETER(InSender);
+					UNREFERENCED_PARAMETER(InArgs);
+
+					SublevelGroupLoaded.Broadcast();
+				}
+			);
+		}
+	);
 }

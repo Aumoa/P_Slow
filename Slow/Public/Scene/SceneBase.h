@@ -7,14 +7,21 @@
 class ULevel;
 class UWorld;
 class ASlowPlayerController;
+class ULevelStreamingStatics;
 
 UCLASS(Blueprintable, abstract)
 class SLOW_API USceneBase : public UObject
 {
 	GENERATED_BODY()
 
+public:
+	DECLARE_EVENT(USceneBase, SublevelGroupLoadedEvent);
+
 private:
 	TWeakObjectPtr<ASlowPlayerController> PlayerController;
+
+	UPROPERTY()
+	ULevelStreamingStatics* LevelStreaming;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (BlueprintProtected = "true"))
@@ -34,4 +41,9 @@ public:
 
 	bool GetCursorVisibleOverride() const;
 	ASlowPlayerController* GetCurrentPlayerController() const;
+
+	SublevelGroupLoadedEvent SublevelGroupLoaded;
+
+protected:
+	void LoadSublevelGroup(FName SublevelGroup);
 };

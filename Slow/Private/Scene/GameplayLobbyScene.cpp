@@ -17,7 +17,7 @@ UGameplayLobbyScene::UGameplayLobbyScene()
 	bStreamLoaded_Base = false;
 	bStreamLoaded_Boss1 = false;
 
-	LevelStreamingStatics = CreateDefaultSubobject<ULevelStreamingStatics>(TEXT("LevelStreaming"));
+	LevelStreamingStatics = CreateDefaultSubobject<ULevelStreamingStatics>(nameof(LevelStreamingStatics));
 }
 
 void UGameplayLobbyScene::BeginPlay(UObject* Args)

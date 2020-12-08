@@ -9,9 +9,14 @@
 #include "AnimInstance/SlowAnimInstance.h"
 #include "Scene/GameplayLobbyScene.h"
 
+UIntroScene::UIntroScene()
+{
+	PersistentLevelName = TEXT("Intro");
+}
+
 void UIntroScene::BeginPlay(UObject* Args)
 {
-	UGameplayStatics::OpenLevel(this, TEXT("Intro"));
+	Super::BeginPlay(Args);
 }
 
 void UIntroScene::BeginLevel(ASlowPlayerController* InPlayerController)
