@@ -23,13 +23,13 @@ void UIntroWidget::OnButtonClicked(USlowTextButton* InClickedButton)
 {
 	if (InClickedButton == PlayButton) {
 		if (StageSelectsWidget == nullptr) {
-			StageSelectsWidget = UWidgetManager::CreateSlowWidget<USlowStageSelectsWidget>(TEXT("Widget.SlowStageSelectsWidget"));
+			StageSelectsWidget = WIDGET_MANAGER.CreateSlowWidget<USlowStageSelectsWidget>(TEXT("Widget.SlowStageSelectsWidget"));
 			StageSelectsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_StageSelects);
 		}
 	}
 	else if (InClickedButton == OptionButton) {
 		if (OptionsWidget == nullptr) {
-			OptionsWidget = UWidgetManager::CreateSlowWidget<USlowOptionsWidget>(TEXT("Widget.SlowOptionsWidget"));
+			OptionsWidget = WIDGET_MANAGER.CreateSlowWidget<USlowOptionsWidget>(TEXT("Widget.SlowOptionsWidget"));
 			OptionsWidget->Disposing.AddUObject(this, &UIntroWidget::OnDisposing_Options);
 		}
 	}
@@ -55,7 +55,7 @@ void UIntroWidget::OnDisposing_StageSelects()
 		StageSelectsWidget = nullptr;
 
 		if (nextScene != nullptr) {
-			USceneManager::SwitchScene(nextScene);
+			SCENE_MANAGER.SwitchScene(nextScene);
 		}
 	}
 }

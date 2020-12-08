@@ -2,10 +2,6 @@
 
 #pragma once
 
-
-
-#include "Manager/ManagerBase.h"
-
 #include "SlowGameInstance.generated.h"
 
 class USlowConfig;

@@ -2,7 +2,16 @@
 
 #include "Manager/ConfigManager.h"
 
-UConfigManager* UConfigManager::GetSingletonInstance()
+UConfigManager* UConfigManager::SingletonInstance = nullptr;
+
+void UConfigManager::Initialize(USlowGameInstance* GInstance)
 {
-	return Super::GetSingletonInstance<UConfigManager>();
+	Super::Initialize(GInstance);
+
+	SingletonInstance = this;
+}
+
+UConfigManager* UConfigManager::GetInstance()
+{
+	return SingletonInstance;
 }

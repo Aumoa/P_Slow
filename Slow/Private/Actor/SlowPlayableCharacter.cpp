@@ -149,7 +149,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ASlowPlayableCharacter::OnActionInput :: Reset Init!!"));
 
-		auto LobbyScene = Cast<UGameplayLobbyScene>(USceneManager::GetCurrentScene());
+		auto LobbyScene = Cast<UGameplayLobbyScene>(SCENE_MANAGER.GetCurrentScene());
 		if (LobbyScene == nullptr)
 		{
 			SLOW_LOG(Error, TEXT("Current scene is not lobby scene."));
@@ -157,7 +157,7 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		}
 
 		LastLevelName = LobbyScene->GetCurrentLevelName();
-		USceneManager::SwitchScene(LobbyScene);
+		SCENE_MANAGER.SwitchScene(LobbyScene);
 		return;
 	}
 
@@ -850,7 +850,7 @@ void ASlowPlayableCharacter::OnActorKill()
 
 	BehaviorCoolDown = 99999.0f;
 	IsDead = true;
-	UWidgetManager::CreateSlowWidget<USlowWidgetBase>(TEXT("Widget.SlowDeathLogoUI"));
+	WIDGET_MANAGER.CreateSlowWidget<USlowWidgetBase>(TEXT("Widget.SlowDeathLogoUI"));
 }
 
 ASlowStatBasedCharacter* ASlowPlayableCharacter::GetTarget()
@@ -867,7 +867,7 @@ ASlowStatBasedCharacter* ASlowPlayableCharacter::GetTarget()
 
 bool ASlowPlayableCharacter::CreateCombatUIWidget()
 {
-	MyCombatUIWidget = UWidgetManager::CreateSlowWidget<USlowCombatUIWidget>(TEXT("Widget.SlowCombatUI"));
+	MyCombatUIWidget = WIDGET_MANAGER.CreateSlowWidget<USlowCombatUIWidget>(TEXT("Widget.SlowCombatUI"));
 	if (MyCombatUIWidget == nullptr)
 	{
 		return false;

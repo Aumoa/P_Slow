@@ -11,19 +11,27 @@
 #include "Statics/SlowNavigationSystem.h"
 #include "Components/SpawnerComponent.h"
 
+USpawnManager* USpawnManager::SingletonInstance = nullptr;
+
 USpawnManager::USpawnManager()
 {
 	CorePlayerChar = nullptr;
+}
+
+void USpawnManager::Initialize(USlowGameInstance* GInstance)
+{
+	Super::Initialize(GInstance);
+
+	SingletonInstance = this;
 }
 
 ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform, bool bForceSpawn)
 {
 	if (CorePlayerChar == nullptr)
 	{
-		auto instance = GetSingletonInstance();
-		auto world = instance->GetWorld();
+		UWorld* const World = GetWorld();
 
-		if (world == nullptr) {
+		if (World == nullptr) {
 			SLOW_LOG(Error, TEXT("GameInstance haven't world context."));
 			return nullptr;
 		}
@@ -31,11 +39,11 @@ ASlowPlayableCharacter* USpawnManager::SpawnPlayerPawn(FTransform Transform, boo
 		TSubclassOf<AActor> _class = UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter"));
 		FVector amendedLocation = Transform.GetLocation();
 
-		if (FSlowNavigationSystem::FindActorStandableLocation(world, Cast<AActor>(_class->GetDefaultObject()), Transform.GetLocation(), &amendedLocation)) {
+		if (FSlowNavigationSystem::FindActorStandableLocation(World, Cast<AActor>(_class->GetDefaultObject()), Transform.GetLocation(), &amendedLocation)) {
 			Transform.SetLocation(amendedLocation);
 		}
 
-		CorePlayerChar = world->SpawnActor<ASlowPlayableCharacter>(UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter")), Transform);
+		CorePlayerChar = World->SpawnActor<ASlowPlayableCharacter>(UActorReference::GetReference(TEXT("Actor.SlowPlayableCharacter")), Transform);
 	}
 	else
 	{
@@ -128,6 +136,11 @@ FTransform USpawnManager::GetSpawnerTransformByCustomKey(const FString& InCustom
 	return FTransform::Identity;
 }
 
+USpawnManager* USpawnManager::GetInstance()
+{
+	return SingletonInstance;
+}
+
 FTransform USpawnManager::GetSpawnerTransform(USpawnerComponent* Spawner) const
 {
 	AActor* const Actor = Spawner->GetOwner();
@@ -139,9 +152,4 @@ FTransform USpawnManager::GetSpawnerTransform(USpawnerComponent* Spawner) const
 	}
 
 	return Actor->GetActorTransform();
-}
-
-USpawnManager* USpawnManager::GetSingletonInstance()
-{
-	return Super::GetSingletonInstance<USpawnManager>();
 }

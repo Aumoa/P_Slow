@@ -2,8 +2,6 @@
 
 #pragma once
 
-
-
 #include "ManagerBase.generated.h"
 
 class USlowGameInstance;
@@ -24,7 +22,7 @@ protected:
 	}
 
 public:
-	virtual void Initialize( USlowGameInstance* GInstance );
+	virtual void Initialize(USlowGameInstance* GInstance);
 
 	static USlowGameInstance* GetGameInstance();
 

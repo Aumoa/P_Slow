@@ -44,8 +44,8 @@ void ASlowPlayerController::BeginPlay()
 
 	Super::BeginPlay();
 
-	USceneManager::BeginLevel(this);
-	UInputManager::SetPlayerController(this);
+	SCENE_MANAGER.BeginLevel(this);
+	INPUT_MANAGER.SetPlayerController(this);
 }
 
 void ASlowPlayerController::SetupInputComponent()

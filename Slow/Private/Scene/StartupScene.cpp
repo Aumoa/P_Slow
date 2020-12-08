@@ -31,5 +31,5 @@ void UStartupScene::OpenDemoScene()
 		NextSceneName = TEXT("Intro");
 	}
 
-	USceneManager::LoadScene(NextSceneName);
+	SCENE_MANAGER.LoadScene(NextSceneName);
 }

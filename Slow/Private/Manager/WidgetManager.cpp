@@ -6,6 +6,25 @@
 #include "Datatable/UIReference.h"
 #include "UI/SlowWidgetBase.h"
 
+UWidgetManager* UWidgetManager::SingletonInstance = nullptr;
+
+UWidgetManager::UWidgetManager()
+{
+	bClearAllWhenSceneChanged = false;
+}
+
+void UWidgetManager::Initialize(USlowGameInstance* GInstance)
+{
+	Super::Initialize(GInstance);
+
+	SingletonInstance = this;
+}
+
+UWidgetManager* UWidgetManager::GetInstance()
+{
+	return SingletonInstance;
+}
+
 USlowWidgetBase* UWidgetManager::CreateSlowWidgetInternal(const FName& InReferenceKey, APlayerController* InPlayerController, bool bVisible)
 {
 	USlowGameInstance* gameInstance = Super::GetGameInstance();
@@ -36,9 +55,4 @@ USlowWidgetBase* UWidgetManager::CreateHUDWidgetInternal(const FName& InReferenc
 	}
 
 	return widget;
-}
-
-UWidgetManager* UWidgetManager::GetSingletonInstance()
-{
-	return Super::GetSingletonInstance<UWidgetManager>();
 }

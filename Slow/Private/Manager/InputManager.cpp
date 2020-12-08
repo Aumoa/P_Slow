@@ -2,13 +2,21 @@
 
 #include "Manager/InputManager.h"
 
-void UInputManager::SetPlayerController(APlayerController* playerController)
+UInputManager* UInputManager::SingletonInstance = nullptr;
+
+void UInputManager::Initialize(USlowGameInstance* GInstance)
 {
-	auto instance = GetSingletonInstance();
-	instance->PlayerController = playerController;
+	Super::Initialize(GInstance);
+
+	SingletonInstance = this;
 }
 
-UInputManager* UInputManager::GetSingletonInstance()
+void UInputManager::SetPlayerController(APlayerController* playerController)
 {
-	return Super::GetSingletonInstance<UInputManager>();
+	PlayerController = playerController;
+}
+
+UInputManager* UInputManager::GetInstance()
+{
+	return SingletonInstance;
 }

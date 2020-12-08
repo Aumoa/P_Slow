@@ -6,6 +6,8 @@
 #include "SlowConfig.h"
 #include "Common/SlowLogDefine.h"
 
+USceneManager* USceneManager::SingletonInstance = nullptr;
+
 void USceneManager::Initialize(USlowGameInstance* GInstance)
 {
 	Super::Initialize(GInstance);
@@ -15,14 +17,14 @@ void USceneManager::Initialize(USlowGameInstance* GInstance)
 	StartupScene = NewObject<USceneBase>(this, Config->StartupScene);
 	DemoScene = NewObject<USceneBase>(this, Config->DemoScene);
 	IntroScene = NewObject<USceneBase>(this, Config->IntroScene);
+
+	SingletonInstance = this;
 }
 
 void USceneManager::BeginLevel(ASlowPlayerController* InPlayerController)
 {
-	auto Instance = GetSingletonInstance();
-
-	if (Instance->CurrentScene != nullptr) {
-		Instance->CurrentScene->BeginLevel(InPlayerController);
+	if (CurrentScene != nullptr) {
+		CurrentScene->BeginLevel(InPlayerController);
 	}
 	else {
 		LoadScene(GetGameInstance()->GetConfig()->EntryPoint);
@@ -31,83 +33,80 @@ void USceneManager::BeginLevel(ASlowPlayerController* InPlayerController)
 
 void USceneManager::LoadScene(const FString& SceneName, UObject* Args)
 {
-	auto Instance = GetSingletonInstance();
-
 	bool bChanged = false;
 
-	if (Instance->CurrentScene != nullptr) {
-		Instance->CurrentScene->EndPlay();
+	if (CurrentScene != nullptr) {
+		CurrentScene->EndPlay();
 	}
 
-	Instance->CurrentScene = GetSceneByName(Instance, SceneName, bChanged);
+	CurrentScene = GetSceneByName(SceneName, bChanged);
 
 	if (bChanged) {
-		Instance->CurrentScene->BeginPlay(Args);
+		CurrentScene->BeginPlay(Args);
 	}
 }
 
 void USceneManager::SwitchScene(USceneBase* InNextScene, UObject* Args)
 {
-	auto Instance = GetSingletonInstance();
 	bool bChanged = false;
 
-	if (Instance->CurrentScene != nullptr) {
-		Instance->CurrentScene->EndPlay();
+	if (CurrentScene != nullptr) {
+		CurrentScene->EndPlay();
 	}
 
-	Instance->CurrentScene = InNextScene;
+	CurrentScene = InNextScene;
 	bChanged = true;
 	
 
 	if (bChanged) {
-		Instance->CurrentScene->BeginPlay(Args);
+		CurrentScene->BeginPlay(Args);
 	}
 }
 
 USceneBase* USceneManager::GetCurrentScene()
 {
-	return GetSingletonInstance()->CurrentScene;
+	return CurrentScene;
 }
 
 void USceneManager::SendInputAction(const FName& ActionName, bool bPressed)
 {
-	return GetSingletonInstance()->CurrentScene->OnActionInput(ActionName, bPressed);
+	return CurrentScene->OnActionInput(ActionName, bPressed);
 }
 
-USceneBase* USceneManager::GetSceneByName(USceneManager* Instance, const FString& SceneName, bool& bChanged)
+USceneManager* USceneManager::GetInstance()
+{
+	return SingletonInstance;
+}
+
+USceneBase* USceneManager::GetSceneByName(const FString& SceneName, bool& bChanged)
 {
 	USceneBase* NextScene = nullptr;
 	bChanged = false;
 
 	if (SceneName == TEXT("Startup")) {
-		NextScene = Instance->StartupScene;
+		NextScene = StartupScene;
 	}
 	else if (SceneName == TEXT("Demo")) {
-		NextScene = Instance->DemoScene;
+		NextScene = DemoScene;
 	}
 	else if (SceneName == TEXT("Intro")) {
-		NextScene = Instance->IntroScene;
+		NextScene = IntroScene;
 	}
 	else if (SceneName == TEXT("Gameplay")) {
-		NextScene = Instance->GameplayScene;
+		NextScene = GameplayScene;
 	}
 	else if (SceneName == TEXT("Map_1S")) {
-		NextScene = Instance->GameplayScene;
+		NextScene = GameplayScene;
 	}
 
 	else {
 		UE_LOG(LogSlow, Error, TEXT("Scene name: [%s] is not registered."), *SceneName);
-		return Instance->CurrentScene;
+		return CurrentScene;
 	}
 
-	if (Instance->CurrentScene != NextScene) {
+	if (CurrentScene != NextScene) {
 		bChanged = true;
 	}
 
 	return NextScene;
-}
-
-USceneManager* USceneManager::GetSingletonInstance()
-{
-	return Super::GetSingletonInstance<USceneManager>();
 }

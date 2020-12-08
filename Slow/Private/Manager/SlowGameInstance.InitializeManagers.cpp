@@ -7,7 +7,6 @@
 #include "Manager/WidgetManager.h"
 #include "Manager/ConfigManager.h"
 #include "Manager/InputManager.h"
-#include "Manager/WeaponManager.h"
 
 void USlowGameInstance::InitializeManagers()
 {

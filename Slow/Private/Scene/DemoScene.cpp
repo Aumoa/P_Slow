@@ -19,7 +19,7 @@ void UDemoScene::BeginLevel(ASlowPlayerController* InPlayerController)
 {
 	Super::BeginLevel(InPlayerController);
 
-	MyWidget = UWidgetManager::CreateSlowWidget<UDemoWidget>(TEXT("Widget.DemoScene.Demo"));
+	MyWidget = WIDGET_MANAGER.CreateSlowWidget<UDemoWidget>(TEXT("Widget.DemoScene.Demo"));
 	MyWidget->DemoEnded.AddUObject(this, &UDemoScene::OnDemoEnded);
 }
 
@@ -33,7 +33,7 @@ void UDemoScene::EndPlay()
 
 void UDemoScene::OnDemoEnded()
 {
-	USceneManager::LoadScene(TEXT("Intro"));
+	SCENE_MANAGER.LoadScene(TEXT("Intro"));
 }
 
 void UDemoScene::OpenNextScene()

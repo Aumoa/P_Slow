@@ -19,7 +19,7 @@ void UIntroScene::BeginLevel(ASlowPlayerController* InPlayerController)
 
 	USlowAnimInstance::SetManagerAccessibleState(true);
 
-	MyMainWidget = UWidgetManager::CreateSlowWidget<UIntroWidget>(TEXT("Widget.IntroScene.IntroMain"));
+	MyMainWidget = WIDGET_MANAGER.CreateSlowWidget<UIntroWidget>(TEXT("Widget.IntroScene.IntroMain"));
 }
 
 void UIntroScene::EndPlay()
@@ -37,5 +37,5 @@ void UIntroScene::OnActionInput(const FName& ActionName, bool bPressed)
 
 void UIntroScene::OnIntroNextSceneInput()
 {
-	USceneManager::LoadScene(TEXT("Gameplay"));
+	SCENE_MANAGER.LoadScene(TEXT("Gameplay"));
 }

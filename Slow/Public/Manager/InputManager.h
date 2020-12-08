@@ -2,7 +2,6 @@
 
 #pragma once
 
-
 #include "ManagerBase.h"
 
 #include "InputManager.generated.h"
@@ -15,12 +14,17 @@ class SLOW_API UInputManager : public UManagerBase
 	GENERATED_BODY()
 
 private:
+	static UInputManager* SingletonInstance;
+
 	UPROPERTY()
 	APlayerController* PlayerController = nullptr;
 
 public:
-	static void SetPlayerController(APlayerController* playerController);
+	void Initialize(USlowGameInstance* GInstance) override;
 
-private:
-	static UInputManager* GetSingletonInstance();
+	void SetPlayerController(APlayerController* playerController);
+
+	static UInputManager* GetInstance();
 };
+
+#define INPUT_MANAGER (*UInputManager::GetInstance())

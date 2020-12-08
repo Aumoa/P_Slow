@@ -18,6 +18,8 @@ class SLOW_API USpawnManager : public UManagerBase
 	GENERATED_BODY()
 
 private:
+	static USpawnManager* SingletonInstance;
+
 	UPROPERTY()
 	ASlowPlayableCharacter* CorePlayerChar;
 
@@ -26,6 +28,8 @@ private:
 	
 public:
 	USpawnManager();
+
+	void Initialize(USlowGameInstance* GInstance) override;
 
 	UFUNCTION(BlueprintCallable, Category = "SpawnManager")
 	ASlowPlayableCharacter* SpawnPlayerPawn(FTransform Transform, bool bForceSpawn = false);
@@ -45,12 +49,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "SpawnManager")
 	FTransform GetSpawnerTransformByCustomKey(const FString& InCustomKey) const;
 
+	static USpawnManager* GetInstance();
+
 private:
 	FTransform GetSpawnerTransform(USpawnerComponent* Spawner) const;
-
-	static USpawnManager* GetSingletonInstance();
 };
 
-#ifdef GAME_INSTANCE
-#define SPAWN_MANAGER (*((USpawnManager*)GAME_INSTANCE.GetManager(USpawnManager::StaticClass())))
-#endif
+#define SPAWN_MANAGER (*USpawnManager::GetInstance())

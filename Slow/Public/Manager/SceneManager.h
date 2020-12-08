@@ -2,7 +2,6 @@
 
 #pragma once
 
-
 #include "ManagerBase.h"
 
 #include "SceneManager.generated.h"
@@ -18,31 +17,38 @@ class SLOW_API USceneManager : public UManagerBase
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY() USceneBase* CurrentScene;
+	static USceneManager* SingletonInstance;
 
-	UPROPERTY() USceneBase* StartupScene;
-	UPROPERTY() USceneBase* DemoScene;
-	UPROPERTY() USceneBase* IntroScene;
-	UPROPERTY() USceneBase* GameplayScene;
+	UPROPERTY()
+	USceneBase* CurrentScene;
+
+	UPROPERTY()
+	USceneBase* StartupScene;
+	UPROPERTY()
+	USceneBase* DemoScene;
+	UPROPERTY()
+	USceneBase* IntroScene;
+	UPROPERTY()
+	USceneBase* GameplayScene;
 
 public:
 	void Initialize(USlowGameInstance* GInstance) override;
 
-	static void BeginLevel(ASlowPlayerController* InPlayerController);
+	void BeginLevel(ASlowPlayerController* InPlayerController);
 
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
-	static void LoadScene(const FString& SceneName, UObject* Args = nullptr);
+	void LoadScene(const FString& SceneName, UObject* Args = nullptr);
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
-	static void SwitchScene(USceneBase* InNextScene, UObject* Args = nullptr);
+	void SwitchScene(USceneBase* InNextScene, UObject* Args = nullptr);
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
-	static USceneBase* GetCurrentScene();
+	USceneBase* GetCurrentScene();
 	UFUNCTION(BlueprintCallable, Category = "SceneManager")
-	static void SendInputAction(const FName& ActionName, bool bPressed);
+	void SendInputAction(const FName& ActionName, bool bPressed);
 
+	static USceneManager* GetInstance();
 
 private:
-	static USceneBase* GetSceneByName( USceneManager* Instance, const FString& SceneName, bool& bChanged );
-	static USceneManager* GetSingletonInstance();
+	USceneBase* GetSceneByName(const FString& SceneName, bool& bChanged);
 };
 
-#define SCENE_MANAGER (*((USceneManager*)GAME_INSTANCE.GetManager(USceneManager::StaticClass())))
+#define SCENE_MANAGER (*USceneManager::GetInstance())

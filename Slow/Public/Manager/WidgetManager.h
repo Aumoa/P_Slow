@@ -16,26 +16,34 @@ class SLOW_API UWidgetManager : public UManagerBase
 	GENERATED_BODY()
 
 public:
-	static bool bClearAllWhenSceneChanged;
+	static UWidgetManager* SingletonInstance;
+
+	uint8 bClearAllWhenSceneChanged : 1;
 
 public:
+	UWidgetManager();
+
+	void Initialize(USlowGameInstance* GInstance) override;
+
 	template<class T>
-	static T* CreateSlowWidget(const FName& InReferenceKey, APlayerController* InPlayerController = nullptr, bool bVisible = true)
+	T* CreateSlowWidget(const FName& InReferenceKey, APlayerController* InPlayerController = nullptr, bool bVisible = true)
 	{
 		USlowWidgetBase* widget = CreateSlowWidgetInternal(InReferenceKey, InPlayerController, bVisible);
 		return Cast<T>(widget);
 	}
 	
 	template<class T>
-	static T* CreateHUDWidget(const FName& InReferenceKey, bool bVisible = true)
+	T* CreateHUDWidget(const FName& InReferenceKey, bool bVisible = true)
 	{
 		USlowWidgetBase* widget = CreateHUDWidgetInternal(InReferenceKey, bVisible);
 		return Cast<T>(widget);
 	}
 
-private:
-	static USlowWidgetBase* CreateSlowWidgetInternal(const FName& InReferenceKey, APlayerController* InPlayerController, bool bVisible);
-	static USlowWidgetBase* CreateHUDWidgetInternal(const FName& InReferenceKey,  bool bVisible);
+	static UWidgetManager* GetInstance();
 
-	static UWidgetManager* GetSingletonInstance();
+private:
+	USlowWidgetBase* CreateSlowWidgetInternal(const FName& InReferenceKey, APlayerController* InPlayerController, bool bVisible);
+	USlowWidgetBase* CreateHUDWidgetInternal(const FName& InReferenceKey,  bool bVisible);
 };
+
+#define WIDGET_MANAGER (*UWidgetManager::GetInstance())
