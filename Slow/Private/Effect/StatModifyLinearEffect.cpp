@@ -26,6 +26,7 @@ void FStatModifyLinearEffect::Apply(AActor* InTarget)
 		return;
 	}
 
+	UE_LOG(LogSlow, Error, TEXT("%s: 전달된 데미지: %d"), __FUNCTIONT__, ModifyValue.AttackDamage);
 	StatBasedCharacter->ApplyEffect(*this);
 }
 

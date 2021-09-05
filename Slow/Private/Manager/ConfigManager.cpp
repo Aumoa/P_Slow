@@ -11,7 +11,7 @@ UConfigManager::UConfigManager()
 	: SoftClassReference(nullptr)
 	, Config(nullptr)
 {
-	static FString ConfigReferencePath = TEXT("Blueprint'/Game/Slow/Blueprints/Embedded/BP_SlowConfig.BP_SlowConfig'");
+	static FString ConfigReferencePath = TEXT("Blueprint'/Game/Slow/Blueprints/Embedded/BP_SlowConfig.BP_SlowConfig_C'");
 	static ConstructorHelpers::FObjectFinder<UObject> BP_SlowConfigFinder(*ConfigReferencePath);
 
 	if (!BP_SlowConfigFinder.Succeeded())

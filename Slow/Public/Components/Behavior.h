@@ -31,4 +31,7 @@ public:
 
 	void RemoveFromParent();
 	void AddEffect(FActorEffect* InEffect);
+	void AddEffectList(TArray<FActorEffect*> InEffectList);
+	void SetEffect(TArray<FActorEffect*> InEffectList);
+	int GetEffectCount();
 };

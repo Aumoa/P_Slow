@@ -17,7 +17,7 @@ UStartupScene::UStartupScene()
 void UStartupScene::BeginPlay( UObject* Args )
 {
 	Super::BeginPlay(Args);
-
+	UE_LOG(LogTemp, Warning, TEXT("CallOpenDemo."));
 	OpenDemoScene();
 }
 
@@ -38,10 +38,12 @@ void UStartupScene::OpenDemoScene()
 	if (bSkipDemo)
 	{
 		NextScene = NewObject<UIntroScene>(GetOuter());
+		UE_LOG(LogTemp, Warning, TEXT("bSkipDemo."));
 	}
 	else
 	{
 		NextScene = NewObject<UDemoScene>(GetOuter());
+		UE_LOG(LogTemp, Warning, TEXT("Not bSkipDemo."));
 	}
 
 	SCENE_MANAGER.SwitchScene(NextScene);

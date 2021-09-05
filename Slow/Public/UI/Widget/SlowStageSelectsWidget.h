@@ -22,8 +22,8 @@ private:
 	USlowTextButton* Button_Stage1_1;
 	UPROPERTY(meta = (BindWidget))
 	USlowTextButton* Button_Stage1_2;
-	UPROPERTY(meta = (BindWidget))
-	USlowTextButton* Button_Stage1_3;
+	/*UPROPERTY(meta = (BindWidget))
+	USlowTextButton* Button_Stage1_3;*/
 
 	UPROPERTY(meta = (BindWidget))
 	USlowTextButton* Button_Cancel;

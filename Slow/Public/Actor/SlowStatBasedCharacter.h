@@ -7,6 +7,7 @@
 #include "Attributes/BaseAttributeConfig.h"
 #include "Attributes/AttrInstance.h"
 #include "Attributes/Equipments.h"
+#include "Ability/AbilitySlot.h"
 
 #include "SlowStatBasedCharacter.generated.h"
 
@@ -40,11 +41,13 @@ public:
 	virtual float GetBehaviorCoolDown() const;
 	virtual void SetBehaviorCoolDown(float num);
 	virtual float GetFaintHP();
+	virtual TSharedPtr<FAttackAbility> GetFAttackAbility() const;
 
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHP();
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentHP();
+	
 	
 
 protected:

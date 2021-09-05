@@ -13,6 +13,10 @@ class ASlowCharacter;
 class ASlowStatBasedCharacter;
 class FActorEffect;
 
+
+DECLARE_MULTICAST_DELEGATE(FDele_ImmediateEffect);
+DECLARE_MULTICAST_DELEGATE(FDele_HitEffect);
+
 /// <summary>
 /// 기본 공격 어빌리티를 표현합니다.
 /// </summary>
@@ -21,8 +25,10 @@ class FAttackAbility : virtual public FAbilityBase, virtual public IActorTargetA
 	TWeakObjectPtr<ASlowCharacter> MyTarget = nullptr;
 
 public:
-	FAttackAbility();
+	FDele_ImmediateEffect FAttackImmediateEffect;
+	FDele_HitEffect FAttackHitEffect;
 
+	FAttackAbility();
 	bool ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer) override;
 	void SetTarget(ASlowCharacter* InActor) override;
 	TWeakObjectPtr<ASlowCharacter> GetTarget() override;

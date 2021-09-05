@@ -7,6 +7,9 @@
 #include "Requirement/CostRequirement.h"
 #include "Requirement/CooldownRequirement.h"
 #include "Components/Behavior.h"
+#include "Effect/StatModifyLinearEffect.h"
+#include "Actor/SlowStatBasedCharacter.h"
+#include "Ability/AttackAbility.h"
 
 UHatchetWeapon::UHatchetWeapon()
 {
@@ -22,8 +25,29 @@ UHatchetWeapon::UHatchetWeapon()
 	Collision_Weapon->SetRelativeLocationAndRotation(FVector(11, 0, -7),FRotator(0,-10,0));
 }
 
-void UHatchetWeapon::BeginWeapon()
+void UHatchetWeapon::AddAttackImmediateEffect()
 {
+	if (!AttackAbility)
+	{
+		return;
+	}
+
+	AttackAbility->FAttackImmediateEffect.AddUFunction(this, FName("ConsumeWeaponCost"));
+}
+
+void UHatchetWeapon::AddAttackHitEffect()
+{
+	if (!AttackAbility)
+	{
+		return;
+	}
+
+	//AttackAbility->FAttackHitEffect.Add()
+}
+
+void UHatchetWeapon::BeginWeapon(AActor *Owner)
+{
+	MyOwner = Owner;
 	SocketName = TEXT("HatchetSocket");
 
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hatchet"));
@@ -33,17 +57,36 @@ void UHatchetWeapon::BeginWeapon()
 	TSharedPtr<FCooldownRequirement> Cooldown_Weapon = MakeShared<FCooldownRequirement>();
 	Cooldown_Weapon->SetupCooldown(WeaponReferenceTable->SwapCoolDown);
 
+	FAttrInstance MondifyValue = {};
+	MondifyValue.AttackDamage = WeaponReferenceTable->Damage;
+
+	FStatModifyLinearEffect* DamageEffect = new FStatModifyLinearEffect(MyOwner, MondifyValue);
+
+	WeaponEffectList.Add(DamageEffect);
+
 	Requirements_Weapon.Add(Cost_Weapon);
 	Requirements_Weapon.Add(Cooldown_Weapon);
+
+	
 
 	ComboList.Empty();
 	ComboList.Emplace(TEXT("Hatchet_Combo1"));
 	ComboList.Emplace(TEXT("Hatchet_Combo2"));
+
+	ASlowStatBasedCharacter* SlowCharacter = Cast<ASlowStatBasedCharacter>(Owner);
+	if (SlowCharacter)
+	{
+		AttackAbility = SlowCharacter->GetFAttackAbility();
+	}
+
+	AddAttackImmediateEffect();
+	AddAttackHitEffect();
 }
 
 void UHatchetWeapon::EndWeapon()
 {
-
+	AttackAbility->FAttackImmediateEffect.Clear();
+	AttackAbility->FAttackHitEffect.Clear();
 }
 
 bool UHatchetWeapon::SwapConditionInternal()
@@ -100,4 +143,16 @@ UCapsuleComponent* UHatchetWeapon::GetCapsuleComponent()
 FWeaponReferenceTableRow* UHatchetWeapon::GetWeaponDataTableRow()
 {
 	return WeaponReferenceTable;
+}
+
+void UHatchetWeapon::ConsumeWeaponCost()
+{
+	for (TSharedPtr<FRequirementBase> Requirement : Requirements_Weapon)
+	{
+		TSharedPtr<FCostRequirement> CostRequirement = StaticCastSharedPtr<FCostRequirement>(Requirement);
+		if (CostRequirement.IsValid())
+		{
+			CostRequirement->Consume(1);
+		}
+	}
 }

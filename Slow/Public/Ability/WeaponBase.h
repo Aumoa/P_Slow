@@ -3,7 +3,7 @@
 #pragma once
 
 
-
+#include "Ability/AbilitySlot.h"
 #include "WeaponBase.generated.h"
 
 class FRequirementBase;
@@ -11,6 +11,7 @@ class UBehavior;
 class UStaticMesh;
 class UAnimMontage;
 class UCapsuleComponent;
+class FAttackAbility;
 struct FWeaponReferenceTableRow;
 
 UCLASS(Blueprintable)
@@ -28,16 +29,22 @@ public:
 	/// 이 무기가 발동되면 대상에게 적용되는 효과를 가져옵니다.
 	/// </summary>
 	virtual TSubclassOf<UBehavior> GetEffect() const;
+	virtual TArray<FActorEffect*> GetEffectList();
+	virtual void AddAttackImmediateEffect();
+	virtual void AddAttackHitEffect();
 	
-	virtual void BeginWeapon();
+	virtual void BeginWeapon(AActor *Owner);
 	virtual void EndWeapon();
 	virtual bool SwapConditionInternal();
 	virtual UStaticMesh* GetWeaponMesh();
 	virtual FName GetSocketName();
-	//가상함수 구현
 	virtual int GetMaxComboCount();
 	virtual UAnimMontage* GetAttackMontage();
 	virtual TArray<FName> GetComboList();
 	virtual UCapsuleComponent* GetCapsuleComponent();
 	virtual FWeaponReferenceTableRow* GetWeaponDataTableRow();
+
+protected:
+	TSharedPtr<FAttackAbility> AttackAbility;
+	TArray<FActorEffect*> WeaponEffectList;
 };

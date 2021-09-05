@@ -9,9 +9,12 @@ class FCostRequirement : public FRequirementBase
 {
 	int32 ActiveUsageCount;
 	int32 BaseUsageCount;
+	bool CastChecker = false;
 
 public:
 	FCostRequirement();
+
+	virtual bool SelfCheck() const override;
 
 	/// <summary>
 	/// 이 요구 사항의 사용 횟수 값을 전달합니다.

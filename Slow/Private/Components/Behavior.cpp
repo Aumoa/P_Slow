@@ -7,7 +7,9 @@
 
 UBehavior::UBehavior()
 {
+	ActivateStateStack.Push(false);
 	ActivateStateStack.Push(true);
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UBehavior::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -20,6 +22,7 @@ void UBehavior::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 	if (GetOwner() == nullptr)
 	{
+
 		return;
 	}
 
@@ -71,4 +74,20 @@ void UBehavior::RemoveFromParent()
 void UBehavior::AddEffect(FActorEffect* InEffect)
 {
 	EffectList.Add(InEffect);
+}
+
+void UBehavior::AddEffectList(TArray<FActorEffect*> InEffectList)
+{
+	EffectList.Append(InEffectList);
+}
+
+void UBehavior::SetEffect(TArray<FActorEffect*> InEffectList)
+{
+	EffectList.Empty();
+	EffectList = InEffectList;
+}
+
+int UBehavior::GetEffectCount()
+{
+	return EffectList.Num();
 }

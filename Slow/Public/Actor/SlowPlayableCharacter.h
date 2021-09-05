@@ -151,6 +151,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CreateCombatUIWidget();
 
+	TSharedPtr<FAttackAbility> GetFAttackAbility() const override;
+
 private:
 	void NewWeaponManager();
 	void NewSpringArm();

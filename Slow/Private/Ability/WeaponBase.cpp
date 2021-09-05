@@ -12,7 +12,21 @@ TSubclassOf<UBehavior> UWeaponBase::GetEffect() const
 	return nullptr;
 }
 
-void UWeaponBase::BeginWeapon()
+TArray<FActorEffect*> UWeaponBase::GetEffectList()
+{
+	return WeaponEffectList;
+}
+
+void UWeaponBase::AddAttackImmediateEffect()
+{
+}
+
+void UWeaponBase::AddAttackHitEffect()
+{
+}
+
+
+void UWeaponBase::BeginWeapon(AActor *Owner)
 {
 	
 }

@@ -9,8 +9,10 @@
 #include "Ability/HammerWeapon.h"
 #include "Ability/SwordWeapon.h"
 
-void UWeaponManager::Init()
+void UWeaponManager::Init(AActor *Owner)
 {
+	MyOwner = Owner;
+
 	auto Config = CONFIG_MANAGER.GetBlueprintConfig();
 
 	WeaponArray.Empty();
@@ -30,8 +32,6 @@ void UWeaponManager::Init()
 UWeaponManager::UWeaponManager()
 {
 	SwapAnimState = false;
-
-
 }
 
 
@@ -42,7 +42,7 @@ void UWeaponManager::NextWeapon()
 	{
 		CurrentWeapon = WeaponArray[0];
 
-		CurrentWeapon->BeginWeapon();
+		CurrentWeapon->BeginWeapon(MyOwner);
 		SetSwapAnimState(true);
 
 		IsBattle = true;
@@ -59,7 +59,7 @@ void UWeaponManager::NextWeapon()
 
 			CurrentWeapon = WeaponArray[(WeaponArray.Find(CurrentWeapon)+1)%WeaponArray.Num()];
 				
-			CurrentWeapon->BeginWeapon();
+			CurrentWeapon->BeginWeapon(MyOwner);
 			SetSwapAnimState(true);
 
 			IsBattle = true;

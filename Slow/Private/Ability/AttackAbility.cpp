@@ -35,6 +35,8 @@ bool FAttackAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 	UWeaponBase* const CurrentWeaponResolve = Equips.Weapon.Get();
 	TArray<TSharedPtr<FRequirementBase>> Requirements = CurrentWeaponResolve->GetAllRequirements();
 
+
+
 	// 무기 사용 요구 사항을 검사합니다.
 	// 예: 재사용 대기시간 등
 	bool bSelfCheck = true;
@@ -52,7 +54,15 @@ bool FAttackAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 		return false;
 	}
 
-	//
+
+	//공격 시도 시 발생하는 효과를 Broadcast합니다.
+	if (FAttackImmediateEffect.IsBound())
+	{
+		FAttackImmediateEffect.Broadcast();
+	}
+	
+
+	// 호철씨 개발 부분
 	// 액터를 대상으로 하는 요구 사항을 검사합니다.
 	TArray<FActorTargetRequirement*> ActorTargetRequirements = ExportSpecialClasses<FActorTargetRequirement>(Requirements);
 	bool bActorCheck = true;
@@ -86,10 +96,22 @@ bool FAttackAbility::ExecuteIndirect(ASlowStatBasedCharacter* InCastPlayer)
 		return false;
 	}
 
+	UE_LOG(LogSlow, Error, TEXT("%s. %s 전달 성공."), __FUNCTIONT__, nameof_c(UBehavior));
+
+	EffectInstance->AddEffectList(CurrentWeaponResolve->GetEffectList());
+
+	UE_LOG(LogSlow, Error, TEXT("이펙트 개수: %d"), EffectInstance->GetEffectCount());
 	//
 	// 공격 효과를 대상 캐릭터에 부여합니다.
 	MyTargetResolve->AddOwnedComponent(EffectInstance);
 	EffectInstance->RegisterComponent();
+	//EffectInstance->PushActivate(true);
+
+	//공격 성공 시 자신에게 발생하는 효과를 Broadcast합니다. (예:공속 버프)
+	if (FAttackHitEffect.IsBound())
+	{
+		FAttackHitEffect.Broadcast();
+	}
 
 	return true;
 }

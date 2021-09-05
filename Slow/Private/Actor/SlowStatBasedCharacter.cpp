@@ -49,7 +49,7 @@ void ASlowStatBasedCharacter::ApplyEffect(const FStatModifyLinearEffect& InEffec
 
 	FAttrInstance InModifyValue = InEffect.GetModifyValue();
 
-	AttrInstance.HealthPoint -= InModifyValue.HealthPoint;
+	AttrInstance.HealthPoint -= InModifyValue.AttackDamage;
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%s HP : %d / %d"), *this->GetName(),AttrInstance.HealthPoint >= 0 ? AttrInstance.HealthPoint : 0, InitialAttribute.MaxHealth));
 	StatValidCheck();
@@ -88,6 +88,11 @@ float ASlowStatBasedCharacter::GetMaxHP()
 float ASlowStatBasedCharacter::GetCurrentHP()
 {
 	return AttrInstance.HealthPoint;
+}
+
+TSharedPtr<FAttackAbility> ASlowStatBasedCharacter::GetFAttackAbility() const
+{
+	return TSharedPtr<FAttackAbility>();
 }
 
 void ASlowStatBasedCharacter::SetInitialAttribute(const FBaseAttributeConfig& InInitialAttribute)

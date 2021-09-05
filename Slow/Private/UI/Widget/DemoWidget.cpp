@@ -38,4 +38,5 @@ void UDemoWidget::LogoTick(float deltaTime)
 void UDemoWidget::OnDemoSequenceEnded(UUMGSequencePlayer& InPlayer)
 {
 	DemoEnded.Broadcast();
+	PendingClose.Broadcast();
 }

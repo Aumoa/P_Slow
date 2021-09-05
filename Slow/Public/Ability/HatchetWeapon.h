@@ -21,6 +21,9 @@ private:
 
 private:
 	UPROPERTY()
+	AActor* MyOwner;
+
+	UPROPERTY()
 	UStaticMesh* StaticMesh_Weapon;
 
 	UPROPERTY()
@@ -41,7 +44,10 @@ public:
 	FWeaponReferenceTableRow* WeaponReferenceTable;
 
 public:
-	void BeginWeapon() override;
+	void AddAttackImmediateEffect() override;
+	void AddAttackHitEffect() override;
+
+	void BeginWeapon(AActor *Owner) override;
 
 	void EndWeapon() override;
 
@@ -60,4 +66,7 @@ public:
 	TArray<FName> GetComboList() override;
 	UCapsuleComponent* GetCapsuleComponent() override;
 	FWeaponReferenceTableRow* GetWeaponDataTableRow() override;
+
+	UFUNCTION()
+	void ConsumeWeaponCost();
 };

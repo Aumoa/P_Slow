@@ -186,9 +186,6 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 			SetWeaponSocketName();
 			SetWeaponMesh();
 			SetWeaponData();
-
-			
-			//Collision_Weapon->AttachToComponent(Weapon, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		}
 	}
 
@@ -218,13 +215,6 @@ void ASlowPlayableCharacter::OnActionInput(const FName& ActionName, bool bPresse
 		RollTime = 0.4f;
 		AttrInstance.StaminaPoint -= RollCost;
 		BehaviorCoolDown = 0.5f;
-
-
-		
-		
-		//FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
-		//Direction*=300.0f;
-		//GetMesh()->AddImpulseAtLocation(GetVelocity() * 300.0f, GetActorLocation());
 	}
 	
 	else if (ActionName == IA_Jump)
@@ -420,7 +410,7 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 	AttackAbility->ExecuteIndirect(this);
 	MyCombatUIWidget->SetTarget(OtherCharacter);
 
-	DamageEffect->Apply(OtherCharacter);
+	//DamageEffect->Apply(OtherCharacter);
 
 	IsValidAttack = false;
 	Collision_Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -439,7 +429,7 @@ void ASlowPlayableCharacter::OnWeaponCollisionBeginOverlap(UPrimitiveComponent* 
 void ASlowPlayableCharacter::NewWeaponManager()
 {
 	WeaponManager = NewObject<UWeaponManager>(this);
-	WeaponManager->Init();
+	WeaponManager->Init(this);
 	
 }
 
@@ -876,4 +866,9 @@ bool ASlowPlayableCharacter::CreateCombatUIWidget()
 	MyCombatUIWidget->SetOwnerCharacter(this);
 
 	return false;
+}
+
+TSharedPtr<FAttackAbility> ASlowPlayableCharacter::GetFAttackAbility() const
+{
+	return AttackAbility;
 }

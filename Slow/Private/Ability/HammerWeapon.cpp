@@ -7,6 +7,9 @@
 #include "Requirement/CostRequirement.h"
 #include "Requirement/CooldownRequirement.h"
 #include "Components/Behavior.h"
+#include "Effect/StatModifyLinearEffect.h"
+#include "Actor/SlowStatBasedCharacter.h"
+#include "Ability/AttackAbility.h"
 
 UHammerWeapon::UHammerWeapon()
 {
@@ -22,28 +25,67 @@ UHammerWeapon::UHammerWeapon()
 	Collision_Weapon->SetRelativeRotation(FRotator(90.0f,0.0f,0.0f));
 }
 
-void UHammerWeapon::BeginWeapon()
+void UHammerWeapon::AddAttackImmediateEffect()
 {
+	if (!AttackAbility)
+	{
+		return;
+	}
+
+	AttackAbility->FAttackImmediateEffect.AddUFunction(this, FName("ConsumeWeaponCost"));
+}
+
+void UHammerWeapon::AddAttackHitEffect()
+{
+	if (!AttackAbility)
+	{
+		return;
+	}
+
+	//AttackAbility->FAttackHitEffect.Add()
+}
+
+void UHammerWeapon::BeginWeapon(AActor *Owner)
+{
+	MyOwner = Owner;
 	SocketName = TEXT("HammerSocket");
 	
 	WeaponReferenceTable = UWeaponReference::GetReferenceTableRow(TEXT("Hammer"));
 
-	TSharedPtr<FCostRequirement> Cost_Weapon = MakeShared<FCostRequirement>();
+	TSharedPtr<FCostRequirement> Cost_Weapon = MakeShared<FCostRequirement>();;
 	Cost_Weapon->SetupUsageCount(WeaponReferenceTable->MaxUsageCount);
+
 	TSharedPtr<FCooldownRequirement> Cooldown_Weapon = MakeShared<FCooldownRequirement>();
 	Cooldown_Weapon->SetupCooldown(WeaponReferenceTable->SwapCoolDown);
 
+	FAttrInstance MondifyValue = {};
+	MondifyValue.AttackDamage = WeaponReferenceTable->Damage;
+
+	FStatModifyLinearEffect* DamageEffect = new FStatModifyLinearEffect(MyOwner, MondifyValue);
+
+	WeaponEffectList.Add(DamageEffect);
+	
 	Requirements_Weapon.Add(Cost_Weapon);
 	Requirements_Weapon.Add(Cooldown_Weapon);
 
 	ComboList.Empty();
 	ComboList.Emplace(TEXT("Hammer_Combo1"));
 	ComboList.Emplace(TEXT("Hammer_Combo2"));
+
+	ASlowStatBasedCharacter* SlowCharacter = Cast<ASlowStatBasedCharacter>(Owner);
+	if (SlowCharacter)
+	{
+		AttackAbility = SlowCharacter->GetFAttackAbility();
+	}
+
+	AddAttackImmediateEffect();
+	AddAttackHitEffect();
 }
 
 void UHammerWeapon::EndWeapon()
 {
-
+	AttackAbility->FAttackImmediateEffect.Clear();
+	AttackAbility->FAttackHitEffect.Clear();
 }
 
 bool UHammerWeapon::SwapConditionInternal()
@@ -59,6 +101,7 @@ TArray<TSharedPtr<FRequirementBase>> UHammerWeapon::GetAllRequirements() const
 
 TSubclassOf<UBehavior> UHammerWeapon::GetEffect() const
 {
+
 	return UBehavior::StaticClass();
 }
 
@@ -100,4 +143,16 @@ UCapsuleComponent* UHammerWeapon::GetCapsuleComponent()
 FWeaponReferenceTableRow* UHammerWeapon::GetWeaponDataTableRow()
 {
 	return WeaponReferenceTable;
+}
+
+void UHammerWeapon::ConsumeWeaponCost()
+{
+	for (TSharedPtr<FRequirementBase> Requirement : Requirements_Weapon)
+	{
+		TSharedPtr<FCostRequirement> CostRequirement = StaticCastSharedPtr<FCostRequirement>(Requirement);
+		if (CostRequirement != nullptr)
+		{
+			CostRequirement->Consume(1);
+		}
+	}
 }

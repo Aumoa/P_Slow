@@ -1,10 +1,8 @@
-// Copyright 2020 Team slow. All right reserved.
-
-#include "Actor/SlowMobCharacterBase.h"
+#include "Actor/SlowBossCharacterBase.h"
 #include "Controller/SlowMobController.h"
 #include "Effect/StatModifyLinearEffect.h"
 
-ASlowMobCharacterBase::ASlowMobCharacterBase()
+ASlowBossCharacterBase::ASlowBossCharacterBase()
 {
 	AIControllerClass = ASlowMobController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -13,21 +11,22 @@ ASlowMobCharacterBase::ASlowMobCharacterBase()
 
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
 	AttackCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
-	
-	
+
+
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	/*AttackCollision->RegisterComponent();
 	AddInstanceComponent(AttackCollision);*/
 
-	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/NewBoss/MTG_Boss1_FourWayAttack.MTG_Boss1_FourWayAttack'")).Object);
-	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/NewBoss/MTG_Boss1_ComboAttack.MTG_Boss1_ComboAttack'")).Object);
-	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/NewBoss/MTG_Boss1_SpinningAttack.MTG_Boss1_SpinningAttack'")).Object);
 	
+
+	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_FourWayAttack.MTG_Boss1_FourWayAttack'")).Object);
+	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_ComboAttack.MTG_Boss1_ComboAttack'")).Object);
+	AttackMontages.Emplace(ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_SpinningAttack.MTG_Boss1_SpinningAttack'")).Object);
+
 	//AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_FourWayAttack.MTG_Boss1_FourWayAttack'
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> FaintAnim(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/NewBoss/MTG_Boss1_Faint.MTG_Boss1_Faint'"));
-	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FaintAnim(TEXT("AnimMontage'/Game/Slow/SkeletalMeshes/Boss1/MTG_Boss1_Faint.MTG_Boss1_Faint'"));
 	FaintMontage = FaintAnim.Object;
 
 	static ConstructorHelpers::FClassFinder<UCameraShake> CS_LoadCoustom(TEXT("/Game/Slow/Blueprints/Components/BP_BossAttackCameraShake"));
@@ -38,7 +37,7 @@ ASlowMobCharacterBase::ASlowMobCharacterBase()
 
 }
 
-void ASlowMobCharacterBase::BeginPlay()
+void ASlowBossCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -56,12 +55,12 @@ void ASlowMobCharacterBase::BeginPlay()
 	DamageEffectAttr.HealthPoint = InitialAttribute.DefaultDamage;
 	DamageEffect->SetModifyValue(DamageEffectAttr);
 
-	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ASlowMobCharacterBase::OnHitCollisionBeginOverlap);
+	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ASlowBossCharacterBase::OnHitCollisionBeginOverlap);
 	DeltaHP = GetCurrentHP();
 	CumDamageTime = 0.0f;
 }
 
-void ASlowMobCharacterBase::Tick(float deltaTime)
+void ASlowBossCharacterBase::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
@@ -69,13 +68,13 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 	{
 		BehaviorCoolDown -= deltaTime;
 	}
-	
-	else if(IsDead)
+
+	else if (IsDead)
 	{
 		Destroy();
 	}
 
-	else if(IsFaint)
+	else if (IsFaint)
 	{
 		CumDamageTime = 0;
 		DeltaHP = GetCurrentHP();
@@ -102,7 +101,7 @@ void ASlowMobCharacterBase::Tick(float deltaTime)
 	}
 }
 
-bool ASlowMobCharacterBase::Monster_Attack()
+bool ASlowBossCharacterBase::Monster_Attack()
 {
 	if (AttackCollision == nullptr)
 	{
@@ -117,7 +116,7 @@ bool ASlowMobCharacterBase::Monster_Attack()
 	return true;
 }
 
-void ASlowMobCharacterBase::Monster_AttackEnd()
+void ASlowBossCharacterBase::Monster_AttackEnd()
 {
 	if (AttackCollision == nullptr)
 	{
@@ -131,9 +130,9 @@ void ASlowMobCharacterBase::Monster_AttackEnd()
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-UBoss1AnimInstance* ASlowMobCharacterBase::GetBossAnimInstance()
+UBoss1AnimInstance* ASlowBossCharacterBase::GetBossAnimInstance()
 {
-	UBoss1AnimInstance *BossAnimInstance = Cast<UBoss1AnimInstance>(GetAnimInstance());
+	UBoss1AnimInstance* BossAnimInstance = Cast<UBoss1AnimInstance>(GetAnimInstance());
 
 	if (BossAnimInstance == nullptr)
 	{
@@ -144,35 +143,35 @@ UBoss1AnimInstance* ASlowMobCharacterBase::GetBossAnimInstance()
 	return BossAnimInstance;
 }
 
-UAnimMontage* ASlowMobCharacterBase::GetAttackMontage(int FindNum)
+UAnimMontage* ASlowBossCharacterBase::GetAttackMontage(int FindNum)
 {
 	if (!AttackMontages.IsValidIndex(FindNum))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::GetAttackMontage :: No Found index[%d]."),FindNum);
+		UE_LOG(LogTemp, Warning, TEXT("ASlowMobCharacterBase::GetAttackMontage :: No Found index[%d]."), FindNum);
 		return nullptr;
 	}
-	
+
 	return AttackMontages[FindNum];
 }
 
-bool ASlowMobCharacterBase::GetIsDead() const
+bool ASlowBossCharacterBase::GetIsDead() const
 {
 	return IsDead;
 }
 
-float ASlowMobCharacterBase::GetBehaviorCoolDown() const
+float ASlowBossCharacterBase::GetBehaviorCoolDown() const
 {
 	return BehaviorCoolDown;
 }
 
-void ASlowMobCharacterBase::OnActorKill()
+void ASlowBossCharacterBase::OnActorKill()
 {
 	GetMesh()->GetAnimInstance()->StopAllMontages(0.01f);
 	BehaviorCoolDown = 3.0f;
 	IsDead = true;
 }
 
-float ASlowMobCharacterBase::GetFaintHP()
+float ASlowBossCharacterBase::GetFaintHP()
 {
 	if (BehaviorCoolDown > 0.0f)
 	{
@@ -182,7 +181,7 @@ float ASlowMobCharacterBase::GetFaintHP()
 	return DeltaHP;
 }
 
-bool ASlowMobCharacterBase::PlayMontage(UAnimMontage* montage)
+bool ASlowBossCharacterBase::PlayMontage(UAnimMontage* montage)
 {
 	if (GetMesh()->GetAnimInstance()->Montage_Play(montage) == 0.f)
 	{
@@ -195,8 +194,8 @@ bool ASlowMobCharacterBase::PlayMontage(UAnimMontage* montage)
 
 
 
-void ASlowMobCharacterBase::OnHitCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
-UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ASlowBossCharacterBase::OnHitCollisionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ASlowStatBasedCharacter* OtherCharacter = Cast<ASlowStatBasedCharacter>(OtherActor);
 
@@ -206,14 +205,14 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 
 		return;
 	}
-		
+
 
 	if (OtherActor == this)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SlowAttackCollisionBeginOverlap :: Error(OtherActor == this)"));
 		return;
 	}
-		
+
 
 	if (IsAttack == false)
 	{
@@ -232,7 +231,7 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHi
 	GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CS_BossAttack, 1.0f);
 }
 
-bool ASlowMobCharacterBase::AddFaint(float num)
+bool ASlowBossCharacterBase::AddFaint(float num)
 {
 	if (num <= 0.0f)
 	{

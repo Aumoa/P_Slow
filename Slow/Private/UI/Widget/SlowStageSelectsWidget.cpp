@@ -13,7 +13,7 @@ void USlowStageSelectsWidget::NativeConstruct()
 
 	Button_Stage1_1->Clicked.AddUObject(this, &USlowStageSelectsWidget::OnClicked_Stage1_1);
 	Button_Stage1_2->Clicked.AddUObject(this, &USlowStageSelectsWidget::OnClicked_Stage1_2);
-	Button_Stage1_3->Clicked.AddUObject(this, &USlowStageSelectsWidget::OnClicked_Stage1_3);
+	//Button_Stage1_3->Clicked.AddUObject(this, &USlowStageSelectsWidget::OnClicked_Stage1_3);
 	Button_Cancel->Clicked.AddUObject(this, &USlowStageSelectsWidget::OnClicked_Cancel);
 }
 
